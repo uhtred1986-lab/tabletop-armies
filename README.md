@@ -1,4 +1,4 @@
-# Muster
+# Muster (tabletop-armies)
 
 A private companion app for miniature games: **collection, paint tracker, list builder and table play** for
 Age of Sigmar, Marvel: Crisis Protocol, Star Wars: Legion, Star Wars: Shatterpoint and Batman Miniature Game.

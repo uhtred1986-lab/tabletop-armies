@@ -76,7 +76,7 @@ There is no automatic CI (`checks.yml` is manual only). Run what proves the chan
 Merge once the gate is green on the exact head you pushed and the issue's "Done when" is met.
 - **Every PR targets `main`; no stacked PRs.**
 - **Never `gh pr merge --auto`.** Confirm the pushed head is the PR head, then
-  `gh api -X PUT repos/uhtred1986-lab/muster/pulls/<n>/merge -f merge_method=squash -f sha=<head>`.
+  `gh api -X PUT repos/uhtred1986-lab/tabletop-armies/pulls/<n>/merge -f merge_method=squash -f sha=<head>`.
 - **One Dexie version bump per open PR.** Compare `src/core/db.ts` versions with `origin/main` before merging.
 - **After a merge, unasked:** delete the merged remote branch and any other fully merged ones; never touch
   `--no-merged` branches, report them. Then verify `git log origin/main`, not the PR state.
