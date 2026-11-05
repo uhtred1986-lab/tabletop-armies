@@ -35,6 +35,9 @@ Built so far (`drizzle/0000_init.sql`); the rest arrives with its milestone.
 | `game_events` | id, played_game_id → `played_games` (cascade), seq (unique per game), at, kind, payload — the game log; state is replayed from events, so undo is "delete the highest seq" |
 | `data_packs` | id, game_id, source, source_date, imported_at, content (jsonb) — the catalogue, not owner data |
 
+Storage location is a requirement (`docs/product/plan.md`, Features 1): today `collection_items.storage` is one free
+text per row; whether it becomes per figure and/or a table of named places is open in `docs/TASKS.md` ("To verify").
+
 Planned: per-model paint rows and recipes/paints (M1), photos (M1; Vercel Blob or bytea, see `docs/TASKS.md`),
 overrides (M2). Enums: `game_id`, `paint_stage`, `game_result`.
 
