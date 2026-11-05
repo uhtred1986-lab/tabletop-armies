@@ -5,7 +5,7 @@ Two halves that never mix:
 - **The rules catalogue (a data pack):** read-only, versioned, replaced on every import. Lives in table `data_packs`
   of the owner's private Neon database and is never exported in backups, seeded from the repo or committed.
 - **The owner's data:** collection, paint, lists, games. Never overwritten by an import; included in JSON exports.
-  Tablet and laptop read the same database, so there is nothing to sync.
+  Tablet and laptop read the same database online. Offline table-play snapshots and operation queues are owner-scoped in IndexedDB; the event log remains authoritative.
 
 They meet only through stable unit IDs, and owner rows also keep the unit's *name*, so a re-import or a renamed unit
 can be re-matched instead of breaking the collection.
@@ -25,7 +25,7 @@ can be re-matched instead of breaking the collection.
 
 ## Owner's data (Postgres, `src/db/schema/*.ts`)
 
-Built so far (`drizzle/0000_init.sql`); the rest arrives with its milestone.
+The original tables are in `drizzle/0000_init.sql`; v1 extends them additively in `0001_v1_foundation.sql`.
 
 | Table | Key fields |
 | --- | --- |
@@ -35,7 +35,7 @@ Built so far (`drizzle/0000_init.sql`); the rest arrives with its milestone.
 | `game_events` | id, played_game_id → `played_games` (cascade), seq (unique per game), at, kind, payload — the game log; state is replayed from events, so undo is "delete the highest seq" |
 | `data_packs` | id, game_id, source, source_date, imported_at, content (jsonb) — the catalogue, not owner data |
 
-Planned (names and key fields; each built in its milestone through skill `data-change`, additive only):
+V1 domain tables (the schema files and generated migration are authoritative):
 
 | Table | Key fields | Milestone |
 | --- | --- | --- |
@@ -43,14 +43,18 @@ Planned (names and key fields; each built in its milestone through skill `data-c
 | `collection_models` | id, item_id → `collection_items` (cascade), label, place_id → `storage_places` (set null), paint_stage | M1 |
 | `photos` | id, blob_key, item_id or model_id, paint_stage at the time, taken_at, caption | M1 |
 | `pack_assets` | id, pack_id → `data_packs` (cascade), unit_id, kind (card, token), blob_key, source_url, fetched_at — catalogue side, replaced with the pack | M3 |
-| `played_game_sides` | id, played_game_id, side (you, opponent), faction_name, units (jsonb: catalogue id + name) | M5 |
+| frozen start-event sides | the first `game_events` payload keeps both sides, catalogue identity/name and module metadata | M5 |
 | `campaigns` / `campaign_games` | id, game_id, kind (generic, path_to_glory), name, notes / campaign_id, played_game_id, order | M8 |
 
-- Storage: `collection_items.storage` (free text today) is retired in M1. A unit's place is derived: one place if all
+- Storage: legacy `collection_items.storage` remains for compatibility; the v1 UI uses model/place references. A unit's place is derived: one place if all
   its models share it, "split" otherwise. Assigning a unit sets every model; nothing is stored twice.
 - A model with no place shows "no place", never a guess.
 - Stats (M7) are computed from `played_games` and `game_events`; no stats table.
-- Also planned: overrides (M2). Photo store is decided in M1 (`docs/TASKS.md`).
+- `collection_overrides` stores owner corrections separately from immutable source packs. Photos and imported card images use private Vercel Blob.
+- `import_runs` and `import_candidates` hold staged catalogue review copies and are excluded from owner JSON export alongside `data_packs` and `pack_assets`.
+- `paint_stages` is configurable; `paint_history` retains immutable model/stage snapshots. `blob_deletion_queue` records cleanup work after references are removed.
+- `offline_operation_receipts` keeps UUID/payload-hash outcomes even after undo removes the corresponding event; repeated operations cannot resurrect an undone event.
+- Campaign roster, injury, renown-event and territory tables store owner-entered progress. Renown totals and ladders are computed.
 
 ## Rules
 

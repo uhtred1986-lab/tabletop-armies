@@ -13,7 +13,7 @@ Tabletop Armies is a private companion app for miniature games: Age of Sigmar, M
 Star Wars: Shatterpoint and Batman Miniature Game. It tracks the owner's collection and paint progress, builds lists
 checked against each game's rules, and runs games at the table (tablet) and at the hobby desk (laptop).
 Next.js 16 (App Router, Server Components and Server Functions) on Vercel, Neon Postgres via Drizzle, Vitest. Tablet and
-laptop share one database, so there is no sync layer. Plan and decisions: `docs/product/plan.md`, `docs/TASKS.md`.
+laptop share one database for online views; offline table-play operations queue locally and reconcile on reconnect. Plan and decisions: `docs/product/plan.md`, `docs/TASKS.md`.
 Not live yet; "production" means the `main` deployment and the Neon `production` branch with Heyhey's real collection.
 
 ## Safety facts for every change

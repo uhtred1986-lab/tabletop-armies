@@ -1,5 +1,43 @@
+import { importsEn } from "./features/imports.en";
+import { playEn } from "./features/play.en";
+import { referenceEn } from "./features/reference.en";
+import { collectionEn } from "./features/collection.en";
+import { campaignsEn } from "./features/campaigns.en";
+import { rulesEn } from "./features/rules.en";
 // English UI strings. Same keys as de.ts (a test checks it). Game terms use each rulebook's own words.
 export const en = {
+  ...importsEn,
+  ...playEn,
+  ...referenceEn,
+  ...collectionEn,
+  ...campaignsEn,
+  ...rulesEn,
+  "nav.places": "Places",
+  "nav.stats": "Statistics",
+  "nav.campaigns": "Campaigns",
+  "nav.data": "Sources & data",
+  "nav.reference": "Rules library",
+  "nav.more": "More",
+  "nav.navigation": "Main navigation",
+  "nav.game": "Game world",
+  "dialog.unsaved": "You have unsaved changes. Discard them?",
+  "dialog.keepEditing": "Keep editing",
+  "dialog.discard": "Discard changes",
+  "kit.controls": "Native controls",
+  "kit.input": "Name",
+  "kit.select": "Paint stage",
+  "kit.notes": "Notes",
+  "kit.referenceLink": "Open rules library",
+  "kit.trooper": "Test Trooper",
+  "kit.dialog": "Dialog specimen",
+  "kit.openDialog": "Open dialog",
+  "kit.dialogBody": "This shared dialog keeps its heading and actions visible while the body scrolls.",
+  "hub.models": "{count} models",
+  "hub.open": "Open collection",
+  "error.title": "This page could not be loaded",
+  "error.body": "This screen could not be loaded. Try again, or return to your games.",
+  "error.retry": "Try again",
+  "loading.label": "Loading your workspace…",
   "app.name": "Tabletop Armies",
   "nav.hub": "Games",
   "nav.collection": "Collection",

@@ -2,6 +2,9 @@
 // two squads; each squad one Primary, one Secondary, one Supporting unit; Secondary + Supporting cost at most the
 // Primary's squad points; every unit in a squad shares an era; no unit name repeats across the team.
 import type { Rule } from "../types";
+import type { ListValidationResult, ListValidationSettings } from "../types";
+import { validationResult, listSelections, definitionIssues, packSchemaIssues, settingsWithEnvelope } from "../validation";
+import { shatterpointTeamSchema, shatterpointPackSchema } from "./schema";
 
 export type SpRole = "primary" | "secondary" | "supporting";
 
@@ -74,3 +77,48 @@ export const uniqueNames: Rule<SpTeam, SpPack> = (team, pack) => {
 };
 
 export const shatterpointRules: Rule<SpTeam, SpPack>[] = [twoSquads, oneOfEachRole, withinSquadPoints, sharedEra, uniqueNames];
+
+type Data = Record<string, unknown>;
+const data = (v: unknown): Data => v && typeof v === "object" ? v as Data : {};
+const rows = (v: unknown): Data[] => Array.isArray(v) ? v.map(data) : [];
+
+/** Full team validator backed by the current imported unit catalogue. */
+export const validateShatterpointTeam = (input: unknown, rawPack: unknown, settings: ListValidationSettings = {}): ListValidationResult => {
+  const envelope = listSelections(input);
+  const parsed = shatterpointTeamSchema.safeParse(envelope.selections);
+  if (!parsed.success) return validationResult([...packSchemaIssues(shatterpointPackSchema, rawPack), ...definitionIssues(envelope, "shatterpoint", rawPack), { rule: "shape", severity: "error", messageKey: "issue.shatterpoint.shape", preventsCompleteValidation: true }]);
+  const team = parsed.data;
+  const units = new Map(rows(data(data(rawPack).catalogue).units).map((unit) => [String(unit.id), unit]));
+  const effectiveSettings = settingsWithEnvelope(settings, envelope.settings);
+  const issues = [...packSchemaIssues(shatterpointPackSchema, rawPack), ...definitionIssues(envelope, "shatterpoint", rawPack)];
+  if (team.squads.length !== 2) issues.push({ rule: "squads", severity: "error", messageKey: "issue.sp.squads", values: { count: team.squads.length } });
+  const selectedIds: string[] = [];
+  const names: string[] = [];
+  for (const [squadIndex, squad] of team.squads.entries()) {
+    const squadUnits = squad.unitIds.map((id) => units.get(id));
+    selectedIds.push(...squad.unitIds);
+    for (const [unitIndex, unit] of squadUnits.entries()) if (!unit) issues.push({ rule: "unit.unknown", severity: "error", messageKey: "issue.unit.unknown", values: { unit: squad.unitIds[unitIndex] ?? "" }, preventsCompleteValidation: true });
+    const known = squadUnits.filter((unit): unit is Data => Boolean(unit));
+    for (const unit of known) {
+      const id = String(unit.id);
+      if (!unit.role) issues.push({ rule: "unit.role", severity: "error", messageKey: "issue.rules.configMissing", values: { path: `units.${id}.role` }, preventsCompleteValidation: true });
+      if (typeof unit.squadPoints !== "number") issues.push({ rule: "unit.points", severity: "error", messageKey: "issue.rules.configMissing", values: { path: `units.${id}.squadPoints` }, preventsCompleteValidation: true });
+      if (!Array.isArray(unit.eras) || unit.eras.length === 0) issues.push({ rule: "unit.era", severity: "error", messageKey: "issue.rules.configMissing", values: { path: `units.${id}.eras` }, preventsCompleteValidation: true });
+      if (!Array.isArray(unit.uniqueNames) || unit.uniqueNames.length === 0) issues.push({ rule: "unit.names", severity: "error", messageKey: "issue.rules.configMissing", values: { path: `units.${id}.uniqueNames` }, preventsCompleteValidation: true });
+    }
+    const roles = known.map((unit) => String(unit.role)).sort().join(",");
+    if (squad.unitIds.length !== 3 || roles !== "primary,secondary,supporting") issues.push({ rule: "roles", severity: "error", messageKey: "issue.sp.roles", values: { squad: squadIndex + 1 } });
+    const primary = known.find((unit) => unit.role === "primary");
+    const budget = Number(primary?.squadPoints ?? 0);
+    const spent = known.filter((unit) => unit.role !== "primary").reduce((sum, unit) => sum + Number(unit.squadPoints ?? 0), 0);
+    if (spent > budget) issues.push({ rule: "squad.points", severity: "error", messageKey: "issue.sp.over", values: { squad: squadIndex + 1, over: spent - budget } });
+    const eraSets = known.map((unit) => Array.isArray(unit.eras) ? unit.eras.map(String) : []);
+    if (known.length && !(eraSets[0] ?? []).some((era) => eraSets.slice(1).every((set) => set.includes(era)))) issues.push({ rule: "squad.era", severity: "error", messageKey: "issue.sp.era", values: { squad: squadIndex + 1 } });
+    for (const unit of known) for (const name of Array.isArray(unit.uniqueNames) ? unit.uniqueNames : [unit.name]) if (typeof name === "string" && name.trim()) names.push(name.trim().toLocaleLowerCase());
+  }
+  for (const id of [...new Set(selectedIds.filter((id, index) => selectedIds.indexOf(id) !== index))]) issues.push({ rule: "unit.duplicate", severity: "error", messageKey: "issue.sp.duplicateName", values: { name: String(units.get(id)?.name ?? id) } });
+  const duplicateNames = [...new Set(names.filter((name, index) => names.indexOf(name) !== index))];
+  for (const name of duplicateNames) issues.push({ rule: "unique.name", severity: "error", messageKey: "issue.sp.duplicateName", values: { name } });
+  if (effectiveSettings.collection) for (const id of selectedIds) if (!effectiveSettings.collection.ownedUnitIds.includes(id)) issues.push({ rule: "ownership", severity: "warning", messageKey: "issue.list.notOwned", values: { unit: String(units.get(id)?.name ?? id) } });
+  return validationResult(issues);
+};

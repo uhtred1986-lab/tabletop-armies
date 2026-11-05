@@ -1,8 +1,46 @@
+import { importsDe } from "./features/imports.de";
+import { playDe } from "./features/play.de";
+import { referenceDe } from "./features/reference.de";
+import { collectionDe } from "./features/collection.de";
+import { campaignsDe } from "./features/campaigns.de";
+import { rulesDe } from "./features/rules.de";
 // Deutsche UI-Texte. Gleiche Schlüssel wie en.ts. Spielbegriffe in der Sprache des jeweiligen Regelwerks
 // (die Regelwerke sind englisch, daher bleiben Phasen- und Werte-Namen meist englisch).
 import type { StringKey } from "./en";
 
 export const de: Record<StringKey, string> = {
+  ...importsDe,
+  ...playDe,
+  ...referenceDe,
+  ...collectionDe,
+  ...campaignsDe,
+  ...rulesDe,
+  "nav.places": "Lagerplätze",
+  "nav.stats": "Statistik",
+  "nav.campaigns": "Kampagnen",
+  "nav.data": "Quellen & Daten",
+  "nav.reference": "Regellexikon",
+  "nav.more": "Mehr",
+  "nav.navigation": "Hauptnavigation",
+  "nav.game": "Spielwelt",
+  "dialog.unsaved": "Du hast ungespeicherte Änderungen. Möchtest du sie verwerfen?",
+  "dialog.keepEditing": "Weiter bearbeiten",
+  "dialog.discard": "Änderungen verwerfen",
+  "kit.controls": "Formularfelder",
+  "kit.input": "Name",
+  "kit.select": "Bemalstufe",
+  "kit.notes": "Notizen",
+  "kit.referenceLink": "Regellexikon öffnen",
+  "kit.trooper": "Testmodell",
+  "kit.dialog": "Dialog-Beispiel",
+  "kit.openDialog": "Dialog öffnen",
+  "kit.dialogBody": "Dieser gemeinsame Dialog hält Titel und Aktionen sichtbar, während der Inhalt scrollt.",
+  "hub.models": "{count} Modelle",
+  "hub.open": "Sammlung öffnen",
+  "error.title": "Diese Seite konnte nicht geladen werden",
+  "error.body": "Diese Seite konnte nicht geladen werden. Versuche es erneut oder gehe zurück zu deinen Spielen.",
+  "error.retry": "Erneut versuchen",
+  "loading.label": "Deine Werkbank wird geladen…",
   "app.name": "Tabletop Armies",
   "nav.hub": "Spiele",
   "nav.collection": "Sammlung",

@@ -67,7 +67,7 @@ describe("proxy decision", () => {
   });
 
   it("keeps the public list narrow", () => {
-    for (const p of ["/login", "/api/auth/login", "/api/auth/callback/google", "/_next/static/x.js", "/icon.svg"]) expect(isPublicPath(p)).toBe(true);
+    for (const p of ["/login", "/api/auth/login", "/api/auth/callback/google", "/_next/static/x.js", "/icon.svg", "/sw.js", "/offline-play.html", "/offline-play.js", "/offline-play.css"]) expect(isPublicPath(p)).toBe(true);
     for (const p of ["/", "/api/auth/logout", "/collection", "/x.png", "/api/auth/callback/google/x"]) expect(isPublicPath(p)).toBe(false);
   });
 });

@@ -9,5 +9,8 @@ next-env.d.ts
 .vercel/
 # Rules data never enters the repo (CLAUDE.md, "No publisher data")
 data/
+# The application route is source code, not a private import directory.
+!src/app/(app)/data/
+!src/app/(app)/data/**
 *.pack.json
 .DS_Store

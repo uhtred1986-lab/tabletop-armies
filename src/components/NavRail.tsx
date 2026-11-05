@@ -5,47 +5,45 @@ import { useTransition } from "react";
 import type { StringKey } from "@/i18n";
 import { useLocale, useT } from "@/i18n/client";
 import { setLocale } from "@/app/actions";
+import { Icon, type IconName } from "./Icon";
+import { OfflineSignOutButton } from "./OfflineSignOutButton";
 
-const NAV: [string, StringKey][] = [
-  ["/", "nav.hub"],
-  ["/collection", "nav.collection"],
-  ["/lists", "nav.lists"],
-  ["/play", "nav.play"],
-  ["/kit", "nav.kit"],
+export const NAV_ITEMS: readonly [string, StringKey, IconName][] = [
+  ["/", "nav.hub", "games"], ["/collection", "nav.collection", "collection"],
+  ["/places", "nav.places", "places"], ["/lists", "nav.lists", "lists"],
+  ["/reference", "nav.reference", "reference"],
+  ["/play", "nav.play", "play"], ["/paint", "nav.paint", "paint"],
+  ["/stats", "nav.stats", "stats"], ["/campaigns", "nav.campaigns", "campaigns"],
+  ["/data", "nav.data", "data"],
 ];
+const MOBILE = NAV_ITEMS.filter(([href]) => ["/collection", "/lists", "/play", "/paint"].includes(href));
 
-/** The left rail: sections, the language toggle and sign-out. */
-export const NavRail = () => {
+/** The same destinations, with controls suited to the available screen width. */
+export const NavRail = ({ owner }: { owner: string }) => {
   const t = useT();
   const locale = useLocale();
   const path = usePathname();
   const router = useRouter();
-  const [, start] = useTransition();
-  return (
-    <nav className="rail" aria-label={t("app.name")}>
-      <div className="w-display rail-title">{t("app.name")}</div>
-      {NAV.map(([href, key]) => (
-        <Link key={href} href={href} aria-current={(href === "/" ? path === "/" : path.startsWith(href)) ? "page" : undefined}>
-          {t(key)}
-        </Link>
-      ))}
+  const [pending, start] = useTransition();
+  const active = (href: string) => href === "/" ? path === "/" : path.startsWith(href);
+  const localeButton = <button type="button" className="rail-link" disabled={pending} onClick={() => start(async () => {
+    const result = await setLocale(locale === "de" ? "en" : "de"); if (result.ok) router.refresh();
+  })}>{t("nav.language")}</button>;
+  return <>
+    <nav className="rail desktop-nav" aria-label={t("nav.navigation")}>
+      <Link href="/" className="w-display rail-title">{t("app.name")}</Link>
+      <div className="rail-items">{NAV_ITEMS.map(([href, key, icon]) => <Link key={href} href={href} aria-current={active(href) ? "page" : undefined}>
+        <Icon name={icon} /><span>{t(key)}</span>
+      </Link>)}</div>
       <div className="rail-foot">
-        <button
-          type="button"
-          className="rail-link"
-          onClick={() =>
-            start(async () => {
-              const r = await setLocale(locale === "de" ? "en" : "de");
-              if (r.ok) router.refresh();
-            })
-          }
-        >
-          {t("nav.language")}
-        </button>
-        <form method="post" action="/api/auth/logout">
-          <button type="submit" className="rail-link">{t("nav.signOut")}</button>
-        </form>
+        {localeButton}
+        <Link href="/kit"><Icon name="settings" /><span>{t("nav.kit")}</span></Link>
+        <OfflineSignOutButton owner={owner} label={t("nav.signOut")} queuedWarning={(count) => t("play.discardOffline", { count })} clearFailure={t("play.clearOfflineFailed")} />
       </div>
     </nav>
-  );
+    <nav className="mobile-nav" aria-label={t("nav.navigation")}>
+      {MOBILE.map(([href, key, icon]) => <Link key={href} href={href} aria-current={active(href) ? "page" : undefined}><Icon name={icon} /><span>{t(key)}</span></Link>)}
+      <Link href="/more" aria-current={!MOBILE.some(([href]) => active(href)) ? "page" : undefined}><Icon name="more" /><span>{t("nav.more")}</span></Link>
+    </nav>
+  </>;
 };

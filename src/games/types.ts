@@ -6,12 +6,122 @@ export type WorldId = "sigmar" | "crisis" | "legion" | "saga" | "gotham";
 
 export type Severity = "error" | "warning" | "info";
 
+export interface DataProvenance {
+  kind: "owner-import" | "manual" | "owner-override";
+  sourceName?: string;
+  sourceUrl?: string;
+  sourceDate?: string;
+  importedAt?: string;
+  note?: string;
+}
+
+export interface CatalogueAsset {
+  id: string;
+  kind: "card" | "token" | "reference" | "other";
+  /** Private storage key or owner-provided URL; assets themselves are never bundled in source. */
+  ref: string;
+  mimeType?: string;
+  sourceUrl?: string;
+  sourceDate?: string;
+}
+
+/** Versioned, replaceable catalogue envelope. Game modules own the catalogue shape. */
+export interface CataloguePack<Catalogue = unknown> {
+  schemaVersion: 1;
+  gameId: GameId;
+  packId: string;
+  revision: string;
+  publishedAt?: string;
+  importedAt: string;
+  provenance: DataProvenance[];
+  assets: CatalogueAsset[];
+  catalogue: Catalogue;
+  /** Explicit game/season constraints supplied by the owner or an import. */
+  constraints: Record<string, unknown>;
+}
+
+/** Persisted builder input. Totals and remaining budgets are always derived. */
+export interface ListDefinition<Selections = unknown> {
+  schemaVersion: 1;
+  gameId: GameId;
+  id?: string;
+  name: string;
+  modeId?: string;
+  factionId?: string;
+  dataPackId: string;
+  selections: Selections;
+  settings?: Record<string, unknown>;
+}
+
+export interface OwnerCollectionSnapshot {
+  /** Catalogue IDs that the owner has at least one model of. */
+  ownedUnitIds: readonly string[];
+  /** Number of owned models per catalogue unit, supplied by collection lookup. */
+  unitCounts?: Readonly<Record<string, number>>;
+  /** Unit IDs for which every owned model is at the configured painted stage. */
+  paintedUnitIds?: readonly string[];
+  paintedModelCounts?: Readonly<Record<string, number>>;
+}
+
+export interface ListValidationSettings {
+  collection?: OwnerCollectionSnapshot;
+  /** Season, format and battle-force limits are explicit inputs, never hidden defaults. */
+  constraints?: Readonly<Record<string, unknown>>;
+}
+
+export interface ListFieldDefinition {
+  path: string;
+  labelKey: string;
+  control: "text" | "number" | "boolean" | "select" | "unit-picker" | "faction-picker" | "card-picker" | "multi-unit-picker" | "repeater";
+  optionsSource?: "units" | "factions" | "abilities" | "cards" | "modes" | "scenarios" | "battleForces" | "teamTactics" | "upgrades" | "enhancements" | "crises" | "objectives" | "equipment";
+  required?: boolean;
+  itemFields?: ListFieldDefinition[];
+}
+
+export interface ListSettingsFieldDefinition {
+  path: string;
+  labelKey: string;
+  control: "text" | "number" | "boolean" | "select" | "json";
+  required?: boolean;
+  optionsSource?: ListFieldDefinition["optionsSource"];
+}
+
+export interface ListBuilderVariant {
+  id: string;
+  labelKey: string;
+  schema: import("zod").ZodType;
+  selectionsSchema: import("zod").ZodType;
+  fields: ListFieldDefinition[];
+  settingsFields: ListSettingsFieldDefinition[];
+  manual: true;
+  validateList: (list: unknown, pack: unknown, settings: ListValidationSettings) => ListValidationResult;
+}
+
+export interface TrackerDefinition {
+  id: string;
+  labelKey: string;
+  kind: "counter" | "toggle" | "resource" | "track";
+  scope: "game" | "side" | "unit" | "round";
+  min?: number;
+  max?: number;
+  derived?: boolean;
+  options?: { id: string; labelKey: string }[];
+}
+
+export interface ListValidationResult {
+  issues: Issue[];
+  status: "complete" | "incomplete";
+}
+
 /** One validation result. `message` and `allowed` are i18n keys plus values, never hand-written text. */
 export interface Issue {
   rule: string;
   severity: Severity;
   messageKey: string;
   values?: Record<string, string | number>;
+  path?: string;
+  /** True when a missing rules/configuration input prevents a complete legality decision. */
+  preventsCompleteValidation?: boolean;
 }
 
 /** A pure list rule: no Dexie, React or network (CLAUDE.md rule 2). */
@@ -34,6 +144,19 @@ export interface GameModule {
   rounds?: number;
   /** Phases of one turn or round, in order. */
   phases: Phase[];
+  /** UI schema and pure validator, injected per game so the shell remains game-agnostic. */
+  listBuilder?: {
+    schema: import("zod").ZodType;
+    fields: ListFieldDefinition[];
+    settingsFields: ListSettingsFieldDefinition[];
+    manual: true;
+    variants?: ListBuilderVariant[];
+    validateList: (list: unknown, pack: unknown, settings: ListValidationSettings) => ListValidationResult;
+  };
+  /** Trackers displayed by the game-specific table UI. */
+  trackers?: TrackerDefinition[];
+  /** Capability flags used to show game-specific action panels without game-id branches. */
+  playTools?: { orderDeck?: boolean; struggleTrack?: boolean };
 }
 
 export const runRules = <L, P, S>(rules: Rule<L, P, S>[], list: L, pack: P, settings: S): Issue[] =>

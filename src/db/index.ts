@@ -2,6 +2,8 @@ import { drizzle, type PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { drizzle as drizzleNeon } from "drizzle-orm/neon-serverless";
 import { Pool, neonConfig } from "@neondatabase/serverless";
 import postgres from "postgres";
+import WebSocket from "ws";
+import { HttpsProxyAgent } from "https-proxy-agent";
 import * as schema from "./schema";
 import { refusingHandle, resolveDbTarget } from "./target";
 
@@ -16,7 +18,17 @@ function open(): Db {
   const target = resolveDbTarget(process.env);
   if (target.kind === "none") return refusingHandle<Db>();
   if (target.kind === "neon-ws") {
-    neonConfig.webSocketConstructor = globalThis.WebSocket;
+    // Native WebSocket does not honor HTTPS_PROXY. Cloud executors must use the
+    // configured egress proxy; retain normal direct sockets on hosts without it.
+    const proxy = process.env.HTTPS_PROXY ?? process.env.https_proxy;
+    const agent = proxy ? new HttpsProxyAgent(proxy) : undefined;
+    neonConfig.webSocketConstructor = agent
+      ? class extends WebSocket {
+          constructor(address: string, protocols?: string | string[]) {
+            super(address, protocols, { agent });
+          }
+        }
+      : WebSocket;
     const pool = new Pool({ connectionString: target.url, max: 5 });
     // Neon drops idle WebSockets; without a listener that is an uncaught exception. The pool replaces the client.
     pool.on("error", (error: Error) => console.warn("neon-ws pool: idle client dropped:", error.message));
