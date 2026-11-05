@@ -108,7 +108,7 @@ export async function verifySession(token: string | undefined | null, env: AuthE
   }
 }
 
-/** Sliding expiry: re-issue once a day, so 30 days without opening Muster signs the owner out. */
+/** Sliding expiry: re-issue once a day, so 30 days without opening Tabletop Armies signs the owner out. */
 export function needsRefresh(verified: VerifiedSession, now: Date): boolean {
   return seconds(now) - verified.issuedAt >= SESSION_REFRESH_AFTER_SECONDS;
 }

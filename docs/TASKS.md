@@ -18,7 +18,7 @@ Order and scope decided with Heyhey on 5 Nov 2026 (`docs/product/plan.md`, brief
 3. **M3 AMG importer (MCP, Shatterpoint, Legion).** Local script: reads a git-ignored URL list, crawls AMG's play modes
    and scenarios pages (robots.txt and terms checked first), parses card PDFs into text and numbers, uploads card and
    token images to the private Blob store, records source URL and date per item. Card viewer behind sign-in. Done when
-   one Shatterpoint unit and one MCP character show Muster's drawn card next to the imported image, and the modes list
+   one Shatterpoint unit and one MCP character show Tabletop Armies' drawn card next to the imported image, and the modes list
    matches AMG's site.
 4. **M4 AoS list builder + validation.** Regiments, enhancements, the rules in `docs/architecture/validation.md`,
    "only what I own", unpainted warnings, text export. Done when a known-legal and a known-illegal list per rule pass.

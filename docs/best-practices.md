@@ -1,7 +1,7 @@
 # Cross-repo working habits
 
-Distilled from sessions in gullet-cove-dm, trading-card-management and wohnungsubergabe; copied into Muster on
-5 Nov 2026 (Neon and Vercel parts restored the same day, when Muster moved onto Gullet Cove's platform). Each repo's `CLAUDE.md` is the authority for
+Distilled from sessions in gullet-cove-dm, trading-card-management and wohnungsubergabe; copied into Tabletop Armies on
+5 Nov 2026 (Neon and Vercel parts restored the same day, when Tabletop Armies moved onto Gullet Cove's platform). Each repo's `CLAUDE.md` is the authority for
 that repo. In this repo: safety and the IP line in `CLAUDE.md`; testing, delegation, screens and merging in
 `docs/agent-brief.md`; the orchestrator rule in `AGENTS.md`.
 

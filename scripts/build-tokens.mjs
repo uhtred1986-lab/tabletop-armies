@@ -1,4 +1,4 @@
-// Turns docs/design/system/tokens.json (the Muster design system's tokens) into src/theme/tokens.css.
+// Turns docs/design/system/tokens.json (the Tabletop Armies design system's tokens) into src/theme/tokens.css.
 // Colours and the frame shadow become one block per world theme; spacing, radius and font families go on :root.
 // Run with `npm run tokens` after changing tokens.json; never edit tokens.css by hand.
 import { readFileSync, writeFileSync } from "node:fs";
@@ -18,7 +18,7 @@ const valueFor = (token, theme) => {
   return alias ? `var(--${alias[1]})` : raw;
 };
 
-const lines = ["/* Muster — generated from docs/design/system/tokens.json by scripts/build-tokens.mjs. Do not edit. */", ""];
+const lines = ["/* Tabletop Armies — generated from docs/design/system/tokens.json by scripts/build-tokens.mjs. Do not edit. */", ""];
 
 for (const theme of themes) {
   const sel = theme === first ? `:root, [data-theme="${theme}"]` : `[data-theme="${theme}"]`;

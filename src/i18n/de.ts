@@ -3,16 +3,16 @@
 import type { StringKey } from "./en";
 
 export const de: Record<StringKey, string> = {
-  "app.name": "Muster",
+  "app.name": "Tabletop Armies",
   "nav.hub": "Spiele",
   "nav.collection": "Sammlung",
   "nav.lists": "Listen",
   "nav.play": "Spielen",
   "nav.paint": "Bemalen",
-  "login.title": "Bei Muster anmelden",
-  "login.body": "Muster ist privat. Melde dich mit dem Google-Konto an, dem es gehört.",
+  "login.title": "Bei Tabletop Armies anmelden",
+  "login.body": "Tabletop Armies ist privat. Melde dich mit dem Google-Konto an, dem es gehört.",
   "login.google": "Mit Google anmelden",
-  "login.error.refused": "Dieses Google-Konto darf Muster nicht öffnen. Wähle das Konto des Besitzers.",
+  "login.error.refused": "Dieses Google-Konto darf Tabletop Armies nicht öffnen. Wähle das Konto des Besitzers.",
   "login.error.state": "Die Anmeldung hat zu lange gedauert oder wurde doppelt geöffnet. Bitte noch einmal.",
   "login.error.failed": "Google hat die Anmeldung nicht abgeschlossen. Bitte noch einmal.",
   "login.error.config": "Die Anmeldung ist noch nicht eingerichtet. Fehlt in der Umgebung: {missing}.",

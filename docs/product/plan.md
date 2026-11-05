@@ -1,4 +1,4 @@
-# Muster – plan: data research and app design
+# Tabletop Armies – plan: data research and app design
 
 *Exported from the living plan doc on 5 Nov 2026 ([claude.ai](https://claude.ai/artifact/Qx7A1qcbujGSkdfsN8ELk3)). The
 live doc may move ahead; decisions also land in `docs/TASKS.md`.*
@@ -9,7 +9,7 @@ Complete, current data exists for every Age of Sigmar 4th edition army, but none
 come from GW's free faction packs and points from the quarterly Battle Profiles PDFs; a structured, machine-readable
 copy of both is maintained by the community BSData project.
 
-GW's IP policy bars fan-made apps based on their settings and redistributing copied rules. So Muster is a **private
+GW's IP policy bars fan-made apps based on their settings and redistributing copied rules. So Tabletop Armies is a **private
 companion app** behind the owner's own sign-in — never published or sold — that keeps its rules data in a separate, swappable "data pack"
 (imported from BSData or typed in by the owner) and owns only the collection, paint status, lists and game state.
 
@@ -71,15 +71,15 @@ policy and the brands are licensed (Marvel, Lucasfilm, DC). Not legal advice. Co
 - No publisher trademarks, logos, artwork or lettering imitations in the app's own design (worlds, icons, chrome).
 - **Imported card and token images (Heyhey's decision, 5 Nov 2026; Heyhey accepts the risk):** the AMG importer may keep the
   card and token images it downloads. They live only in the private Blob store, are shown only after sign-in, sit next
-  to Muster's own drawn card, and are never committed, never in a migration, seed, fixture or test, and never shared.
+  to Tabletop Armies' own drawn card, and are never committed, never in a migration, seed, fixture or test, and never shared.
   Everything else in this section stands.
 - **Importers run on the owner's machine** from URLs the owner lists in a git-ignored config; the repo holds the
   parser, never the downloaded files. The crawler reads the site's robots.txt and terms first and keeps to a slow rate.
 
 ## Features
 
-Competitor survey and the gaps Muster fills: `docs/product/competitors.md`. Visual briefing with click-throughs:
-`docs/product/briefing.html` (published privately: [Muster Briefing](https://claude.ai/artifact/Ms2DbZ97GLbYtnBomeQsc2)).
+Competitor survey and the gaps Tabletop Armies fills: `docs/product/competitors.md`. Visual briefing with click-throughs:
+`docs/product/briefing.html` (published privately: [Tabletop Armies Briefing](https://claude.ai/artifact/Ms2DbZ97GLbYtnBomeQsc2)).
 
 1. **Collection** — units per game and faction with models, loadout, tags, photos, shortfall view ("you need 5 more
    of this unit"). Every model is its own row under the unit, so it can carry its own place, paint stage and photos.

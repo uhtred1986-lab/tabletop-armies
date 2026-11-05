@@ -1,6 +1,6 @@
 ---
 name: game-module
-description: Use when adding or changing a game module in Muster (Age of Sigmar, Crisis Protocol, Legion, Shatterpoint, Batman MG) — its profile schema, list validator, play loop or trackers.
+description: Use when adding or changing a game module in Tabletop Armies (Age of Sigmar, Crisis Protocol, Legion, Shatterpoint, Batman MG) — its profile schema, list validator, play loop or trackers.
 ---
 
 # Working on a game module

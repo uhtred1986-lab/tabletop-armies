@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.2.0",
   "type": "module",
-  "description": "Muster: private companion for miniature games — collection, paint tracker, list builder and table play.",
+  "description": "Tabletop Armies: private companion for miniature games — collection, paint tracker, list builder and table play.",
   "scripts": {
     "dev": "next dev -p 3000 -H 0.0.0.0",
     "build": "next build",

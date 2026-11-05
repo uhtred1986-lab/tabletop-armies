@@ -1,6 +1,6 @@
 # Existing army apps compared (survey of 5 Nov 2026)
 
-What people use today for the five games, and which gaps Muster fills. Cells come from store listings, the apps' own
+What people use today for the five games, and which gaps Tabletop Armies fills. Cells come from store listings, the apps' own
 pages and reviews; `?` means not verified. Several pages blocked fetching, so this is a snapshot, not hands-on testing.
 
 Legend: Y yes · P partial · N no · ? unverified.
@@ -40,7 +40,7 @@ Legend: Y yes · P partial · N no · ? unverified.
 - Every game has its own siloed builder; collection, paint and lists never connect.
 - Offline support is rarely documented; tournament apps lock history behind subscriptions.
 
-## Gaps Muster fills
+## Gaps Tabletop Armies fills
 
 1. **Storage places** per unit and per model. No app found does this.
 2. A list builder that knows **what you own** and its paint stage.

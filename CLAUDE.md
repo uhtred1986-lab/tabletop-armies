@@ -9,7 +9,7 @@ via Drizzle, Google sign-in.*
 
 ## What this is
 
-Muster is a private companion app for miniature games: Age of Sigmar, Marvel: Crisis Protocol, Star Wars: Legion,
+Tabletop Armies is a private companion app for miniature games: Age of Sigmar, Marvel: Crisis Protocol, Star Wars: Legion,
 Star Wars: Shatterpoint and Batman Miniature Game. It tracks the owner's collection and paint progress, builds lists
 checked against each game's rules, and runs games at the table (tablet) and at the hobby desk (laptop).
 Next.js 16 (App Router, Server Components and Server Functions) on Vercel, Neon Postgres via Drizzle, Vitest. Tablet and

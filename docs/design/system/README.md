@@ -1,6 +1,6 @@
-# Muster
+# Tabletop Armies
 
-Muster is a private companion for miniature-game collectors (Age of Sigmar, Crisis Protocol, Legion, Shatterpoint, Batman MG): it tracks the miniatures you own and how far each is painted, builds lists that are checked against the current Battle Profiles, and runs the game at the table. It is built for a tablet propped beside the board and a laptop at the hobby desk.
+Tabletop Armies is a private companion for miniature-game collectors (Age of Sigmar, Crisis Protocol, Legion, Shatterpoint, Batman MG): it tracks the miniatures you own and how far each is painted, builds lists that are checked against the current Battle Profiles, and runs the game at the table. It is built for a tablet propped beside the board and a laptop at the hobby desk.
 
 ## Principles
 

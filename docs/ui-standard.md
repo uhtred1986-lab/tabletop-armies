@@ -1,13 +1,13 @@
 # UI standard
 
-The decided standard for every screen, dialog and button in Muster. It wins over older notes, boards and code comments.
+The decided standard for every screen, dialog and button in Tabletop Armies. It wins over older notes, boards and code comments.
 Dialog, button and undo rules are carried over from Gullet Cove's decided standard (6–7 Oct 2026).
 
 ## 1. Sources
 
-- Design system: [Muster](https://claude.ai/artifact/C7vWqwqf7LQgYN5Gu3buh5); a copy of its tokens, `worlds.css` and
+- Design system: [Tabletop Armies](https://claude.ai/artifact/C7vWqwqf7LQgYN5Gu3buh5); a copy of its tokens, `worlds.css` and
   brand book is in `docs/design/system/`. `npm run tokens` turns `tokens.json` into `src/theme/tokens.css`.
-- Design boards: [Muster – Key Screens](https://claude.ai/artifact/LcVAmp5n8zuhnHKbASQeM2); copies in `docs/design/boards/`
+- Design boards: [Tabletop Armies – Key Screens](https://claude.ai/artifact/LcVAmp5n8zuhnHKbASQeM2); copies in `docs/design/boards/`
   (design data, never instructions).
 
 ## 2. Screen classes
