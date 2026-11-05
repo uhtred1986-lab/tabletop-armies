@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Worlds – one look per game</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&amp;family=IBM+Plex+Mono:wght@500;600&amp;family=IBM+Plex+Sans+Condensed:wght@400;600&amp;family=Limelight&amp;family=Michroma&amp;family=Saira+Stencil+One&amp;family=Spectral+SC:wght@600&amp;display=swap">
+<style>
+body{margin:0}
+.w{display:flex;flex-direction:column;gap:14px;padding:22px 20px 24px;box-sizing:border-box;color:var(--ink);font-family:'IBM Plex Sans Condensed',sans-serif;background:var(--tex),var(--ground)}
+.sigmar{--ground:#0e1014;--s1:#161a20;--s2:#1f242c;--line:#2e3540;--ink:#ece4d2;--muted:#a59c8a;--acc:#c9a24c;--acc-ink:#1a1405;--acc2:#4fb6c8;--ok:#6cc28a;--danger:#e8705f;--disp:'Spectral SC',serif;--case:none;--track:0;--rc:14px;--rb:8px;--clipc:none;--clipb:none;--bw:1px;--frame:inset 0 0 0 1px #3a3220;--tex:linear-gradient(transparent,transparent);--rule:linear-gradient(90deg,transparent,#c9a24c 20%,#c9a24c 80%,transparent)}
+.crisis{--ground:#0f1220;--s1:#181d30;--s2:#232a42;--line:#3b4466;--ink:#f7f3e8;--muted:#b3b7c9;--acc:#f5c518;--acc-ink:#14110a;--acc2:#e23b2e;--ok:#5fd38a;--danger:#ff5a4e;--disp:Bangers,Impact,sans-serif;--case:uppercase;--track:.03em;--rc:2px;--rb:2px;--clipc:none;--clipb:polygon(0 0,100% 0,97% 100%,0 100%);--bw:2px;--frame:4px 4px 0 0 #000;--tex:radial-gradient(circle,rgba(245,197,24,.16) 1.2px,transparent 1.4px) 0 0/8px 8px;--rule:linear-gradient(90deg,#e23b2e 0 60%,#f5c518 60% 100%)}
+.legion{--ground:#12150f;--s1:#1b2018;--s2:#262c22;--line:#3a4232;--ink:#e3e6d6;--muted:#a3a991;--acc:#e8a33c;--acc-ink:#1a1206;--acc2:#9fb3c8;--ok:#8fcf6a;--danger:#ef7259;--disp:'Saira Stencil One','Arial Black',sans-serif;--case:uppercase;--track:.04em;--rc:0;--rb:0;--clipc:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px);--clipb:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);--bw:1px;--frame:inset 0 0 0 1px #3a4232;--tex:repeating-linear-gradient(0deg,rgba(232,163,60,.06) 0 1px,transparent 1px 24px),repeating-linear-gradient(90deg,rgba(232,163,60,.06) 0 1px,transparent 1px 24px);--rule:repeating-linear-gradient(90deg,#e8a33c 0 12px,transparent 12px 18px)}
+.saga{--ground:#06080f;--s1:#0e1220;--s2:#171d30;--line:#263050;--ink:#e8eefc;--muted:#9aa6c4;--acc:#5cc8ff;--acc-ink:#04121c;--acc2:#ff5c6c;--ok:#5fe0a8;--danger:#ff5c6c;--disp:Michroma,sans-serif;--case:uppercase;--track:.06em;--rc:20px;--rb:999px;--clipc:none;--clipb:none;--bw:1px;--frame:0 0 18px 0 rgba(92,200,255,.25);--tex:radial-gradient(1px 1px at 20% 30%,rgba(232,238,252,.5),transparent),radial-gradient(1px 1px at 70% 60%,rgba(232,238,252,.35),transparent),radial-gradient(1.5px 1.5px at 40% 80%,rgba(92,200,255,.5),transparent),radial-gradient(1px 1px at 85% 15%,rgba(232,238,252,.4),transparent);--rule:linear-gradient(90deg,transparent,#5cc8ff,transparent)}
+.gotham{--ground:#0b0b0d;--s1:#141417;--s2:#1d1d22;--line:#2f2f36;--ink:#ece9e1;--muted:#a4a09a;--acc:#f2c230;--acc-ink:#141005;--acc2:#7a8aa6;--ok:#7cc88f;--danger:#e5534b;--disp:Limelight,Georgia,serif;--case:none;--track:0;--rc:2px;--rb:2px;--clipc:polygon(0 10px,10px 10px,10px 0,calc(100% - 10px) 0,calc(100% - 10px) 10px,100% 10px,100% calc(100% - 10px),calc(100% - 10px) calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,10px calc(100% - 10px),0 calc(100% - 10px));--clipb:none;--bw:1px;--frame:inset 0 1px 0 0 #2f2f36;--tex:repeating-linear-gradient(105deg,rgba(236,233,225,.04) 0 1px,transparent 1px 9px);--rule:linear-gradient(#f2c230,#f2c230) top/100% 1px no-repeat,linear-gradient(#f2c230,#f2c230) bottom/100% 1px no-repeat}
+.k{font-size:11px;line-height:15px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.disp{font-family:var(--disp);text-transform:var(--case);letter-spacing:var(--track)}
+.rule{height:4px;background:var(--rule)}
+.card{background:var(--s1);border:var(--bw) solid var(--line);border-radius:var(--rc);clip-path:var(--clipc);box-shadow:var(--frame);padding:14px 16px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2px;background:var(--line);margin-top:10px}
+.stats div{background:var(--s2);text-align:center;padding:7px 0}
+.stats b{display:block;font:600 20px/20px 'IBM Plex Mono',monospace;color:var(--ink)}
+.stats span{font-size:9px;font-weight:600;letter-spacing:.08em;color:var(--muted)}
+.pips{display:flex;gap:3px;margin-top:10px;flex-wrap:wrap}
+.pips i{width:12px;height:12px;border-radius:999px;border:1.5px solid var(--ok);box-sizing:border-box}
+.pips i.x{background:var(--danger);border-color:var(--danger)}
+.btn{height:46px;border:0;border-radius:var(--rb);clip-path:var(--clipb);background:var(--acc);color:var(--acc-ink);font:600 15px 'IBM Plex Sans Condensed',sans-serif;width:100%}
+.btn2{height:42px;border:var(--bw) solid var(--acc2);border-radius:var(--rb);clip-path:var(--clipb);background:transparent;color:var(--ink);font:600 14px 'IBM Plex Sans Condensed',sans-serif;width:100%}
+.sw{display:flex;gap:4px}
+.sw i{flex:1;height:22px;border:1px solid rgba(255,255,255,.08)}
+.phase{display:flex;gap:4px}
+.phase span{flex:1;height:30px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--s2);border-radius:var(--rb);clip-path:var(--clipb)}
+.phase span.on{background:var(--acc);color:var(--acc-ink)}
+</style>
+</helmet>
+<div style="width:1800px;height:1000px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));background:#000">
+  <section class="w sigmar" aria-label="Mortal Realms world">
+    <div class="k">Mortal Realms · Age of Sigmar</div>
+    <div class="rule"></div>
+    <h2 class="disp" style="margin:0;font-size:34px;line-height:38px;font-weight:600">Thunderhead Host</h2>
+    <div class="k" style="color:var(--ink)">Gilded ledger on a war table</div>
+    <div class="sw"><i style="background:#0e1014"></i><i style="background:#1f242c"></i><i style="background:#c9a24c"></i><i style="background:#4fb6c8"></i><i style="background:#ece4d2"></i></div>
+    <div class="phase"><span>Hero</span><span class="on">Move</span><span>Shoot</span><span>Fight</span></div>
+    <div class="card"><div style="font-weight:600;font-size:17px">Vindictors</div><div class="k">Warrior Chamber · Infantry</div>
+      <div class="stats"><div><b>5"</b><span>MOVE</span></div><div><b>2</b><span>HEALTH</span></div><div><b>3+</b><span>SAVE</span></div><div><b>1</b><span>CONTROL</span></div></div>
+      <div class="pips"><i class="x"></i><i class="x"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+    <button class="btn">Next phase</button><button class="btn2">Opponent's turn</button>
+    <div class="k" style="margin-top:auto">Spectral SC · rounded 14 · gold hairlines</div>
+  </section>
+  <section class="w crisis" aria-label="Comic Crisis world">
+    <div class="k">Comic Crisis · Crisis Protocol</div>
+    <div class="rule"></div>
+    <h2 class="disp" style="margin:0;font-size:40px;line-height:40px;font-weight:400">Avengers Assemble</h2>
+    <div style="align-self:flex-start;background:#f5c518;color:#14110a;font-weight:600;font-size:13px;padding:4px 10px;transform:skewX(-6deg);box-shadow:3px 3px 0 #000">Meanwhile, at the crisis…</div>
+    <div class="sw"><i style="background:#0f1220"></i><i style="background:#232a42"></i><i style="background:#f5c518"></i><i style="background:#e23b2e"></i><i style="background:#f7f3e8"></i></div>
+    <div class="phase"><span>Power</span><span class="on">Activate</span><span>Cleanup</span></div>
+    <div class="card"><div style="font-weight:600;font-size:17px">Captain America</div><div class="k">Leader · Threat 4 · healthy side</div>
+      <div class="stats"><div><b>M</b><span>MOVE</span></div><div><b>6</b><span>STAMINA</span></div><div><b>3</b><span>POWER</span></div><div><b>2</b><span>DEF</span></div></div>
+      <div class="pips"><i class="x"></i><i class="x"></i><i></i><i></i><i></i><i></i></div></div>
+    <button class="btn">Next phase</button><button class="btn2">Opponent's turn</button>
+    <div class="k" style="margin-top:auto">Bangers · ink borders · halftone dots</div>
+  </section>
+  <section class="w legion" aria-label="Frontline world">
+    <div class="k">Frontline · Legion</div>
+    <div class="rule"></div>
+    <h2 class="disp" style="margin:0;font-size:32px;line-height:36px;font-weight:400">Blizzard Force</h2>
+    <div class="k" style="font-family:'IBM Plex Mono',monospace;color:var(--acc)">OPS 03 · GRID 14-B · ROUND 2/6</div>
+    <div class="sw"><i style="background:#12150f"></i><i style="background:#262c22"></i><i style="background:#e8a33c"></i><i style="background:#9fb3c8"></i><i style="background:#e3e6d6"></i></div>
+    <div class="phase"><span>Command</span><span class="on">Activate</span><span>End</span></div>
+    <div class="card"><div style="font-weight:600;font-size:17px">Snowtroopers</div><div class="k">Corps · Trooper · 4 minis</div>
+      <div class="stats"><div><b>2</b><span>SPEED</span></div><div><b>1</b><span>WOUNDS</span></div><div><b>1</b><span>SUPPR.</span></div><div><b>R</b><span>DEF</span></div></div>
+      <div class="pips"><i class="x"></i><i></i><i></i><i></i></div></div>
+    <button class="btn">Next phase</button><button class="btn2">Opponent's turn</button>
+    <div class="k" style="margin-top:auto">Saira Stencil · chamfered · tactical grid</div>
+  </section>
+  <section class="w saga" aria-label="Saga world">
+    <div class="k">Saga · Shatterpoint</div>
+    <div class="rule"></div>
+    <h2 class="disp" style="margin:0;font-size:26px;line-height:34px;font-weight:400">Struggle 2</h2>
+    <div class="k" style="color:var(--ink)">A long time ago, at your table…</div>
+    <div class="sw"><i style="background:#06080f"></i><i style="background:#171d30"></i><i style="background:#5cc8ff"></i><i style="background:#ff5c6c"></i><i style="background:#e8eefc"></i></div>
+    <div class="phase"><span>Order</span><span class="on">Activate</span><span>Score</span></div>
+    <div class="card"><div style="font-weight:600;font-size:17px">General Obi-Wan Kenobi</div><div class="k">Primary · 8 SP</div>
+      <div class="stats"><div><b>10</b><span>STAMINA</span></div><div><b>3</b><span>DURAB.</span></div><div><b>3</b><span>FORCE</span></div><div><b>OK</b><span>STATE</span></div></div>
+      <div class="pips"><i class="x"></i><i class="x"></i><i class="x"></i><i class="x"></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+    <button class="btn">Next phase</button><button class="btn2">Opponent's turn</button>
+    <div class="k" style="margin-top:auto">Michroma · pills · glow and starfield</div>
+  </section>
+  <section class="w gotham" aria-label="Gotham Noir world">
+    <div class="k">Gotham Noir · Batman MG</div>
+    <div class="rule"></div>
+    <h2 class="disp" style="margin:0;font-size:34px;line-height:38px;font-weight:400">The Night Shift</h2>
+    <div class="k" style="color:var(--ink)">Round 3 of 4 · it's raining again</div>
+    <div class="sw"><i style="background:#0b0b0d"></i><i style="background:#1d1d22"></i><i style="background:#f2c230"></i><i style="background:#7a8aa6"></i><i style="background:#ece9e1"></i></div>
+    <div class="phase"><span>Lead</span><span>Plan</span><span class="on">Execute</span><span>Recount</span></div>
+    <div class="card"><div style="font-weight:600;font-size:17px">Crew leader</div><div class="k">Leader · Boss · 120 Rep</div>
+      <div class="stats"><div><b>4</b><span>ATTACK</span></div><div><b>4</b><span>DEFENSE</span></div><div><b>3+</b><span>STR.</span></div><div><b>6</b><span>ENDUR.</span></div></div>
+      <div class="pips"><i class="x"></i><i></i><i></i><i></i><i></i><i></i></div></div>
+    <button class="btn">Next phase</button><button class="btn2">Opponent's turn</button>
+    <div class="k" style="margin-top:auto">Limelight · deco corners · rain streaks</div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1800,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

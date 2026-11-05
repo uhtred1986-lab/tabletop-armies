@@ -1,0 +1,63 @@
+/* Muster worlds — the costume each game wears.
+   Colours come from the theme (data-theme = the world id, see tokens.json).
+   This file sets the slots a theme cannot: display face, shapes, frames, texture.
+   Fonts (Google): Spectral SC 600, Bangers, Saira Stencil One, Michroma, Limelight. */
+
+[data-world="sigmar"], [data-world="sigmar-light"] {
+  --font-display: "Spectral SC", Georgia, serif;
+  --display-case: none; --display-track: 0;
+  --radius-card: 14px; --radius-control: 8px; --radius-chip: 4px;
+  --clip-card: none; --clip-control: none;
+  --border-w: 1px;
+  --texture: none;
+  --rule: linear-gradient(90deg, transparent, var(--accent) 20%, var(--accent) 80%, transparent);
+}
+
+[data-world="crisis"] {
+  --font-display: Bangers, Impact, sans-serif;
+  --display-case: uppercase; --display-track: .03em;
+  --radius-card: 2px; --radius-control: 2px; --radius-chip: 0;
+  --clip-card: none; --clip-control: polygon(0 0, 100% 0, 97% 100%, 0 100%);
+  --border-w: 2px;
+  --texture: radial-gradient(circle, rgba(245,197,24,.16) 1.2px, transparent 1.4px) 0 0 / 8px 8px;
+  --rule: linear-gradient(90deg, var(--accent-2) 0 60%, var(--accent) 60% 100%);
+}
+
+[data-world="legion"] {
+  --font-display: "Saira Stencil One", "Arial Black", sans-serif;
+  --display-case: uppercase; --display-track: .04em;
+  --radius-card: 0; --radius-control: 0; --radius-chip: 0;
+  --clip-card: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
+  --clip-control: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+  --border-w: 1px;
+  --texture: repeating-linear-gradient(0deg, rgba(232,163,60,.05) 0 1px, transparent 1px 24px), repeating-linear-gradient(90deg, rgba(232,163,60,.05) 0 1px, transparent 1px 24px);
+  --rule: repeating-linear-gradient(90deg, var(--accent) 0 12px, transparent 12px 18px);
+}
+
+[data-world="saga"] {
+  --font-display: Michroma, "Eurostile", sans-serif;
+  --display-case: uppercase; --display-track: .06em;
+  --radius-card: 20px; --radius-control: 999px; --radius-chip: 999px;
+  --clip-card: none; --clip-control: none;
+  --border-w: 1px;
+  --texture: radial-gradient(1px 1px at 20% 30%, rgba(232,238,252,.5), transparent), radial-gradient(1px 1px at 70% 60%, rgba(232,238,252,.35), transparent), radial-gradient(1.5px 1.5px at 40% 80%, rgba(92,200,255,.5), transparent);
+  --rule: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+
+[data-world="gotham"] {
+  --font-display: Limelight, Georgia, serif;
+  --display-case: none; --display-track: 0;
+  --radius-card: 2px; --radius-control: 2px; --radius-chip: 2px;
+  --clip-card: polygon(0 10px, 10px 10px, 10px 0, calc(100% - 10px) 0, calc(100% - 10px) 10px, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 10px calc(100% - 10px), 0 calc(100% - 10px));
+  --clip-control: none;
+  --border-w: 1px;
+  --texture: repeating-linear-gradient(105deg, rgba(236,233,225,.035) 0 1px, transparent 1px 9px);
+  --rule: linear-gradient(var(--accent), var(--accent)) top / 100% 1px no-repeat, linear-gradient(var(--accent), var(--accent)) bottom / 100% 1px no-repeat;
+}
+
+/* How components read the slots */
+.w-display { font-family: var(--font-display); text-transform: var(--display-case); letter-spacing: var(--display-track); }
+.w-card { border-radius: var(--radius-card); clip-path: var(--clip-card); border: var(--border-w) solid var(--line); box-shadow: var(--frame); background: var(--surface-1); }
+.w-btn { border-radius: var(--radius-control); clip-path: var(--clip-control); }
+.w-ground { background: var(--texture), var(--ground); }
+.w-rule { height: 3px; background: var(--rule); }

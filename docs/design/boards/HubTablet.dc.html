@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>All games – tablet</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&amp;family=IBM+Plex+Mono:wght@500;600&amp;family=IBM+Plex+Sans+Condensed:wght@400;600&amp;family=Limelight&amp;family=Michroma&amp;family=Saira+Stencil+One&amp;family=Spectral+SC:wght@600&amp;display=swap">
+<style>
+body{margin:0}
+:root{--ground:#0e1014;--surface-1:#161a20;--surface-2:#1f242c;--line:#2e3540;--ink:#ece4d2;--ink-muted:#a59c8a;--brass:#c9a24c;--brass-ink:#1a1405;--ok:#6cc28a;--warn:#e2b64a;--g-aos:#c9a24c;--g-mcp:#e8705f;--g-legion:#9aa8b8;--g-sp:#6fb7ff;--g-bmg:#b49ae8}
+.lbl{font-size:12px;line-height:16px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted)}
+.num{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
+.seg{display:flex;align-items:center;gap:8px;height:40px;padding:0 14px;border:0;border-radius:4px;background:transparent;color:var(--ink-muted);font:600 13px 'IBM Plex Sans Condensed',sans-serif}
+.seg.on{background:var(--surface-2);color:var(--ink)}
+.dot{width:8px;height:8px;border-radius:999px;flex:none}
+a{color:var(--brass)}a:hover{color:#e0bd6a}
+</style>
+</helmet>
+<div style="width:1180px;height:820px;box-sizing:border-box;display:flex;flex-direction:column;gap:20px;padding:24px 28px;background:var(--ground);color:var(--ink);font-family:'IBM Plex Sans Condensed',sans-serif">
+  <header style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+    <div>
+      <h1 style="margin:0;font-family:'Spectral SC',serif;font-size:26px;line-height:30px;font-weight:600">Your games</h1>
+      <div class="lbl" style="margin-top:4px">5 games · 23 factions and affiliations · synced 08:41</div>
+    </div>
+    <div role="group" aria-label="Game" style="display:flex;gap:4px;padding:4px;border:1px solid var(--line);border-radius:8px;background:var(--surface-1)">
+      <button class="seg on" aria-pressed="true">All games</button>
+      <button class="seg" aria-pressed="false"><span class="dot" style="background:var(--g-aos)"></span>Sigmar</button>
+      <button class="seg" aria-pressed="false"><span class="dot" style="background:var(--g-mcp)"></span>Crisis Protocol</button>
+      <button class="seg" aria-pressed="false"><span class="dot" style="background:var(--g-legion)"></span>Legion</button>
+      <button class="seg" aria-pressed="false"><span class="dot" style="background:var(--g-sp)"></span>Shatterpoint</button>
+      <button class="seg" aria-pressed="false"><span class="dot" style="background:var(--g-bmg)"></span>Batman</button>
+    </div>
+  </header>
+  <section aria-label="Games" style="display:grid;gap:10px">
+    <sc-for list="{{games}}" as="g" hint-placeholder-count="5">
+      <a href="{{g.href}}" style="display:grid;grid-template-columns:6px 1.6fr 1.5fr 1.4fr 1.3fr 44px;align-items:center;gap:16px;min-height:96px;padding:0 16px 0 0;background:{{g.tex}},var(--surface-1);border:1px solid var(--line);border-radius:14px;overflow:hidden;color:var(--ink);text-decoration:none">
+        <span style="align-self:stretch;background:{{g.color}}"></span>
+        <div>
+          <div style="font-family:{{g.font}};font-size:{{g.size}};text-transform:{{g.case}};letter-spacing:{{g.track}};line-height:1.15">{{g.name}}</div><div class="lbl" style="color:{{g.color}}">{{g.world}} world</div>
+          <div class="lbl" style="margin-top:2px">{{g.groups}}</div>
+        </div>
+        <div>
+          <div class="lbl">Collection</div>
+          <div class="num" style="font-size:15px;margin-top:2px">{{g.collection}}</div>
+          <div style="height:6px;background:var(--surface-2);border-radius:999px;margin-top:8px;overflow:hidden"><div style="height:100%;width:{{g.pct}}%;background:var(--ok)"></div></div>
+        </div>
+        <div>
+          <div class="lbl">Lists</div>
+          <div style="font-size:15px;margin-top:2px">{{g.lists}}</div>
+        </div>
+        <div>
+          <div class="lbl">Data</div>
+          <div style="font-size:14px;margin-top:2px;color:{{g.dataColor}}">{{g.data}}</div>
+        </div>
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--ink-muted)"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+    </sc-for>
+  </section>
+  <section aria-label="Next up" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
+    <div style="padding:14px 16px;background:var(--surface-1);border:1px solid var(--line);border-radius:14px"><div class="lbl">Next game</div><div style="font-size:16px;font-weight:600;margin-top:4px">Shatterpoint · Thursday</div><div style="font-size:13px;color:var(--ink-muted)">Strike team ready · 2 squads, Clone Wars</div></div>
+    <div style="padding:14px 16px;background:var(--surface-1);border:1px solid var(--line);border-radius:14px"><div class="lbl">On the painting desk</div><div style="font-size:16px;font-weight:600;margin-top:4px">Gothizzar Harvester</div><div style="font-size:13px;color:var(--ink-muted)">Ossiarch · Built → Primed</div></div>
+    <div style="padding:14px 16px;background:var(--surface-1);border:1px solid var(--warn);border-radius:14px"><div class="lbl" style="color:var(--warn)">Rules changed</div><div style="font-size:16px;font-weight:600;margin-top:4px">Crisis Protocol · August update</div><div style="font-size:13px;color:var(--ink-muted)">Stamina changed on many cards · re-check 2 rosters</div></div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1180,"height":820}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      games: [
+        { name: 'Age of Sigmar', world: 'Mortal Realms', font: "'Spectral SC', serif", size: '22px', case: 'none', track: '0', tex: 'linear-gradient(transparent,transparent)', groups: 'Skaven · Stormcast · Gloomspite · Ossiarch · Seraphon', collection: '412 models · 58% painted', pct: 58, lists: '6 lists · 2 tournament-ready', data: 'BSData · Battle Profiles June 2026', dataColor: 'var(--ok)', color: 'var(--g-aos)', href: 'Main.dc.html' },
+        { name: 'Marvel: Crisis Protocol', world: 'Comic Crisis', font: 'Bangers, Impact, sans-serif', size: '26px', case: 'uppercase', track: '.03em', tex: 'radial-gradient(circle, rgba(245,197,24,.12) 1.2px, transparent 1.4px) 0 0/8px 8px', groups: 'Avengers · Cabal · Web Warriors', collection: '34 characters · 41% painted', pct: 41, lists: '3 rosters · 1 needs a re-check', data: 'Manual entry · cards Aug 2026', dataColor: 'var(--warn)', color: 'var(--g-mcp)', href: 'McpRoster.dc.html' },
+        { name: 'Star Wars: Legion', world: 'Frontline', font: "'Saira Stencil One', sans-serif", size: '21px', case: 'uppercase', track: '.04em', tex: 'repeating-linear-gradient(90deg, rgba(232,163,60,.05) 0 1px, transparent 1px 24px)', groups: 'Galactic Empire · Rebel Alliance', collection: '96 models · 27% painted', pct: 27, lists: '2 armies', data: 'Manual entry · points April 2026', dataColor: 'var(--ink-muted)', color: 'var(--g-legion)', href: '#' },
+        { name: 'Star Wars: Shatterpoint', world: 'Saga', font: 'Michroma, sans-serif', size: '15px', case: 'uppercase', track: '.06em', tex: 'radial-gradient(1px 1px at 30% 40%, rgba(232,238,252,.5), transparent), radial-gradient(1.5px 1.5px at 75% 70%, rgba(92,200,255,.5), transparent)', groups: 'Clone Wars · Galactic Civil War', collection: '18 units · 72% painted', pct: 72, lists: '4 squads · 2 strike teams', data: 'Manual entry · units May 2026', dataColor: 'var(--ink-muted)', color: 'var(--g-sp)', href: 'ShatterpointPlay.dc.html' },
+        { name: 'Batman Miniature Game', world: 'Gotham Noir', font: 'Limelight, Georgia, serif', size: '22px', case: 'none', track: '0', tex: 'repeating-linear-gradient(105deg, rgba(236,233,225,.04) 0 1px, transparent 1px 9px)', groups: 'Bat-Family · Joker · League of Assassins', collection: '27 models · 63% painted', pct: 63, lists: '2 crews at 350 Rep', data: 'Manual entry · 3rd edition', dataColor: 'var(--ink-muted)', color: 'var(--g-bmg)', href: '#' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

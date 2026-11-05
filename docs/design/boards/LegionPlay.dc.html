@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Legion play – Frontline world</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&amp;family=IBM+Plex+Sans+Condensed:wght@400;600&amp;family=Saira+Stencil+One&amp;display=swap">
+<style>
+body{margin:0}
+:root{--ground:#12150f;--s1:#1b2018;--s2:#262c22;--line:#3a4232;--ink:#e3e6d6;--muted:#a3a991;--acc:#e8a33c;--acc-ink:#1a1206;--acc2:#9fb3c8;--ok:#8fcf6a;--warn:#e8c547;--danger:#ef7259}
+.disp{font-family:'Saira Stencil One','Arial Black',sans-serif;text-transform:uppercase;letter-spacing:.04em;font-weight:400}
+.lbl{font-size:11px;line-height:15px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.mono{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums}
+.grid{background:repeating-linear-gradient(0deg,rgba(232,163,60,.06) 0 1px,transparent 1px 24px),repeating-linear-gradient(90deg,rgba(232,163,60,.06) 0 1px,transparent 1px 24px),var(--ground)}
+.cham{clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px)}
+.chams{clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
+.dash{height:3px;background:repeating-linear-gradient(90deg,var(--acc) 0 12px,transparent 12px 18px)}
+.unit{background:var(--s1);padding:12px 16px;border-left:3px solid var(--line)}
+.unit.act{border-left-color:var(--acc)}
+.tok{display:inline-flex;align-items:center;justify-content:center;height:24px;min-width:24px;padding:0 6px;font:600 12px 'IBM Plex Mono',monospace}
+.pip{width:12px;height:12px;border:1.5px solid var(--ok);box-sizing:border-box;transform:rotate(45deg)}
+.pip.x{background:var(--danger);border-color:var(--danger)}
+.btn{height:46px;padding:0 18px;border:0;font:600 14px 'IBM Plex Sans Condensed',sans-serif}
+</style>
+</helmet>
+<div class="grid" style="width:1180px;height:820px;box-sizing:border-box;display:flex;flex-direction:column;color:var(--ink);font-family:'IBM Plex Sans Condensed',sans-serif">
+  <header style="display:flex;align-items:center;gap:24px;padding:16px 24px 10px">
+    <div style="flex:1">
+      <div class="lbl mono" style="color:var(--acc)">OPS 03 · Galactic Empire · 1 000 pts</div>
+      <h1 class="disp" style="margin:2px 0 0;font-size:30px;line-height:34px">Blizzard Force</h1>
+    </div>
+    <div class="chams" style="background:var(--s1);padding:8px 16px;text-align:center"><div class="mono" style="font-size:26px;font-weight:600">2<span style="color:var(--muted)">/6</span></div><div class="lbl">Round</div></div>
+    <div class="chams" style="background:var(--s1);padding:8px 16px;text-align:center"><div class="mono" style="font-size:26px;font-weight:600;color:var(--acc)">5</div><div class="lbl">VP you</div></div>
+    <div class="chams" style="background:var(--s1);padding:8px 16px;text-align:center"><div class="mono" style="font-size:26px;font-weight:600;color:var(--acc2)">3</div><div class="lbl">VP them</div></div>
+  </header>
+  <div style="padding:0 24px"><div class="dash"></div></div>
+  <div style="flex:1;min-height:0;display:flex;gap:18px;padding:16px 24px 20px">
+    <section aria-label="Phases and command card" style="width:230px;flex:none;display:flex;flex-direction:column;gap:10px">
+      <div class="lbl">Phase</div>
+      <div class="chams" style="background:var(--s2);padding:12px 14px;color:var(--muted);font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:13px">Command · done</div>
+      <div class="chams" style="background:var(--acc);color:var(--acc-ink);padding:12px 14px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:13px">Activation</div>
+      <div class="chams" style="background:var(--s2);padding:12px 14px;color:var(--muted);font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:13px">End</div>
+      <div class="lbl" style="margin-top:8px">Command card this round</div>
+      <div class="cham" style="background:var(--s1);padding:14px">
+        <div class="mono" style="color:var(--acc);font-size:12px">•• 2 PIPS</div>
+        <div style="font-weight:600;font-size:16px;margin-top:2px">Example tactic card</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:4px">Issues 2 orders · priority by pips</div>
+      </div>
+      <div class="lbl" style="margin-top:8px">Order pool</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <span class="tok chams" style="background:var(--acc);color:var(--acc-ink)">CMD</span><span class="tok chams" style="background:var(--s2)">CORPS</span><span class="tok chams" style="background:var(--s2)">CORPS</span><span class="tok chams" style="background:var(--s2)">SPEC</span><span class="tok chams" style="background:var(--s2)">HEAVY</span>
+      </div>
+      <button class="btn cham" style="margin-top:auto;background:var(--acc);color:var(--acc-ink)">End activation</button>
+    </section>
+    <section aria-label="Units" style="flex:1;min-width:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-content:start">
+      <sc-for list="{{units}}" as="u" hint-placeholder-count="6">
+        <article class="unit cham {{u.cls}}">
+          <div style="display:flex;justify-content:space-between;gap:8px">
+            <div><div style="font-weight:600;font-size:16px">{{u.n}}</div><div class="lbl">{{u.rank}}</div></div>
+            <div style="display:flex;gap:4px;align-items:flex-start">
+              <span class="tok chams" style="background:{{u.orderBg}};color:{{u.orderInk}}">{{u.order}}</span>
+              <span class="tok chams" style="background:var(--s2);color:{{u.supColor}}">S{{u.sup}}</span>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:10px">
+            <div style="display:flex;gap:6px;flex-wrap:wrap;padding-left:3px"><sc-for list="{{u.pips}}" as="p"><span class="{{p}}"></span></sc-for></div>
+            <span class="lbl mono" style="margin-left:auto">{{u.wnd}}</span>
+          </div>
+        </article>
+      </sc-for>
+    </section>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1180,"height":820}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const u = (n, rank, minis, lost, order, sup, active) => ({ n, rank, sup, cls: active ? 'act' : '',
+      order, orderBg: order === 'DONE' ? 'var(--s2)' : (order === 'FACE UP' ? 'var(--acc)' : 'var(--s2)'),
+      orderInk: order === 'FACE UP' ? 'var(--acc-ink)' : 'var(--muted)',
+      supColor: sup >= 2 ? 'var(--warn)' : 'var(--ink)',
+      wnd: (minis - lost) + '/' + minis + ' minis',
+      pips: Array.from({ length: minis }, (_, i) => i < lost ? 'pip x' : 'pip') });
+    return { units: [
+      u('Commander (example)', 'Commander · 1 model', 1, 0, 'FACE UP', 0, true),
+      u('Snowtroopers', 'Corps · 4 minis', 4, 1, 'DONE', 1, false),
+      u('Stormtroopers', 'Corps · 4 minis', 4, 0, 'POOL', 0, false),
+      u('Shoretroopers', 'Corps · 4 minis', 4, 2, 'POOL', 2, false),
+      u('Scout Troopers', 'Special Forces · 4 minis', 4, 0, 'POOL', 0, false),
+      u('Heavy unit (example)', 'Heavy · 1 vehicle', 1, 0, 'POOL', 0, false)
+    ] };
+  }
+}
+</script>
+</body>
+</html>

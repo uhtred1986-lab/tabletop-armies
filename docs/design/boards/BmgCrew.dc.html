@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Batman MG crew – Gotham Noir world</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&amp;family=IBM+Plex+Sans+Condensed:wght@400;600&amp;family=Limelight&amp;display=swap">
+<style>
+body{margin:0}
+:root{--ground:#0b0b0d;--s1:#141417;--s2:#1d1d22;--line:#2f2f36;--ink:#ece9e1;--muted:#a4a09a;--acc:#f2c230;--acc-ink:#141005;--acc2:#7a8aa6;--ok:#7cc88f;--warn:#f2a33a;--danger:#e5534b}
+.disp{font-family:Limelight,Georgia,serif;font-weight:400}
+.lbl{font-size:11px;line-height:15px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.mono{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums}
+.rain{background:repeating-linear-gradient(105deg,rgba(236,233,225,.04) 0 1px,transparent 1px 9px),radial-gradient(ellipse at 85% 0%,rgba(242,194,48,.10),transparent 50%),var(--ground)}
+.deco{clip-path:polygon(0 10px,10px 10px,10px 0,calc(100% - 10px) 0,calc(100% - 10px) 10px,100% 10px,100% calc(100% - 10px),calc(100% - 10px) calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,10px calc(100% - 10px),0 calc(100% - 10px))}
+.drule{height:7px;border-top:1px solid var(--acc);border-bottom:1px solid var(--acc)}
+.row{display:grid;grid-template-columns:1.8fr .9fr repeat(6,44px) .7fr .7fr;align-items:center;gap:8px;min-height:50px;padding:0 16px;border-top:1px solid var(--line);font-size:14px}
+.row .c{text-align:center;font-family:'IBM Plex Mono',monospace}
+.btn{height:46px;padding:0 20px;border:0;font:600 14px 'IBM Plex Sans Condensed',sans-serif}
+</style>
+</helmet>
+<div class="rain" style="width:1180px;height:820px;box-sizing:border-box;display:flex;flex-direction:column;gap:16px;padding:22px 28px;color:var(--ink);font-family:'IBM Plex Sans Condensed',sans-serif">
+  <header style="display:flex;align-items:flex-end;gap:24px">
+    <div style="flex:1">
+      <div class="lbl">Batman Miniature Game · Crew · 350 Rep</div>
+      <h1 class="disp" style="margin:4px 0 0;font-size:40px;line-height:44px">The Night Shift</h1>
+    </div>
+    <div style="text-align:right"><div class="mono" style="font-size:28px;font-weight:600;color:var(--acc)">330<span style="color:var(--muted);font-size:16px"> / 350 Rep</span></div><div class="lbl">Reputation</div></div>
+    <div style="text-align:right"><div class="mono" style="font-size:28px;font-weight:600">$950<span style="color:var(--muted);font-size:16px"> / $1 500</span></div><div class="lbl">Funding left $550</div></div>
+  </header>
+  <div class="drule"></div>
+  <div style="flex:1;min-height:0;display:flex;gap:18px">
+    <section aria-label="Crew" class="deco" style="flex:1;min-width:0;background:var(--s1);padding:12px 0 0">
+      <div class="row lbl" style="border-top:0;min-height:30px"><span>Model</span><span>Rank</span><span class="c">Wil</span><span class="c">End</span><span class="c">Mov</span><span class="c">Atk</span><span class="c">Str</span><span class="c">Def</span><span>Rep</span><span>$</span></div>
+      <sc-for list="{{crew}}" as="m" hint-placeholder-count="6">
+        <div class="row">
+          <span style="display:flex;align-items:center;gap:8px"><sc-if value="{{m.boss}}" hint-placeholder-val="{{false}}"><span title="Boss" style="width:10px;height:10px;background:var(--acc);transform:rotate(45deg)"></span></sc-if><span style="font-weight:600">{{m.n}}</span></span>
+          <span class="lbl" style="color:{{m.rankColor}}">{{m.rank}}</span>
+          <span class="c">{{m.wil}}</span><span class="c">{{m.end}}</span><span class="c">{{m.mov}}</span><span class="c">{{m.atk}}</span><span class="c">{{m.str}}</span><span class="c">{{m.def}}</span>
+          <span class="mono">{{m.rep}}</span><span class="mono" style="color:var(--muted)">{{m.cash}}</span>
+        </div>
+      </sc-for>
+    </section>
+    <aside aria-label="Checks and objectives" style="width:320px;flex:none;display:flex;flex-direction:column;gap:12px">
+      <div class="lbl">Crew checks</div>
+      <div class="deco" style="background:var(--s1);padding:14px 16px;display:grid;gap:10px;font-size:14px">
+        <div style="display:flex;justify-content:space-between"><span>Leader</span><span style="color:var(--ok)">1 / 1</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Sidekick</span><span style="color:var(--ok)">1 / 1</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Free Agents</span><span style="color:var(--ok)">1 / 1</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Shared affiliation</span><span style="color:var(--ok)">All match the Boss</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Rivals in crew</span><span style="color:var(--ok)">None</span></div>
+      </div>
+      <div class="lbl">Objective deck</div>
+      <div class="deco" style="background:var(--s1);padding:14px 16px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between"><span class="mono" style="font-size:26px;font-weight:600;color:var(--warn)">18<span style="font-size:15px;color:var(--muted)"> / 20</span></span><span class="lbl" style="color:var(--warn)">2 cards short</span></div>
+        <div style="font-size:13px;color:var(--muted);margin-top:6px">General cards 8 ≤ crew cards 10 · single copies 7 of max 10</div>
+      </div>
+      <div style="margin-top:auto;display:grid;gap:8px">
+        <button class="btn deco" style="background:var(--s2);color:var(--ink)">Buy equipment · $550 left</button>
+        <button class="btn deco" style="background:var(--acc);color:var(--acc-ink)">Take this crew to the table</button>
+      </div>
+    </aside>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1180,"height":820}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const m = (n, rank, wil, end, mov, atk, str, def, rep, cash, boss) => ({ n, rank, wil, end, mov, atk, str, def, rep, cash: cash ? '$' + cash : '–', boss: !!boss,
+      rankColor: rank === 'Leader' ? 'var(--acc)' : 'var(--muted)' });
+    return { crew: [
+      m('Crew leader (example)', 'Leader', 6, 7, 4, 4, '3+', 4, 120, 0, true),
+      m('Sidekick (example)', 'Sidekick', 5, 6, 4, 3, '4+', 4, 70, 0),
+      m('Free agent (example)', 'Free Agent', 5, 6, 4, 3, '4+', 3, 55, 150),
+      m('Henchman A (example)', 'Henchman', 4, 5, 4, 2, '4+', 3, 30, 200),
+      m('Henchman B (example)', 'Henchman', 4, 5, 4, 2, '4+', 3, 30, 300),
+      m('Henchman C (example)', 'Henchman', 3, 5, 4, 2, '4+', 2, 25, 300)
+    ] };
+  }
+}
+</script>
+</body>
+</html>

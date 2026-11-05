@@ -1,0 +1,25 @@
+name: checks
+
+# Manual only, as in Gullet Cove: the gate is a local run on the final combined head (docs/agent-brief.md,
+# "Testing"). Kept as a button for a clean-install second opinion: Actions -> checks -> "Run workflow".
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build

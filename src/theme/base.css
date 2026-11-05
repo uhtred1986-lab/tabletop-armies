@@ -1,0 +1,201 @@
+/* Base styles. Every colour, face and shape comes from tokens.css and worlds.css (CLAUDE.md rule 8). */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--texture), var(--ground);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 22px;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.label {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.shell {
+  display: flex;
+  min-height: 100%;
+}
+
+.rail {
+  width: 208px;
+  flex: none;
+  border-right: 1px solid var(--line);
+  padding: var(--space-6) var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.rail a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-control);
+  color: var(--ink-muted);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.rail a[aria-current="page"] {
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-6) var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.switcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  padding: var(--space-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  background: var(--surface-1);
+  width: max-content;
+  max-width: 100%;
+}
+
+.switcher button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding: 0 var(--space-4);
+  border: 0;
+  border-radius: var(--radius-chip);
+  background: transparent;
+  color: var(--ink-muted);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.switcher button[aria-pressed="true"] {
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  flex: none;
+}
+
+.btn {
+  min-height: 44px;
+  padding: 0 var(--space-4);
+  border: 0;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn.secondary {
+  background: var(--surface-2);
+  color: var(--ink);
+  border: var(--border-w) solid var(--line);
+}
+
+.grid-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--space-4);
+}
+
+.card-pad {
+  padding: var(--space-4);
+}
+
+.phase-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 200px;
+}
+
+.phase-rail div {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-control);
+  clip-path: var(--clip-control);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.phase-rail div[aria-current="step"] {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+@media (max-width: 767px) {
+  .shell {
+    flex-direction: column;
+  }
+  .rail {
+    width: auto;
+    flex-direction: row;
+    overflow-x: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .main {
+    padding: var(--space-4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

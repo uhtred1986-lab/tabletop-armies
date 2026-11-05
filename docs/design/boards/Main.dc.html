@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Collection – tablet</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&amp;family=IBM+Plex+Sans+Condensed:wght@400;600&amp;family=Spectral+SC:wght@600&amp;display=swap">
+<style>
+body{margin:0}
+:root{--ground:#0e1014;--surface-1:#161a20;--surface-2:#1f242c;--line:#2e3540;--ink:#ece4d2;--ink-muted:#a59c8a;--brass:#c9a24c;--brass-ink:#1a1405;--ok:#6cc28a;--warn:#e2b64a;--danger:#e8705f;--f-skaven:#8fd14f;--f-storm:#4fb6c8;--f-gloom:#e3d24e;--f-oss:#d8ccb0;--f-sera:#7d9cf2}
+.lbl{font-size:12px;line-height:16px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted)}
+.num{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
+.seg{flex:1;height:8px;border-radius:999px;background:var(--surface-2)}
+.seg.on{background:var(--ok)}
+.navbtn{display:flex;flex-direction:column;align-items:center;gap:4px;width:72px;padding:10px 0;border-radius:8px;color:var(--ink-muted);text-decoration:none;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.navbtn.on{background:var(--surface-2);color:var(--ink)}
+.art{background-color:var(--surface-2);background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.03) 0 2px,transparent 2px 12px)}
+a{color:var(--brass)}a:hover{color:#e0bd6a}
+</style>
+</helmet>
+<div style="width:1180px;height:820px;box-sizing:border-box;display:flex;background:var(--ground);color:var(--ink);font-family:'IBM Plex Sans Condensed',sans-serif">
+  <nav aria-label="Main" style="width:88px;flex:none;border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;gap:6px;padding:20px 0">
+    <div style="font-family:'Spectral SC',serif;font-size:22px;font-weight:600;color:var(--brass);margin-bottom:14px">M</div>
+    <a class="navbtn on" href="Main.dc.html"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Collection</a>
+    <a class="navbtn" href="ListBuilderTablet.dc.html"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Lists</a>
+    <a class="navbtn" href="TablePlayTablet.dc.html"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.2"/><circle cx="15.5" cy="15.5" r="1.2"/><circle cx="12" cy="12" r="1.2"/></svg>Play</a>
+    <a class="navbtn" href="PaintLaptop.dc.html"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 3l3 3-9 9H9v-3z"/><path d="M9 15c-3 0-5 2-5 5 2 0 5-1 5-5z"/></svg>Paint</a>
+    <div style="flex:1"></div>
+    <div class="lbl" style="font-size:10px;text-align:center;line-height:13px">Synced<br>00:41</div>
+  </nav>
+  <main style="flex:1;min-width:0;padding:24px 28px;display:flex;flex-direction:column;gap:20px">
+    <header style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px">
+      <div>
+        <h1 style="margin:0;font-family:'Spectral SC',serif;font-size:26px;line-height:30px;font-weight:600">Collection</h1>
+        <div class="lbl" style="margin-top:4px">5 armies · 412 models · <span style="color:var(--ok)">58% painted</span></div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button style="height:44px;padding:0 16px;border-radius:8px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);font:600 14px 'IBM Plex Sans Condensed',sans-serif">Scan box barcode</button>
+        <button style="height:44px;padding:0 16px;border-radius:8px;border:1px solid var(--brass);background:var(--brass);color:var(--brass-ink);font:600 14px 'IBM Plex Sans Condensed',sans-serif">+ Add models</button>
+      </div>
+    </header>
+    <section aria-label="Armies" style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px">
+      <sc-for list="{{factions}}" as="f" hint-placeholder-count="5">
+        <article class="{{f.cls}}" style="background:var(--surface-1);border:1px solid var(--line);border-radius:14px;overflow:hidden">
+          <div class="art" style="height:92px;position:relative">
+            <div style="position:absolute;left:0;right:0;bottom:0;height:4px;background:{{f.color}}"></div>
+            <span class="lbl" style="position:absolute;left:10px;top:8px;font-size:10px">Art · {{f.art}}</span>
+          </div>
+          <div style="padding:10px 12px 12px">
+            <div style="font-weight:600;font-size:15px;line-height:20px">{{f.name}}</div>
+            <div class="num" style="font-size:13px;color:var(--ink-muted);margin-top:2px">{{f.pts}} pts · {{f.models}} models</div>
+            <div style="height:6px;background:var(--surface-2);border-radius:999px;margin-top:10px;overflow:hidden"><div style="height:100%;width:{{f.pct}}%;background:var(--ok)"></div></div>
+            <div class="lbl" style="margin-top:6px">{{f.pct}}% painted</div>
+          </div>
+        </article>
+      </sc-for>
+    </section>
+    <section aria-label="Stormcast Eternals units" style="flex:1;min-height:0;background:var(--surface-1);border:1px solid var(--line);border-radius:14px;display:flex;flex-direction:column;overflow:hidden">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line)">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="width:10px;height:10px;border-radius:999px;background:var(--f-storm)"></span>
+          <h2 style="margin:0;font-size:18px;line-height:24px;font-weight:600">Stormcast Eternals</h2>
+          <span class="lbl">14 units · 2 310 pts on the shelf</span>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button style="height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--brass);background:transparent;color:var(--ink);font:600 12px 'IBM Plex Sans Condensed';letter-spacing:.06em;text-transform:uppercase">All</button>
+          <button style="height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink-muted);font:600 12px 'IBM Plex Sans Condensed';letter-spacing:.06em;text-transform:uppercase">Unpainted</button>
+          <button style="height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink-muted);font:600 12px 'IBM Plex Sans Condensed';letter-spacing:.06em;text-transform:uppercase">Moving to Legends</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:2.4fr 0.7fr 2fr 0.8fr;gap:12px;padding:8px 16px;border-bottom:1px solid var(--line)" class="lbl">
+        <span>Unit</span><span>Models</span><span>Paint stage</span><span style="text-align:right">Points</span>
+      </div>
+      <sc-for list="{{units}}" as="u" hint-placeholder-count="7">
+        <div style="display:grid;grid-template-columns:2.4fr 0.7fr 2fr 0.8fr;gap:12px;align-items:center;padding:0 16px;min-height:52px;border-bottom:1px solid var(--line)">
+          <div><div style="font-weight:600;font-size:15px">{{u.name}}</div><div class="lbl" style="font-size:11px">{{u.kw}}</div></div>
+          <div class="num" style="font-size:14px">{{u.models}}</div>
+          <div>
+            <div style="display:flex;gap:3px"><sc-for list="{{u.segs}}" as="s"><span class="{{s}}"></span></sc-for></div>
+            <div class="lbl" style="margin-top:4px;font-size:11px;color:{{u.stageColor}}">{{u.stage}}</div>
+          </div>
+          <div class="num" style="font-size:14px;text-align:right">{{u.pts}}</div>
+        </div>
+      </sc-for>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1180,"height":820}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const stages = ['Unbuilt','Built','Primed','Base coat','Shaded','Detailed','Based'];
+    const mk = (name, kw, models, n, pts) => ({
+      name, kw, models, pts,
+      stage: n === 6 ? 'Done · ' + stages[n] : stages[n] + ' · ' + n + ' of 6',
+      stageColor: n === 6 ? 'var(--ok)' : (n <= 1 ? 'var(--warn)' : 'var(--ink-muted)'),
+      segs: [1,2,3,4,5,6].map((i) => i <= n ? 'seg on' : 'seg')
+    });
+    return {
+      factions: [
+        { name: 'Skaven', art: 'rat horde', color: 'var(--f-skaven)', pts: '1 240', models: 118, pct: 48 },
+        { name: 'Stormcast Eternals', art: 'lightning knights', color: 'var(--f-storm)', pts: '2 310', models: 46, pct: 64 },
+        { name: 'Gloomspite Gitz', art: 'moon goblins', color: 'var(--f-gloom)', pts: '1 020', models: 92, pct: 22 },
+        { name: 'Ossiarch Bonereapers', art: 'bone legion', color: 'var(--f-oss)', pts: '1 640', models: 71, pct: 81 },
+        { name: 'Seraphon', art: 'star lizards', color: 'var(--f-sera)', pts: '760', models: 85, pct: 35 }
+      ],
+      units: [
+        mk('Lord-Commander Bastian Carthalos', 'Hero · Infantry · Unique', 1, 6, 190),
+        mk('Knight-Arcanum', 'Hero · Infantry · Wizard', 1, 5, 120),
+        mk('Lord-Vigilant on Gryph-stalker', 'Hero · Cavalry', 1, 2, 120),
+        mk('Vindictors', 'Warrior Chamber · Infantry', 10, 4, 180),
+        mk('Liberators', 'Warrior Chamber · Infantry', 5, 6, 90),
+        mk('Prosecutors', 'Ruination Chamber · Infantry · Fly', 3, 1, 150),
+        mk('Annihilators', 'Warrior Chamber · Infantry', 3, 3, 130)
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
