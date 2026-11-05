@@ -1,7 +1,7 @@
 # Game modules
 
 Every game is a module behind one interface (`src/games/types.ts`). The shell, collection, paint tracker, photos,
-dice and sync never know which game they hold; anything game-specific goes in `src/games/<id>/`.
+dice and the database never know which game they hold; anything game-specific goes in `src/games/<id>/`.
 
 ## The interface
 

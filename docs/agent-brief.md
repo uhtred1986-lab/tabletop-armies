@@ -23,7 +23,7 @@ the orchestrator rule itself: `AGENTS.md`. (Adapted from Gullet Cove's agent bri
   AGENTS.md does not apply to you: do the work yourself and start no agents."**
 - **Models:** Sonnet by default; Haiku for well-bounded docs and bookkeeping; Opus only for novel rules semantics or
   cross-cutting design.
-- **Parallel briefs** go in separate worktrees. Only one Dexie schema version may be in flight across parallel briefs.
+- **Parallel briefs** go in separate worktrees. Only one migration may be in flight across parallel briefs.
 - **Review every diff against its brief.** A worker's report is a claim, not proof.
 - Don't spawn more agents than the task needs.
 
@@ -31,12 +31,13 @@ the orchestrator rule itself: `AGENTS.md`. (Adapted from Gullet Cove's agent bri
 
 - The repo carries no publisher data. A local pack for manual testing lives in `data/` (git-ignored) and is never
   committed, pasted into an issue or a PR, or quoted in a test.
-- Owner data in a browser profile is real: test schema upgrades on a copy (export JSON, import into a fresh profile).
+- `DATABASE_URL` is production with Heyhey's real collection. Test schema changes on PGlite (`npm test`) or a throwaway
+  Neon branch, never by migrating production by hand.
 
 ## Running things
 
 - **Run `npm test` and `npm run build` in the foreground**, with no `| tail` (it buffers and looks like a hang).
-- **Only a dev server runs in the background.** Stop it, and every `node`/`vite` process you started, by PID before you
+- **Only a dev server runs in the background.** Stop it, and every `node`/`next` process you started, by PID before you
   report back (`ps -eo pid,args | grep … | grep -v grep`); `pkill -f <pattern>` has killed the agent's own shell.
 - **`npm test` must exit on its own** (Vitest runs with `--run`).
 - **Killed by the OS (exit 137 / SIGKILL)** means out of memory, not a failing check: retry with fewer workers.
@@ -48,9 +49,9 @@ There is no automatic CI (`checks.yml` is manual only). Run what proves the chan
 1. **While working:** the scoped Vitest file(s) (`npx vitest run src/games/aos`), `npm run typecheck`. Never re-run a
    check that already passed on unchanged code.
 2. **A worker** runs those scoped checks plus what its brief names: known-legal and known-illegal lists for every new
-   rule; an upgrade test for every Dexie version; replay/undo tests for every play-loop change.
+   rule; a migration test on PGlite for every schema change (`src/db/migrations.test.ts`); replay/undo tests for every play-loop change.
 3. **The gate, once, on the final combined head before merge:** `npm run gate` (typecheck, lint, test), and
-   `npm run gate -- --build` when the change touches `src/app`, `src/components`, `vite.config.ts`, the service worker,
+   `npm run gate -- --build` when the change touches `src/app`, `src/components`, `src/proxy.ts`, `next.config.ts`,
    `package.json` or the lockfile.
 4. **Never skip, weaken or delete a test to get green.** A red `main` is fixed first, before any new work.
 
@@ -68,7 +69,7 @@ There is no automatic CI (`checks.yml` is manual only). Run what proves the chan
 - **Small commits, pushed in batches**: at the end of a working unit, before you stop or wait, and at least hourly.
 - **Fewer PRs.** The title names the issue numbers. The body starts with `Closes #N` for each, then each acceptance item
   with its evidence, then what you judged or deferred. Address Heyhey by name in issue and PR text.
-- **Report** (to the orchestrator or Heyhey): the PR URL, changed files, any Dexie version bump, screenshot paths, every
+- **Report** (to the orchestrator or Heyhey): the PR URL, changed files, any migration, screenshot paths, every
   judgement call, and (standing rule) whether a new script, check or skill would have helped.
 
 ## Merging (the orchestrator, or a session working alone)
@@ -77,6 +78,7 @@ Merge once the gate is green on the exact head you pushed and the issue's "Done 
 - **Every PR targets `main`; no stacked PRs.**
 - **Never `gh pr merge --auto`.** Confirm the pushed head is the PR head, then
   `gh api -X PUT repos/uhtred1986-lab/tabletop-armies/pulls/<n>/merge -f merge_method=squash -f sha=<head>`.
-- **One Dexie version bump per open PR.** Compare `src/core/db.ts` versions with `origin/main` before merging.
+- **One migration per open PR, numbered on top of `origin/main`.** Two branches that both ran `db:generate` collide:
+  regenerate on the newer `main` before merging. The merge to `main` is what migrates production (after its backup).
 - **After a merge, unasked:** delete the merged remote branch and any other fully merged ones; never touch
   `--no-merged` branches, report them. Then verify `git log origin/main`, not the PR state.

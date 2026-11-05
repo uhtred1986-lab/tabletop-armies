@@ -1,10 +1,12 @@
 node_modules/
-dist/
-dev-dist/
+.next/
+out/
 coverage/
+next-env.d.ts
+*.tsbuildinfo
 .env
-.env.local
-*.local
+.env*.local
+.vercel/
 # Rules data never enters the repo (CLAUDE.md, "No publisher data")
 data/
 *.pack.json

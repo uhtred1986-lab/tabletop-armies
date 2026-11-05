@@ -12,6 +12,6 @@ description: Use when adding or changing a game module in Muster (Age of Sigmar,
    Tests use invented units ("Test Hero", "Test Trooper").
 4. **No guessed rules.** If the exact rule is not confirmed, add it to `docs/TASKS.md` "To verify", open an issue and
    leave the check out.
-5. Validators and play loops are pure: no Dexie, React or network imports. Each rule: one known-legal and one
+5. Validators and play loops are pure: no database, React, Next or network imports. Each rule: one known-legal and one
    known-illegal test. Play loops: replay and undo tests.
 6. Run the module's tests (`npx vitest run src/games/<id>`), then the gate once at the end.
