@@ -10,7 +10,12 @@ if (process.argv.includes("--build")) steps.push(["build", ["run", "build"]]);
 
 for (const [name, args] of steps) {
   console.log(`\n▶ ${name}`);
-  const r = spawnSync("npm", args, { stdio: "inherit", shell: process.platform === "win32" });
+  const r = spawnSync("npm", args, {
+    stdio: "inherit",
+    shell: process.platform === "win32",
+    // The build runs right after typecheck, so it skips Next's second type check; no DATABASE_URL: the build reads no data.
+    env: name === "build" ? { ...process.env, MUSTER_BUILD_SKIP_TYPECHECK: "1", DATABASE_URL: "" } : process.env,
+  });
   if (r.status !== 0) {
     console.error(`\n✖ gate failed at ${name}${r.signal === "SIGKILL" || r.status === 137 ? " (killed by the OS: likely out of memory, not a code failure)" : ""}`);
     process.exit(r.status ?? 1);

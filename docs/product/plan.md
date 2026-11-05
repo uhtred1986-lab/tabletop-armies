@@ -9,12 +9,12 @@ Complete, current data exists for every Age of Sigmar 4th edition army, but none
 come from GW's free faction packs and points from the quarterly Battle Profiles PDFs; a structured, machine-readable
 copy of both is maintained by the community BSData project.
 
-GW's IP policy bars fan-made apps based on their settings and redistributing copied rules. So Muster is a **private,
-self-hosted companion app** — never published or sold — that keeps its rules data in a separate, swappable "data pack"
+GW's IP policy bars fan-made apps based on their settings and redistributing copied rules. So Muster is a **private
+companion app** behind the owner's own sign-in — never published or sold — that keeps its rules data in a separate, swappable "data pack"
 (imported from BSData or typed in by the owner) and owns only the collection, paint status, lists and game state.
 
 **Scope (5 Nov 2026):** five games — Age of Sigmar, Marvel: Crisis Protocol, Star Wars: Legion, Star Wars:
-Shatterpoint and Batman Miniature Game. Collection, paint, photos and sync are shared; each game plugs in its own
+Shatterpoint and Batman Miniature Game. Collection, paint and photos are shared; each game plugs in its own
 catalogue, list rules and table-play loop, and wears its own world (look).
 
 ## What data is public (Age of Sigmar)
@@ -89,19 +89,21 @@ known-legal and known-illegal lists; season limits in an editable config. Detail
 
 ## Architecture and stack
 
-Local-first PWA: React + Vite + TypeScript, IndexedDB via Dexie, service worker, Vitest; importer as a Node script
-producing one JSON data pack; optional self-hosted sync (PocketBase) for the owner's data only; JSON backup.
+Same platform as Gullet Cove (decided 5 Nov 2026): Next.js 16 on Vercel, Neon Postgres via Drizzle, Google sign-in
+for the owner only, Vitest. Tablet and laptop share the database, so multi-device needs no sync layer; offline play at
+the table is its own milestone. The importer is a local Node script producing one JSON data pack, loaded into the
+owner's private database. Details: `docs/architecture/platform.md`, `docs/architecture/auth.md`.
 Each game is a module behind one interface (`docs/architecture/game-modules.md`) and wears its own world
 (`docs/ui-standard.md`).
 
 ## Roadmap
 
 1. **Collection + paint (MVP).** Game picker for all five games, free-text unit names, counts, paint stages, photos,
-   JSON backup.
+   JSON export.
 2. **Importer + data pack (AoS).** BSData for the owner's factions, name matching, overrides.
 3. **List builder + validation (AoS).**
 4. **Table play (AoS).**
-5. **Sync** between tablet and laptop.
+5. **Offline at the table** (multi-device itself comes from the shared database).
 6. **Game modules, one at a time:** Shatterpoint, then Crisis Protocol, Batman MG, Legion.
 7. **Polish:** second-device opponent view, win/loss stats.
 
@@ -111,7 +113,8 @@ Each game is a module behind one interface (`docs/architecture/game-modules.md`)
 - Separate tablet and laptop layouts (phone as fallback).
 - Modes: matched play, Spearhead and Path to Glory.
 - Rules text stored where imported, else optional manual entry.
-- Multi-device: yes (sync is phase 5).
+- Multi-device: yes, through the shared Neon database.
+- Platform: Vercel + Neon like the other apps.
 - Five games; each its own world (unique look).
 - Open: which factions/affiliations the owner has in the four new games.
 
