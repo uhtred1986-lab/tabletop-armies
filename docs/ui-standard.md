@@ -51,6 +51,14 @@ faces (IBM Plex Sans Condensed, IBM Plex Mono), behaviour, the words.
 (`npm test` checks it); `accent` marks one thing per screen; `accent-2` is for the opponent's side and ornaments, never
 body text; textures sit on the ground only; no publisher logos, symbols or lettering imitations.
 
+**Scene plates (Heyhey, 5 Nov 2026; same idea as Gullet Cove):** every screen sits on a painted plate of its world,
+behind the main column (`SceneBackdrop`, `src/lib/backgrounds.ts`). Three places per world: **hall** (hub, collection,
+places, paint), **table** (lists, stats, campaigns, data packs), **field** (play). Rules: the plate is only ever behind
+opaque cards and the ground veil (base.css `.scene`, built from the world's `ground`), never directly behind body text;
+detail sits on the right, the left 60 % stays calm; play gets the quietest veil; one viewport tall, fading into the
+ground. Plates are original paintings with no characters, symbols, logos or anything from a publisher's setting.
+A new screen picks its place in `SCENE_FOR`; a new world needs all three plates (`backgrounds.test.ts` checks).
+
 **Adding a world:** one theme in `docs/design/system/tokens.json`, one block in `src/theme/worlds.css`, `npm run tokens`,
 `npm test`.
 

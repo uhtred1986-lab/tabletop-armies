@@ -81,6 +81,8 @@ textarea {
 .main {
   flex: 1;
   min-width: 0;
+  position: relative;
+  isolation: isolate;
   padding: var(--space-6) var(--space-8);
   display: flex;
   flex-direction: column;
@@ -177,6 +179,51 @@ textarea {
   color: var(--accent-ink);
 }
 
+/* Scene plates (docs/ui-standard.md §3): the painted world behind the main column, under a veil of the world's own
+   ground so text set on the ground keeps its contrast. Detail sits right; the left, where panels sit, is veiled most.
+   One viewport tall, fading into the ground below, so a long page never stretches the picture. */
+.scene {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 100vh;
+  max-height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, transparent 55%, var(--ground) 100%),
+    linear-gradient(90deg,
+      color-mix(in srgb, var(--ground) 92%, transparent) 0%,
+      color-mix(in srgb, var(--ground) 80%, transparent) 40%,
+      color-mix(in srgb, var(--ground) 45%, transparent) 75%,
+      color-mix(in srgb, var(--ground) 30%, transparent) 100%),
+    var(--plate-l) right center / cover no-repeat,
+    var(--ground);
+}
+
+.scene[data-place="field"] {
+  /* At the table the plate stays quieter: numbers matter more than mood. */
+  background:
+    linear-gradient(180deg, transparent 55%, var(--ground) 100%),
+    linear-gradient(90deg,
+      color-mix(in srgb, var(--ground) 94%, transparent) 0%,
+      color-mix(in srgb, var(--ground) 86%, transparent) 50%,
+      color-mix(in srgb, var(--ground) 60%, transparent) 100%),
+    var(--plate-l) right center / cover no-repeat,
+    var(--ground);
+}
+
+@media (max-width: 767px) {
+  .scene,
+  .scene[data-place="field"] {
+    /* Phone: panels span the full width, so the veil is even and the smaller plate is enough. */
+    background:
+      linear-gradient(180deg, transparent 40%, var(--ground) 100%),
+      linear-gradient(color-mix(in srgb, var(--ground) 78%, transparent), color-mix(in srgb, var(--ground) 78%, transparent)),
+      var(--plate-s) 70% center / cover no-repeat,
+      var(--ground);
+  }
+}
+
 @media (max-width: 767px) {
   .shell {
     flex-direction: column;
@@ -233,7 +280,8 @@ textarea {
 }
 
 .rail-title {
-  font-size: 24px;
+  /* 21 px: the widest world face (saga's Michroma, caps) still fits "TABLETOP" in the 208 px rail. */
+  font-size: 21px;
   line-height: 1.1;
   text-wrap: balance;
   color: var(--accent);

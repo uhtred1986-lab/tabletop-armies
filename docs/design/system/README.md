@@ -50,6 +50,12 @@ Each faction header carries original painterly key art (rat horde in a ruined se
 - Always under a `ground` scrim from the text side so the title keeps 4.5:1.
 - Never behind stat blocks, lists or ability text.
 
+## Scene plates
+
+Behind every screen sits a painted plate of the current world: hall, table and field, one dark plate each, under a veil
+of the world's `ground`. Calm on the left where panels sit, detail on the right. Prompts: `scripts/generate-backgrounds.mts`;
+processing: `scripts/process-backgrounds.mts`; rules: `docs/ui-standard.md` §3.
+
 ## Worlds: one app, five looks
 
 Each game is a **world**: a costume the whole app wears while you are in that game. `<html data-world="…" data-theme="…">` carries it (the theme id and the world id are the same word). The game switcher changes both.

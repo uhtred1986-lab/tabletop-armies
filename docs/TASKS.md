@@ -65,6 +65,10 @@ opponent second-device view.
   images are kept privately** (Blob, after sign-in, never committed, never shared). Heyhey's call, accepting the risk;
   `docs/product/plan.md`, "IP constraints".
 - 5 Nov 2026 — Next game after AoS stays Shatterpoint. Order of milestones as above.
+- 5 Nov 2026 — **Scene plates (Heyhey):** painted backgrounds like Gullet Cove's, 5 worlds × hall/table/field. Painted
+  with gemini-3-pro-image through ElevenLabs (Heyhey's choice; the Google key's prepaid credit was used up), 4 takes
+  each, about $13; the chosen 15 are in `public/theme/backgrounds/`. Light (`sigmar-light`) plates come when that theme
+  is used.
 - 5 Nov 2026 — Working agreement copied from Gullet Cove (CLAUDE.md, AGENTS.md, agent brief, best practices).
 
 ## To verify (never coded as a guess)

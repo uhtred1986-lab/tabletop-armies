@@ -5,6 +5,7 @@ import { formatNumber, translator } from "@/i18n";
 import { getLocale } from "@/i18n/server";
 import { currentGame } from "@/lib/current-game";
 import { GameSwitcher } from "@/components/GameSwitcher";
+import { SceneBackdrop } from "@/components/SceneBackdrop";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,7 @@ export default async function CollectionPage() {
     .orderBy(asc(collectionItems.unitName));
   return (
     <>
+      <SceneBackdrop area="collection" />
       <h1 className="w-display page-title">{t("collection.title")}</h1>
       <GameSwitcher current={game.id} />
       <div className="w-rule" />
