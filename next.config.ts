@@ -14,6 +14,8 @@ const nextConfig: NextConfig = {
   typescript: { ignoreBuildErrors: process.env.MUSTER_BUILD_SKIP_TYPECHECK === "1" },
   images: { unoptimized: true },
   poweredByHeader: false,
+  // Leave room for multipart form overhead under Vercel's 4.5 MB request cap.
+  experimental: { serverActions: { bodySizeLimit: "4mb" } },
 };
 
 export default nextConfig;

@@ -17,6 +17,8 @@ Names only; values live in `.env.local`, Vercel and the cloud environment, never
 | `OWNER_EMAILS` | Vercel, `.env.local` | comma-separated Google addresses that may sign in |
 | `AUTH_DISABLED` | `.env.local` only | `1` skips sign-in under `next dev` only; ignored in a build and on Vercel |
 | `NEON_API_KEY`, `NEON_PROJECT_ID` | Vercel (Production) | the pre-migration backup branch; without them a deploy with a pending migration fails before migrating |
+| `BLOB_READ_WRITE_TOKEN` | Vercel, `.env.local` | credential for the private Blob store; never use a public store for owner photos or imported cards |
+| `BLOB_PATH_PREFIX` | isolated development only | optional image namespace; saved database references retain the complete key |
 | `PRODUCTION_DATABASE_HOST` | Vercel (Preview), optional | lets a preview with its own Neon branch migrate it; previews are off by default |
 
 ## Deploys and the database
@@ -57,3 +59,14 @@ Names only; values live in `.env.local`, Vercel and the cloud environment, never
   Neon branch made for the task, or run with no database: pages then fail loudly (`src/db/target.ts`), never pretend.
 - Cloud sessions: `DB_DRIVER=neon-ws` plus `DATABASE_URL`.
 - Tests never touch Neon: migrations and queries run on PGlite in memory.
+- In a proxied cloud runtime, start Node with `NODE_USE_ENV_PROXY=1` (or `--use-env-proxy`) so static-source and Blob requests use the session proxy. The Neon WebSocket driver uses the configured HTTPS proxy too.
+- Shell environment values override `.env.local`. When the shell inherits a production connection, unset `DATABASE_URL` and `DB_DRIVER` before starting local Next; it then reads the isolated connection from `.env.local`. Never print connection values while diagnosing this.
+- Use the direct endpoint hostname when the selected Neon endpoint has no pooler enabled.
+
+## V1 migration and private media
+
+`0001_v1_foundation` is additive. After migrations, the deployment runs the idempotent collection backfill: it creates physical-model rows only for unmaterialized legacy units, stamps the conversion transactionally, and never recreates models an owner later deleted. The seven initial paint stages are seeded only when the stage table is empty.
+
+Create a **private** Vercel Blob store and connect its token to the app. Owner photo uploads validate bytes before registration. Imported images are linked to reviewed catalogue records; authenticated no-store routes return their bytes. Failed cleanup stays in the deletion queue and respects all surviving photo/catalogue references.
+
+The v1 verification environment uses a separate Neon child branch and a development Blob prefix. Data imported there is not production data and is not in the PR. After the main deployment, use the reviewed private import files through `/data` for any production catalogue setup; never copy a database connection or source data into Git.

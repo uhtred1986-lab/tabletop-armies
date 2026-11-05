@@ -1,0 +1,173 @@
+.form {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.field {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  background: var(--surface-1);
+}
+
+.field textarea {
+  min-height: 88px;
+  resize: vertical;
+}
+
+.sections {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.stack {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.rowGap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.inline {
+  display: flex;
+  align-items: end;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.inline > * {
+  flex: 1 1 150px;
+}
+
+.record {
+  display: grid;
+  gap: var(--space-2);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--line);
+}
+
+.confirm summary {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  color: var(--danger);
+  cursor: pointer;
+}
+
+.destructive {
+  border-color: var(--danger) !important;
+  color: var(--danger) !important;
+}
+
+.dialogShade {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: var(--space-4);
+  background: color-mix(in srgb, var(--ground) 80%, transparent);
+}
+
+.dialog {
+  width: min(100%, 560px);
+  max-height: min(90vh, 720px);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  border: var(--border-w) solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--surface-1);
+  color: var(--ink);
+  box-shadow: var(--frame);
+}
+
+.dialogHeader,
+.dialogFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
+
+.dialogHeader {
+  border-bottom: 1px solid var(--line);
+}
+
+.dialogBody {
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-4);
+}
+
+.dialogFooter {
+  justify-content: end;
+  border-top: 1px solid var(--line);
+}
+
+.dialogAction {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.close {
+  width: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+}
+
+.muted {
+  color: var(--ink-muted);
+}
+
+.link {
+  color: var(--ink);
+  text-decoration-color: var(--accent);
+  text-underline-offset: 3px;
+}
+
+.small {
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+
+.example {
+  margin: 0 0 var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  background: var(--surface-2);
+  color: var(--ink);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.ruleRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+@media (max-width: 767px) {
+  .inline {
+    display: grid;
+  }
+}

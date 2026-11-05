@@ -49,6 +49,15 @@ function run(script: string) {
   if (result.status !== 0) fail(`npm run ${script} exited with ${result.status ?? result.signal}.`);
 }
 
+function backfillCollection() {
+  log("Running the idempotent legacy collection backfill.");
+  const result = spawnSync(process.execPath, ["--import", "tsx", "scripts/backfill-collection.mts"], {
+    stdio: "inherit",
+    shell: process.platform === "win32",
+  });
+  if (result.status !== 0) fail(`collection backfill exited with ${result.status ?? result.signal}.`);
+}
+
 function readJournal(): JournalEntry[] {
   const file = path.join(process.cwd(), "drizzle", "meta", "_journal.json");
   return (JSON.parse(readFileSync(file, "utf8")) as { entries: JournalEntry[] }).entries;
@@ -91,6 +100,7 @@ if (target.kind === "local") {
 } else if (target.kind === "preview-own-db") {
   log(target.reason);
   run("db:migrate");
+  backfillCollection();
 } else if (target.kind === "preview-shared-db") {
   log(`${target.reason} Skipping db:migrate.`);
   if (env.DATABASE_URL) {
@@ -142,6 +152,7 @@ if (target.kind === "local") {
       log(`WARNING: could not clean up an old backup branch (the deploy goes on): ${failure}`);
     }
   }
+  backfillCollection();
 }
 
 run("build");

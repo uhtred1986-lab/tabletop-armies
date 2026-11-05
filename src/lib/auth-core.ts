@@ -158,6 +158,8 @@ export async function verifyFlow(token: string | undefined | null, secret: strin
  */
 export function isPublicPath(pathname: string): boolean {
   if (pathname === LOGIN_PAGE || pathname === LOGIN_START_PATH || pathname === CALLBACK_PATH) return true;
+  // Generic offline shell only; it reads owner-keyed IndexedDB in this browser and contains no private game data.
+  if (pathname === "/sw.js" || pathname === "/offline-play.html" || pathname === "/offline-play.js" || pathname === "/offline-play.css") return true;
   if (pathname.startsWith("/_next/")) return true;
   if (pathname === "/favicon.ico" || pathname === "/icon.svg" || pathname === "/robots.txt") return true;
   return false;

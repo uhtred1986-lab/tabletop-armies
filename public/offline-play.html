@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tabletop Armies · Offline play</title>
+    <link rel="stylesheet" href="/offline-play.css">
+    <script defer src="/offline-play.js"></script>
+  </head>
+  <body>
+    <main>
+      <h1>Offline table</h1>
+      <p>This private offline view uses only the game state saved for the account last authenticated on this device.</p>
+      <button id="load-games" type="button">Load saved games</button>
+      <section id="saved-games" hidden>
+        <label for="game">Saved game</label>
+        <select id="game"></select>
+        <p id="sync-status" aria-live="polite"></p>
+        <h2>Table controls</h2>
+        <section id="phase-state"></section>
+        <div id="controls">
+          <button type="button" data-action="phase">Next phase</button>
+          <button type="button" data-action="round">Next round</button>
+          <button type="button" data-action="side">Change side</button>
+        </div>
+        <section id="tracker-panels"></section>
+        <section id="orders-panel" hidden>
+          <h2>Order deck</h2>
+          <div id="orders-list"></div>
+          <form id="order-form"><label id="order-label" for="order-id">Add order</label><select id="order-id"></select><input id="manual-order-id" hidden><button type="submit">Add order</button></form>
+        </section>
+        <section id="struggle-panel" hidden>
+          <h2>Struggle</h2>
+          <form id="struggle-form"><label for="struggle-key">Marker</label><input id="struggle-key" required><label for="struggle-value">Value</label><input id="struggle-value" required><button type="submit">Record marker</button></form>
+          <div id="struggle-list"></div>
+        </section>
+        <section id="timer-panel"><h2>Turn timer</h2><output id="timer-value">00:00</output><button type="button" data-action="timer">Start or pause</button><button type="button" data-action="timer-reset">Reset</button></section>
+        <section id="offline-tools">
+          <div class="offline-side-panel"><h2 id="dice-title">Dice helper</h2><label for="dice-count">Dice count</label><input id="dice-count" type="number" min="1" max="100" value="1"><button id="roll-dice" type="button">Roll</button><output id="dice-result"></output></div>
+          <div class="offline-side-panel"><h2 id="damage-title">Damage calculator</h2><label>Attacks<input id="damage-attacks" type="number" min="0" value="1"></label><label>Dice per attack<input id="damage-dice" type="number" min="0" value="1"></label><label>Successes per attack<input id="damage-successes" type="number" min="0" value="1"></label><label>Damage per success<input id="damage-value" type="number" min="0" value="1"></label><output id="damage-total">Total damage: 1</output></div>
+        </section>
+        <section id="result-panel" class="offline-side-panel"><h2 id="result-title">Game result</h2><button type="button" data-result="win">Win</button><button type="button" data-result="loss">Loss</button><button type="button" data-result="draw">Draw</button></section>
+        <form id="note-form">
+          <label for="note">Table note</label>
+          <input id="note" required>
+          <button type="submit">Record note</button>
+        </form>
+        <h2>Saved actions</h2>
+        <ol id="event-list"></ol>
+      </section>
+      <p><a href="/play">Reconnect to Tabletop Armies</a></p>
+    </main>
+  </body>
+</html>

@@ -17,8 +17,10 @@ Adapted from Gullet Cove's DM sign-in (5 Nov 2026), reduced to one role: the own
 
 ## Public paths (`isPublicPath`)
 
-`/login`, `/api/auth/login`, `/api/auth/callback/google`, `/_next/*`, `/favicon.ico`, `/icon.svg`, `/robots.txt`. Nothing
-else, and deliberately not "anything with a file extension": photo bytes will be owner-only.
+`/login`, `/api/auth/login`, `/api/auth/callback/google`, `/_next/*`, `/favicon.ico`, `/icon.svg`, `/robots.txt`, and
+the static offline shell (`/sw.js`, `/offline-play.html`, `/offline-play.js`, `/offline-play.css`). The offline shell contains no private game
+state; it reads only owner-keyed IndexedDB in the browser. Dynamic HTML, RSC, photos, API responses and Server Functions
+remain owner-only. Nothing else is public, deliberately not "anything with a file extension".
 
 ## The flow
 

@@ -71,13 +71,22 @@ opponent second-device view.
   is used.
 - 5 Nov 2026 — Working agreement copied from Gullet Cove (CLAUDE.md, AGENTS.md, agent brief, best practices).
 
+- 5 Nov 2026 — Deliver M1–M10 together using parallel implementation workers, one final branch push and one PR. Keep production deployment behind the existing merge-to-main process.
+- 5 Nov 2026 — Photos and imported card/token images use private Vercel Blob. Reference images retain their source provenance and stay distinct from owner photos.
+- 5 Nov 2026 — Seven shared, configurable paint stages. The last configured stage defines painted status; the initial final stage is `based`.
+- 5 Nov 2026 — Initial catalogue coverage: all MCP and Shatterpoint figures; Legion Galactic Republic Starter Set SWQ19 and Separatist Alliance Starter Set SWQ28; Batman The Batman Two-Player Starter Box KSTBMG019. Catalogue availability does not create owned inventory automatically.
+- 5 Nov 2026 — Provide complete manual configuration/import workflows for unavailable or paid rules, including General’s Handbook and Path to Glory. Unavailable rules remain explicitly unconfigured.
+- 5 Nov 2026 — Table play is a companion: both sides, list validation, reliable trackers, helpers, history and replay. Game decisions stay with the players.
+- 5 Nov 2026 — Preserve the existing painted background pictures across all five worlds and all responsive screen classes.
+
+- 5 Nov 2026 — Special modes are a searchable, readable rules library before mode-specific play support: Shatterpoint Legendary Encounters and Key Operations, plus MCP Crisis Events and Ultimate Encounters. Show source-backed rules/documents and figure suggestions, distinguishing official requirements from collection-based recommendations. This clarifies the existing work and does not stop the other milestones.
+
+- 5 Nov 2026 — Heyhey confirmed that the three selected Legion/Batman starter boxes should be marked for manual configuration. Preserve product identities and empty, explicitly unverified contents; do not infer figures or ownership.
+
 ## To verify (never coded as a guess)
 
-- Photos and imported images: Vercel Blob (private store) vs. Neon bytea; Gullet Cove moved to Blob. Decide in M1.
 - AMG site: robots.txt, terms of use and rate before the crawler runs (M3); which URLs Heyhey lists.
-- Which AMG modes and scenarios exist per game today (read from the site in M3, never typed from memory).
-- Crisis Protocol: Secure/Extract split of the 6 crisis cards (3 + 3?).
-- Legion: rank minimums/maximums and the standard points size after the April 2026 update.
-- Path to Glory: which rules Heyhey enters by hand vs. what BSData provides.
-- Which factions/affiliations Heyhey owns in Crisis Protocol, Legion, Shatterpoint and Batman MG (decide later).
+- Which AMG modes and scenarios exist per game today (read from the site in M3, never typed from memory). The first searchable special-mode lexicon covers MCP Crisis Events and Ultimate Encounters, and Shatterpoint Legendary Encounters and Key Operations; source-backed figure suggestions remain explicit suggestions, not inferred official recommendations.
+- MCP roster crisis split is resolved: the official November 2025 revised Core Rules use five Secure and five Extract cards. The official August 2026 Organized Play Formats document supplies format-specific included/banned components and a maximum of two restricted components; import/manual format data still determines actual legality. Sources: [November 2025 rules update](https://www.atomicmassgames.com/transmission/marvel-crisis-protocol-november-2025-rules-update/) and [Formats effective August 1, 2026](https://cdn.svc.asmodee.net/production-amgcom/uploads/2026/08/OP_CrisisProtocol_Formats_08_01_2026.pdf).
+- Legion standard Army rank limits and 1,000-point cap are resolved from the official Core Rules updated June 17, 2026. Battle Force and non-standard mode limits remain source-backed configurable data. Source: [Legion rules and organized play](https://www.atomicmassgames.com/swlegiondocs/).
 - UI standard inconsistencies listed in `docs/ui-standard.md` §10.

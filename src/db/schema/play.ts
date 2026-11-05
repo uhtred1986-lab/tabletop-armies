@@ -1,4 +1,4 @@
-import { bigserial, date, index, integer, jsonb, pgTable, serial, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
+import { bigserial, date, index, integer, jsonb, pgTable, serial, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { gameIdEnum, gameResultEnum } from "./enums";
 
 /** One game played (or being played) at the table. Its state is replayed from `gameEvents` (CLAUDE.md rule 4). */
@@ -28,7 +28,12 @@ export const gameEvents = pgTable(
     seq: integer("seq").notNull(),
     at: timestamp("at", { withTimezone: true }).notNull().defaultNow(),
     kind: text("kind").notNull(),
+    /** UUID for an offline append operation; unique so a replay cannot insert it twice. */
+    operationId: uuid("operation_id"),
     payload: jsonb("payload").notNull().default({}),
   },
-  (t) => [uniqueIndex("game_events_game_seq_uq").on(t.playedGameId, t.seq)],
+  (t) => [
+    uniqueIndex("game_events_game_seq_uq").on(t.playedGameId, t.seq),
+    uniqueIndex("game_events_operation_id_uq").on(t.operationId),
+  ],
 );
