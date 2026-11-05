@@ -1,4 +1,4 @@
-# Muster (tabletop-armies)
+# Tabletop Armies (tabletop-armies)
 
 A private companion app for miniature games: **collection, paint tracker, list builder and table play** for
 Age of Sigmar, Marvel: Crisis Protocol, Star Wars: Legion, Star Wars: Shatterpoint and Batman Miniature Game.
@@ -25,8 +25,8 @@ npm run gate       # typecheck, lint, test (+ -- --build)
 | Plan, scope, data sources, decisions | `docs/product/plan.md`, `docs/TASKS.md` |
 | How agents work in this repo | `CLAUDE.md`, `AGENTS.md`, `docs/agent-brief.md` |
 | UI standard and worlds | `docs/ui-standard.md` |
-| Design system (tokens, worlds, brand book) | `docs/design/system/` — live: [Muster design system](https://claude.ai/artifact/C7vWqwqf7LQgYN5Gu3buh5) |
-| Screen designs | `docs/design/boards/` — live: [Muster – Key Screens](https://claude.ai/artifact/LcVAmp5n8zuhnHKbASQeM2) |
+| Design system (tokens, worlds, brand book) | `docs/design/system/` — live: [Tabletop Armies design system](https://claude.ai/artifact/C7vWqwqf7LQgYN5Gu3buh5) |
+| Screen designs | `docs/design/boards/` — live: [Tabletop Armies – Key Screens](https://claude.ai/artifact/LcVAmp5n8zuhnHKbASQeM2) |
 | Game modules, data model, validation | `docs/architecture/` |
 | Vercel, Neon, environment, first-time setup; sign-in | `docs/architecture/platform.md`; `docs/architecture/auth.md` |
 

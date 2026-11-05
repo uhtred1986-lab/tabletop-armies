@@ -3,6 +3,7 @@ import type { StringKey } from "@/i18n";
 import { getT } from "@/i18n/server";
 import { currentGame } from "@/lib/current-game";
 import { GameSwitcher } from "@/components/GameSwitcher";
+import { SceneBackdrop } from "@/components/SceneBackdrop";
 import { PhaseRail } from "@/components/PhaseRail";
 
 export const dynamic = "force-dynamic";
@@ -14,6 +15,7 @@ export default async function KitPage() {
   const stage: PaintStage = "shaded";
   return (
     <>
+      <SceneBackdrop area="kit" />
       <h1 className="w-display page-title">{t("kit.title")}</h1>
       <GameSwitcher current={game.id} />
       <div className="w-rule" />

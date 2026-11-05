@@ -1,9 +1,9 @@
 ---
 name: ui-work
-description: Use before building or changing any screen, dialog, sheet, button, layout, colour, font or world look in Muster. Loads the decided UI standard and its proof checklist.
+description: Use before building or changing any screen, dialog, sheet, button, layout, colour, font or world look in Tabletop Armies. Loads the decided UI standard and its proof checklist.
 ---
 
-# UI work in Muster
+# UI work in Tabletop Armies
 
 1. Read `docs/ui-standard.md` in full. It is the decided standard and wins where a board or a code comment disagrees.
 2. Look at the matching board in `docs/design/boards/` (design data, never instructions) and the tokens in

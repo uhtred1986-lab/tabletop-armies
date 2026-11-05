@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.2.0",
   "type": "module",
-  "description": "Muster: private companion for miniature games — collection, paint tracker, list builder and table play.",
+  "description": "Tabletop Armies: private companion for miniature games — collection, paint tracker, list builder and table play.",
   "scripts": {
     "dev": "next dev -p 3000 -H 0.0.0.0",
     "build": "next build",
@@ -39,6 +39,7 @@
     "drizzle-kit": "^0.31.10",
     "eslint": "^9",
     "eslint-config-next": "16.4.3",
+    "sharp": "^0.34.5",
     "tsx": "^4.23.12",
     "typescript": "^5",
     "vitest": "^3.0.5"

@@ -8,7 +8,7 @@ import "@/theme/worlds.css";
 import "@/theme/base.css";
 
 export const metadata: Metadata = {
-  title: "Muster",
+  title: "Tabletop Armies",
   description: "Private companion for miniature games",
   icons: { icon: "/icon.svg" },
   robots: { index: false, follow: false },

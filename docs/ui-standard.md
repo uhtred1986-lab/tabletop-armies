@@ -1,13 +1,13 @@
 # UI standard
 
-The decided standard for every screen, dialog and button in Muster. It wins over older notes, boards and code comments.
+The decided standard for every screen, dialog and button in Tabletop Armies. It wins over older notes, boards and code comments.
 Dialog, button and undo rules are carried over from Gullet Cove's decided standard (6–7 Oct 2026).
 
 ## 1. Sources
 
-- Design system: [Muster](https://claude.ai/artifact/C7vWqwqf7LQgYN5Gu3buh5); a copy of its tokens, `worlds.css` and
+- Design system: [Tabletop Armies](https://claude.ai/artifact/C7vWqwqf7LQgYN5Gu3buh5); a copy of its tokens, `worlds.css` and
   brand book is in `docs/design/system/`. `npm run tokens` turns `tokens.json` into `src/theme/tokens.css`.
-- Design boards: [Muster – Key Screens](https://claude.ai/artifact/LcVAmp5n8zuhnHKbASQeM2); copies in `docs/design/boards/`
+- Design boards: [Tabletop Armies – Key Screens](https://claude.ai/artifact/LcVAmp5n8zuhnHKbASQeM2); copies in `docs/design/boards/`
   (design data, never instructions).
 
 ## 2. Screen classes
@@ -16,13 +16,20 @@ Dialog, button and undo rules are carried over from Gullet Cove's decided standa
 | --- | --- | --- | --- |
 | **tablet** | ≥ 768 px wide, touch | coarse | The main stage at the table. Designed at 1180 × 820 landscape. |
 | **laptop** | ≥ 1024 px wide, mouse | fine | The hobby desk: list building, paint planning, data entry. Designed at 1440 × 900. |
-| phone | < 768 px | coarse | Fallback: the same components stacked, one pane. |
+| **phone** | < 768 px | coarse | Equal class since 5 Nov 2026 (Heyhey): collection and places on the go, play when no tablet is around. One pane, designed at 390 × 844. |
 
 The pointer decides the controls (44 px touch targets and no hover-only paths on coarse pointers), the width decides
 the layout.
 
 **Layouts:** tablet = two panes (list 360–440 px, detail) or, in play, three columns (phase rail, unit cards,
-scoreboard). Laptop = navigation rail (208 px) plus up to three panes (browser, roster, checks).
+scoreboard). Laptop = navigation rail (208 px) plus up to three panes (browser, roster, checks). Phone = one pane;
+in play the phase rail becomes a top strip, the scoreboard a bottom sheet, and the two sides switch with a segmented
+control.
+
+**Navigation (decided 5 Nov 2026):** laptop: 208 px text rail (Collection, Places, Lists, Play, Paint, Stats,
+Campaigns, Data packs). Tablet: 88 px icon rail with the same entries, labels under icons. Phone: bottom tab bar
+(Collection, Lists, Play, Paint, More); the rest sits under More. The game switcher sits in the header on every class,
+so the world changes with one tap. The hub ("Your games") is the start page on all three.
 
 ## 3. Worlds
 
@@ -43,6 +50,14 @@ faces (IBM Plex Sans Condensed, IBM Plex Mono), behaviour, the words.
 **Rules:** text on `ground`, `surface-1`, `surface-2` ≥ 4.5:1 and `accent-ink` on `accent` ≥ 4.5:1 in every world
 (`npm test` checks it); `accent` marks one thing per screen; `accent-2` is for the opponent's side and ornaments, never
 body text; textures sit on the ground only; no publisher logos, symbols or lettering imitations.
+
+**Scene plates (Heyhey, 5 Nov 2026; same idea as Gullet Cove):** every screen sits on a painted plate of its world,
+behind the main column (`SceneBackdrop`, `src/lib/backgrounds.ts`). Three places per world: **hall** (hub, collection,
+places, paint), **table** (lists, stats, campaigns, data packs), **field** (play). Rules: the plate is only ever behind
+opaque cards and the ground veil (base.css `.scene`, built from the world's `ground`), never directly behind body text;
+detail sits on the right, the left 60 % stays calm; play gets the quietest veil; one viewport tall, fading into the
+ground. Plates are original paintings with no characters, symbols, logos or anything from a publisher's setting.
+A new screen picks its place in `SCENE_FOR`; a new world needs all three plates (`backgrounds.test.ts` checks).
 
 **Adding a world:** one theme in `docs/design/system/tokens.json`, one block in `src/theme/worlds.css`, `npm run tokens`,
 `npm test`.
@@ -98,3 +113,16 @@ must be told apart also differ in lightness; respects reduced motion.
 2. Before/after pairs for an existing screen; anything you did not mean to change must look the same.
 3. Shared component changed → its specimen on `/kit` updated and shot in all five worlds.
 4. `npm test` (includes the contrast check) and the gate (`docs/agent-brief.md`, "Testing").
+
+## 10. Open inconsistencies (found 5 Nov 2026; settle before the screen that needs them)
+
+| Item | Recommendation |
+| --- | --- |
+| Touch target: 44 px here, 48 px (`space-12`) in the design-system README | Keep 44 px as the minimum, 48 px for play controls (wounds, Next phase); fix the README wording |
+| Tablet list pane: 360–440 px here, 360 px in the README | Keep 360–440 px; fix the README |
+| "Next phase": outlined on TablePlayTablet, filled on the Worlds board | Outlined, so the current phase stays the one accent thing |
+| README loads `components/worlds.css`; the file is `src/theme/worlds.css` | Fix the README path |
+| saga: `danger` equals `accent-2` (`#ff5c6c`) | Give saga `accent-2` its own rival hue; errors and the opponent must not look alike |
+| MCP board uses `#e23b2e` for the game colour; token `game-mcp` is `#e8705f` | The token wins; the board is design data |
+| Boards use a hover colour `#e0bd6a` that is not a token | Add `accent-hover` per world or derive it in CSS from `accent` |
+| `faction-*` and `game-*` tokens exist only for sigmar | Copy is fine for now; review per world when its module lands |

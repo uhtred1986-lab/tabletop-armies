@@ -7,6 +7,7 @@ import { getLocale } from "@/i18n/server";
 import { formatNumber, translator } from "@/i18n";
 import { currentGame } from "@/lib/current-game";
 import { GameSwitcher } from "@/components/GameSwitcher";
+import { SceneBackdrop } from "@/components/SceneBackdrop";
 
 export const dynamic = "force-dynamic";
 
@@ -24,6 +25,7 @@ export default async function HubPage() {
   const counts = new Map(rows.map((r) => [r.gameId, r.models]));
   return (
     <>
+      <SceneBackdrop area="hub" />
       <h1 className="w-display page-title">{t("hub.title")}</h1>
       <GameSwitcher current={game.id} />
       <div className="grid-cards">

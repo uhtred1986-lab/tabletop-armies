@@ -35,8 +35,22 @@ Built so far (`drizzle/0000_init.sql`); the rest arrives with its milestone.
 | `game_events` | id, played_game_id → `played_games` (cascade), seq (unique per game), at, kind, payload — the game log; state is replayed from events, so undo is "delete the highest seq" |
 | `data_packs` | id, game_id, source, source_date, imported_at, content (jsonb) — the catalogue, not owner data |
 
-Planned: per-model paint rows and recipes/paints (M1), photos (M1; Vercel Blob or bytea, see `docs/TASKS.md`),
-overrides (M2). Enums: `game_id`, `paint_stage`, `game_result`.
+Planned (names and key fields; each built in its milestone through skill `data-change`, additive only):
+
+| Table | Key fields | Milestone |
+| --- | --- | --- |
+| `storage_places` | id, name (unique), kind (case, box, shelf, away), sort, notes | M1 |
+| `collection_models` | id, item_id → `collection_items` (cascade), label, place_id → `storage_places` (set null), paint_stage | M1 |
+| `photos` | id, blob_key, item_id or model_id, paint_stage at the time, taken_at, caption | M1 |
+| `pack_assets` | id, pack_id → `data_packs` (cascade), unit_id, kind (card, token), blob_key, source_url, fetched_at — catalogue side, replaced with the pack | M3 |
+| `played_game_sides` | id, played_game_id, side (you, opponent), faction_name, units (jsonb: catalogue id + name) | M5 |
+| `campaigns` / `campaign_games` | id, game_id, kind (generic, path_to_glory), name, notes / campaign_id, played_game_id, order | M8 |
+
+- Storage: `collection_items.storage` (free text today) is retired in M1. A unit's place is derived: one place if all
+  its models share it, "split" otherwise. Assigning a unit sets every model; nothing is stored twice.
+- A model with no place shows "no place", never a guess.
+- Stats (M7) are computed from `played_games` and `game_events`; no stats table.
+- Also planned: overrides (M2). Photo store is decided in M1 (`docs/TASKS.md`).
 
 ## Rules
 

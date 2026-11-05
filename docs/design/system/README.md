@@ -1,6 +1,6 @@
-# Muster
+# Tabletop Armies
 
-Muster is a private companion for miniature-game collectors (Age of Sigmar, Crisis Protocol, Legion, Shatterpoint, Batman MG): it tracks the miniatures you own and how far each is painted, builds lists that are checked against the current Battle Profiles, and runs the game at the table. It is built for a tablet propped beside the board and a laptop at the hobby desk.
+Tabletop Armies is a private companion for miniature-game collectors (Age of Sigmar, Crisis Protocol, Legion, Shatterpoint, Batman MG): it tracks the miniatures you own and how far each is painted, builds lists that are checked against the current Battle Profiles, and runs the game at the table. It is built for a tablet propped beside the board and a laptop at the hobby desk.
 
 ## Principles
 
@@ -49,6 +49,12 @@ Each faction header carries original painterly key art (rat horde in a ruined se
 - Only in faction headers and the collection overview tiles, cropped wide (16:9 or wider).
 - Always under a `ground` scrim from the text side so the title keeps 4.5:1.
 - Never behind stat blocks, lists or ability text.
+
+## Scene plates
+
+Behind every screen sits a painted plate of the current world: hall, table and field, one dark plate each, under a veil
+of the world's `ground`. Calm on the left where panels sit, detail on the right. Prompts: `scripts/generate-backgrounds.mts`;
+processing: `scripts/process-backgrounds.mts`; rules: `docs/ui-standard.md` §3.
 
 ## Worlds: one app, five looks
 

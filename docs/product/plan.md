@@ -1,4 +1,4 @@
-# Muster – plan: data research and app design
+# Tabletop Armies – plan: data research and app design
 
 *Exported from the living plan doc on 5 Nov 2026 ([claude.ai](https://claude.ai/artifact/Qx7A1qcbujGSkdfsN8ELk3)). The
 live doc may move ahead; decisions also land in `docs/TASKS.md`.*
@@ -9,12 +9,12 @@ Complete, current data exists for every Age of Sigmar 4th edition army, but none
 come from GW's free faction packs and points from the quarterly Battle Profiles PDFs; a structured, machine-readable
 copy of both is maintained by the community BSData project.
 
-GW's IP policy bars fan-made apps based on their settings and redistributing copied rules. So Muster is a **private
+GW's IP policy bars fan-made apps based on their settings and redistributing copied rules. So Tabletop Armies is a **private
 companion app** behind the owner's own sign-in — never published or sold — that keeps its rules data in a separate, swappable "data pack"
 (imported from BSData or typed in by the owner) and owns only the collection, paint status, lists and game state.
 
 **Scope (5 Nov 2026):** five games — Age of Sigmar, Marvel: Crisis Protocol, Star Wars: Legion, Star Wars:
-Shatterpoint and Batman Miniature Game. Collection, paint and photos are shared; each game plugs in its own
+Shatterpoint and Batman Miniature Game. Collection, storage places, paint, photos, stats and campaigns are shared; each game plugs in its own
 catalogue, list rules and table-play loop, and wears its own world (look).
 
 ## What data is public (Age of Sigmar)
@@ -38,7 +38,8 @@ Owner's AoS factions: Skaven, Stormcast Eternals, Gloomspite Gitz, Ossiarch Bone
 
 ## Other games
 
-None of the four has an importable community dataset; they start with manual entry from the owner's own cards.
+None of the four has an importable community dataset. The three AMG games get a local importer for AMG's own card
+PDFs, play modes and scenarios (M3); Batman MG starts with manual entry from the owner's own cards.
 
 | | Marvel: Crisis Protocol | Star Wars: Legion | Star Wars: Shatterpoint | Batman Miniature Game |
 | --- | --- | --- | --- | --- |
@@ -49,6 +50,10 @@ None of the four has an importable community dataset; they start with manual ent
 | Table-play state | Stamina, injured side, Power, conditions, crisis VP | Wounds per model, suppression, order tokens, command cards, 6 rounds | Damage → Wounded → Injured, Force pool, struggles, momentum | Stun/injury markers, Effort, Audacity, 3 Resource points per round, 4 rounds |
 | Latest change | Aug 2026 update (≈115 characters' Stamina raised, Peerless) | April 2026 rules and points | May 2026 annual unit update | 3rd edition; official app since 2024 |
 | Where cards live | AMG card PDFs; fan apps (CerebroMCP, Crit! Wild!) | AMG rules page; Legion HQ | AMG unit cards; ShatterpointDB | Compendium PDF; official app |
+
+| Modes (Heyhey, 5 Nov 2026) | Standard play plus every mode and scenario AMG publishes (imported, M3) | Standard plus AMG's modes (M3) | Standard plus every mode and scenario AMG publishes (M3) | Standard |
+
+AoS modes: Matched play, Spearhead, Path to Glory.
 
 To verify before coding validators: MCP Secure/Extract split (3 + 3), Legion rank limits, the 1 000-point standard.
 
@@ -63,18 +68,43 @@ policy and the brands are licensed (Marvel, Lucasfilm, DC). Not legal advice. Co
 - **No public hosting, no app store, no sharing of data packs.** Own device or a private server.
 - **Own data is the owner's:** collection, recipes, photos, lists, logs — free to store and export.
 - **Rules text optional:** stored in full where the import provides it, otherwise an entry field per ability.
-- No publisher trademarks, logos, artwork or lettering imitations in the UI.
+- No publisher trademarks, logos, artwork or lettering imitations in the app's own design (worlds, icons, chrome).
+- **Imported card and token images (Heyhey's decision, 5 Nov 2026; Heyhey accepts the risk):** the AMG importer may keep the
+  card and token images it downloads. They live only in the private Blob store, are shown only after sign-in, sit next
+  to Tabletop Armies' own drawn card, and are never committed, never in a migration, seed, fixture or test, and never shared.
+  Everything else in this section stands.
+- **Importers run on the owner's machine** from URLs the owner lists in a git-ignored config; the repo holds the
+  parser, never the downloaded files. The crawler reads the site's robots.txt and terms first and keeps to a slow rate.
 
 ## Features
 
-1. **Collection** — models per unit (kits, assembled, bases, magnets, storage), unit instances with loadouts, photos,
-   tags, shortfall view ("you need 5 more Vindictors").
-2. **Paint tracker** — Unbuilt → Built → Primed → Base coat → Shaded → Detailed → Based (configurable), recipes reused
-   across units, paint inventory with "running low", progress by faction and points.
-3. **List builder** — per game list shape (see game modules), live points/budget, validation errors and warnings,
-   "build from my collection", lists versioned against the data pack they were built with, text export.
-4. **Table play** — phase-driven: only what is usable *now*; unit cards, round/phase tracker, wounds, resources, VP,
-   once-per toggles, dice helper, undo on every action, local game log that survives a phone lock.
+Competitor survey and the gaps Tabletop Armies fills: `docs/product/competitors.md`. Visual briefing with click-throughs:
+`docs/product/briefing.html` (published privately: [Tabletop Armies Briefing](https://claude.ai/artifact/Ms2DbZ97GLbYtnBomeQsc2)).
+
+1. **Collection** — units per game and faction with models, loadout, tags, photos, shortfall view ("you need 5 more
+   of this unit"). Every model is its own row under the unit, so it can carry its own place, paint stage and photos.
+2. **Storage places** — a list of named places the owner keeps (case, box, shelf, "at the club"; never free text).
+   Assign a whole unit to a place in one tap; split a unit across places down to single models; filter the collection
+   by place ("what's in the green case?"); a model without a place shows as such, never guessed.
+3. **Photos** — on every unit and every model, tagged with the paint stage they were taken at; a unit's timeline.
+4. **Paint tracker** — Unbuilt → Built → Primed → Base coat → Shaded → Detailed → Based (configurable), per model,
+   progress by faction, points and month. No recipes and no paint inventory (dropped by Heyhey, 5 Nov 2026).
+5. **Data packs** — importers for AoS (BSData) and the AMG games (card PDFs, play modes, scenarios, card and token
+   images kept privately); manual entry where no import exists; overrides; a pack is replaced on import.
+6. **List builder** — per game list shape (see game modules), live points/budget, validation errors and warnings,
+   "only what I own", unpainted warnings, lists versioned against their data pack, text export.
+7. **Table play** — phase-driven, **both sides on one tablet**: the opponent's units are picked from the catalogue (or
+   typed) and get the same trackers. Round/phase tracker, wounds, resources, VP, once-per toggles, undo on every
+   action, game log that survives a phone lock, modes and scenarios from the pack.
+8. **Table helpers** — dice roller, damage calculator (attacks against a profile), the owner's own quick reference
+   (rules entered or imported), turn timer.
+9. **Stats and history** — win/loss by game, list, faction, opponent and mode; matchup history; painted per month.
+   Computed from played games and events, never stored.
+10. **Campaigns** — a generic campaign for any game (a series of games, a ladder, notes, per-unit history) and AoS
+    Path to Glory (order of battle, renown, injuries, territories; rules entered or imported by the owner).
+
+Not wanted (Heyhey, 5 Nov 2026), recorded so they are not re-added: paint recipes, paint inventory, wishlist and
+purchases, barcode scan, list QR/share codes, hobby sessions and goals, an opponent's second-device view.
 
 ## Data model
 
@@ -98,25 +128,35 @@ Each game is a module behind one interface (`docs/architecture/game-modules.md`)
 
 ## Roadmap
 
-1. **Collection + paint (MVP).** Game picker for all five games, free-text unit names, counts, paint stages, photos,
-   JSON export.
-2. **Importer + data pack (AoS).** BSData for the owner's factions, name matching, overrides.
-3. **List builder + validation (AoS).**
-4. **Table play (AoS).**
-5. **Offline at the table** (multi-device itself comes from the shared database).
-6. **Game modules, one at a time:** Shatterpoint, then Crisis Protocol, Batman MG, Legion.
-7. **Polish:** second-device opponent view, win/loss stats.
+Milestones with their "done when": `docs/TASKS.md`.
+
+1. **M1 Collection, storage places, photos, paint stages** — all five games; phone, tablet and laptop navigation.
+2. **M2 AoS importer** — BSData, name matching, overrides; Spearhead and Path to Glory data where BSData has it.
+3. **M3 AMG importer** — MCP, Shatterpoint, Legion: card PDFs, play modes and scenarios, private card and token images.
+4. **M4 AoS list builder + validation.**
+5. **M5 AoS table play** — both sides, table helpers, Matched and Spearhead.
+6. **M6 Shatterpoint module** — strike team builder, play loop, AMG modes and scenarios.
+7. **M7 Stats and history.**
+8. **M8 Campaigns** — generic campaign, AoS Path to Glory.
+9. **M9 Offline at the table.**
+10. **M10 Remaining modules** — Crisis Protocol, Batman MG, Legion.
 
 ## Decisions (5 Nov 2026)
 
 - Factions for AoS: Skaven, Stormcast Eternals, Gloomspite Gitz, Ossiarch Bonereapers, Seraphon.
-- Separate tablet and laptop layouts (phone as fallback).
-- Modes: matched play, Spearhead and Path to Glory.
+- **Phone, tablet and laptop are equal screen classes** (replaces "phone as fallback"). Navigation: laptop 208 px text
+  rail, tablet 88 px icon rail, phone bottom tab bar; the game switcher sits in the header everywhere.
+- Modes: AoS matched play, Spearhead, Path to Glory; MCP and Shatterpoint standard plus every AMG mode and scenario.
 - Rules text stored where imported, else optional manual entry.
 - Multi-device: yes, through the shared Neon database.
 - Platform: Vercel + Neon like the other apps.
-- Five games; each its own world (unique look).
-- Open: which factions/affiliations the owner has in the four new games.
+- Five games; each its own world (unique look). After AoS comes Shatterpoint.
+- Storage: named places, never free text; whole unit in one tap, split down to single models.
+- Photos on every unit and every model.
+- Table play tracks both sides on one tablet; opponent units come from the catalogue.
+- AMG importer fetches from listed URLs and crawls play modes and scenarios; card and token images kept privately.
+- New: stats and history, table helpers, campaigns (generic + Path to Glory). Dropped: recipes, paint inventory.
+- Open: which factions/affiliations the owner has in the four new games (decide later; nothing depends on it).
 
 ## Sources
 

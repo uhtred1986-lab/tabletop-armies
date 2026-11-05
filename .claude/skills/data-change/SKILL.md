@@ -1,6 +1,6 @@
 ---
 name: data-change
-description: Use before changing Muster's database schema (src/db/schema/*.ts, drizzle/ migrations), the backup format, the data-pack format or anything that writes the owner's stored data.
+description: Use before changing Tabletop Armies' database schema (src/db/schema/*.ts, drizzle/ migrations), the backup format, the data-pack format or anything that writes the owner's stored data.
 ---
 
 # Changing stored data

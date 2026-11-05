@@ -5,7 +5,7 @@ import { legion } from "./legion";
 import { shatterpoint } from "./shatterpoint";
 import { bmg } from "./bmg";
 
-/** Every game Muster knows, in switcher order. Adding a game: copy src/games/_template and list it here. */
+/** Every game Tabletop Armies knows, in switcher order. Adding a game: copy src/games/_template and list it here. */
 export const games: GameModule[] = [aos, mcp, legion, shatterpoint, bmg];
 
 export const gameById = (id: GameId): GameModule => {

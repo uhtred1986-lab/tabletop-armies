@@ -9,7 +9,7 @@ via Drizzle, Google sign-in.*
 
 ## What this is
 
-Muster is a private companion app for miniature games: Age of Sigmar, Marvel: Crisis Protocol, Star Wars: Legion,
+Tabletop Armies is a private companion app for miniature games: Age of Sigmar, Marvel: Crisis Protocol, Star Wars: Legion,
 Star Wars: Shatterpoint and Batman Miniature Game. It tracks the owner's collection and paint progress, builds lists
 checked against each game's rules, and runs games at the table (tablet) and at the hobby desk (laptop).
 Next.js 16 (App Router, Server Components and Server Functions) on Vercel, Neon Postgres via Drizzle, Vitest. Tablet and
@@ -22,7 +22,9 @@ Not live yet; "production" means the `main` deployment and the Neon `production`
   trademarks from Games Workshop, Atomic Mass Games, Knight Models, Marvel, Lucasfilm or DC. Rules data enters only
   through the owner's import or manual entry and lives in the owner's private Neon database (`data_packs`) or
   git-ignored files (`data/`, `*.pack.json`); never in a migration, seed, fixture or test. Tests use invented units.
-  This is the IP line the whole project rests on (`docs/product/plan.md`, "IP constraints").
+  This is the IP line the whole project rests on (`docs/product/plan.md`, "IP constraints"). One private exception
+  (Heyhey, 5 Nov 2026): card and token images the owner's AMG importer downloads live only in the private Blob store,
+  shown after sign-in, never committed.
 - **Private use only.** The deployment sits on a public Vercel URL behind Google sign-in; only `OWNER_EMAILS` get in.
   `src/proxy.ts` sends everyone else to `/login`; pages and Server Functions ask `src/lib/auth.ts`
   (`requireOwnerPage`/`requireOwner`), never a cookie. Every page, Server Function and route holds on its own
