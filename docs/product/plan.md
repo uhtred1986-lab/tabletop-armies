@@ -69,8 +69,9 @@ policy and the brands are licensed (Marvel, Lucasfilm, DC). Not legal advice. Co
 
 1. **Collection** — models per unit (kits, assembled, bases, magnets, storage), unit instances with loadouts, photos,
    tags, shortfall view ("you need 5 more Vindictors"). **Storage location:** for every figure the owner can say where
-   it is right now (a case, box, shelf or "at the club") and change it in a tap; the collection can be filtered by
-   location ("what's in the Skaven case?") and a figure without a location shows as such, never guessed.
+   it is right now, picked from a list of named places the owner keeps (a case, box, shelf, "at the club"; not free
+   text), and change it in a tap; the collection can be filtered by location ("what's in the Skaven case?") and a
+   figure without a location shows as such, never guessed.
 2. **Paint tracker** — Unbuilt → Built → Primed → Base coat → Shaded → Detailed → Based (configurable), recipes reused
    across units, paint inventory with "running low", progress by faction and points.
 3. **List builder** — per game list shape (see game modules), live points/budget, validation errors and warnings,
@@ -118,7 +119,8 @@ Each game is a module behind one interface (`docs/architecture/game-modules.md`)
 - Multi-device: yes, through the shared Neon database.
 - Platform: Vercel + Neon like the other apps.
 - Five games; each its own world (unique look).
-- Storage location per figure: where it is stored now, editable and filterable (requirement, Heyhey).
+- Storage location per figure: where it is stored now, picked from named places (not free text), editable and
+  filterable (requirement, Heyhey).
 - Open: which factions/affiliations the owner has in the four new games.
 
 ## Sources

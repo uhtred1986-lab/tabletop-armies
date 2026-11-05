@@ -36,7 +36,8 @@ Built so far (`drizzle/0000_init.sql`); the rest arrives with its milestone.
 | `data_packs` | id, game_id, source, source_date, imported_at, content (jsonb) — the catalogue, not owner data |
 
 Storage location is a requirement (`docs/product/plan.md`, Features 1): today `collection_items.storage` is one free
-text per row; whether it becomes per figure and/or a table of named places is open in `docs/TASKS.md` ("To verify").
+text per row. Decided: it becomes a table of named places the owner keeps (not free text), and figures point at one.
+Open: per figure or per collection row (`docs/TASKS.md`, "To verify").
 
 Planned: per-model paint rows and recipes/paints (M1), photos (M1; Vercel Blob or bytea, see `docs/TASKS.md`),
 overrides (M2). Enums: `game_id`, `paint_stage`, `game_result`.

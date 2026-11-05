@@ -31,14 +31,15 @@ The backlog is GitHub issues; this file holds the roadmap order, the decisions a
 - 5 Nov 2026 — Five games: AoS, Crisis Protocol, Legion, Shatterpoint, Batman MG; one module per game.
 - 5 Nov 2026 — Each game is its own world (unique look), Gullet Cove style.
 - 5 Nov 2026 — **Storage location (Heyhey):** Heyhey can say where each figure is currently stored and change it;
-  the collection filters by location. Owner data, part of the JSON export. Shape still open (see "To verify").
+  the collection filters by location. Owner data, part of the JSON export.
+- 5 Nov 2026 — **Storage locations are named places, not free text (Heyhey).** Heyhey keeps a list of places (cases,
+  boxes, shelves); a figure points at one of them or at none. Renaming a place renames it everywhere.
 - 5 Nov 2026 — Working agreement copied from Gullet Cove (CLAUDE.md, AGENTS.md, agent brief, best practices).
 
 ## To verify (never coded as a guess)
 
-- Storage location shape: per figure (one model of a unit can sit in another case) or per collection item with a
-  split? A fixed list of named places Heyhey manages (cases, boxes, shelves) or free text as today's `storage` column?
-  Ask Heyhey before the schema change in M1.
+- Storage location granularity: per figure (one model of a unit can sit in another case) or per collection item,
+  split into two rows when a unit is spread out? Ask Heyhey before the schema change in M1.
 - Photos: Vercel Blob (private store) vs. Neon bytea; Gullet Cove moved to Blob. Decide in M1.
 - Crisis Protocol: Secure/Extract split of the 6 crisis cards (3 + 3?).
 - Legion: rank minimums/maximums and the standard points size after the April 2026 update.
