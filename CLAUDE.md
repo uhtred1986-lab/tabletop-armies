@@ -22,7 +22,9 @@ Not live yet; "production" means the `main` deployment and the Neon `production`
   trademarks from Games Workshop, Atomic Mass Games, Knight Models, Marvel, Lucasfilm or DC. Rules data enters only
   through the owner's import or manual entry and lives in the owner's private Neon database (`data_packs`) or
   git-ignored files (`data/`, `*.pack.json`); never in a migration, seed, fixture or test. Tests use invented units.
-  This is the IP line the whole project rests on (`docs/product/plan.md`, "IP constraints").
+  This is the IP line the whole project rests on (`docs/product/plan.md`, "IP constraints"). One private exception
+  (Heyhey, 5 Nov 2026): card and token images the owner's AMG importer downloads live only in the private Blob store,
+  shown after sign-in, never committed.
 - **Private use only.** The deployment sits on a public Vercel URL behind Google sign-in; only `OWNER_EMAILS` get in.
   `src/proxy.ts` sends everyone else to `/login`; pages and Server Functions ask `src/lib/auth.ts`
   (`requireOwnerPage`/`requireOwner`), never a cookie. Every page, Server Function and route holds on its own

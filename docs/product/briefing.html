@@ -1,0 +1,590 @@
+<title>Muster Briefing</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+Condensed:wght@400;600&family=Limelight&family=Michroma&family=Saira+Stencil+One&family=Spectral+SC:wght@600&display=swap">
+<style>
+/* Layout: one ledger column (max 1120 px); the page wears Muster's own sigmar world, parchment in light, war table in dark.
+   Mocks inside carry their own world tokens (data-world), copied from docs/design/system/tokens.json. */
+:root {
+  --ground: #f4efe4; --surface-1: #fbf8f1; --surface-2: #ebe4d4; --line: #d3c9b3;
+  --ink: #1d1a15; --ink-muted: #5e5647; --accent: #765913; --accent-ink: #fffaf0; --accent-2: #1f6f7d;
+  --ok: #276a3d; --warn: #755400; --danger: #b23a2a;
+  --font-display: "Spectral SC", Georgia, serif;
+  --font-ui: "IBM Plex Sans Condensed", "Arial Narrow", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --ground: #0e1014; --surface-1: #161a20; --surface-2: #1f242c; --line: #2e3540;
+  --ink: #ece4d2; --ink-muted: #a59c8a; --accent: #c9a24c; --accent-ink: #1a1405; --accent-2: #4fb6c8;
+  --ok: #6cc28a; --warn: #e2b64a; --danger: #e8705f; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --ground: #0e1014; --surface-1: #161a20; --surface-2: #1f242c; --line: #2e3540;
+  --ink: #ece4d2; --ink-muted: #a59c8a; --accent: #c9a24c; --accent-ink: #1a1405; --accent-2: #4fb6c8;
+  --ok: #6cc28a; --warn: #e2b64a; --danger: #e8705f; color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { background: var(--ground); color: var(--ink); font: 400 15px/22px var(--font-ui); }
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 32px 64px; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 600; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(30px, 5vw, 40px); line-height: 1.1; }
+h2 { font-size: 26px; line-height: 30px; }
+h3 { font-size: 18px; line-height: 24px; }
+p { margin: 0; max-width: 68ch; }
+.label { font: 600 12px/16px var(--font-ui); text-transform: uppercase; letter-spacing: .08em; color: var(--ink-muted); }
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.rule { height: 1px; background: linear-gradient(90deg, transparent, var(--accent) 20%, var(--accent) 80%, transparent); border: 0; margin: 0; }
+a { color: var(--accent-2); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+header.top { display: grid; gap: 16px; padding-bottom: 24px; }
+.lede { font-size: 17px; line-height: 26px; color: var(--ink); }
+nav.toc { display: flex; flex-wrap: wrap; gap: 8px; }
+nav.toc a { font: 600 13px/18px var(--font-ui); text-decoration: none; color: var(--ink); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; background: var(--surface-1); }
+nav.toc a:hover { border-color: var(--accent); }
+
+section { display: grid; gap: 16px; padding-block: 40px 8px; scroll-margin-top: 16px; }
+.sec-head { display: grid; gap: 6px; }
+.sec-head p { color: var(--ink-muted); }
+
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface-1); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 20px; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font: 600 12px/16px var(--font-ui); text-transform: uppercase; letter-spacing: .06em; color: var(--ink-muted); background: var(--surface-2); white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.c { text-align: center; font-family: var(--font-mono); }
+.y { color: var(--ok); font-weight: 600; } .p { color: var(--warn); font-weight: 600; } .n { color: var(--ink-muted); }
+tr.muster td { background: color-mix(in srgb, var(--accent) 10%, var(--surface-1)); font-weight: 600; }
+
+.grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+.card { background: var(--surface-1); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 600 11px/16px var(--font-ui); text-transform: uppercase; letter-spacing: .06em; border: 1px solid var(--line); border-radius: 4px; padding: 2px 6px; color: var(--ink-muted); background: var(--surface-2); }
+.chip.m { color: var(--ink); border-color: var(--accent); }
+.chip.ok { color: var(--ok); } .chip.warn { color: var(--warn); }
+.card ul, .plain { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+
+.gaps { counter-reset: g; display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); padding: 0; margin: 0; list-style: none; }
+.gaps li { background: var(--surface-1); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 4px; padding: 10px 12px; }
+
+.timeline { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.timeline li { display: grid; grid-template-columns: 56px 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.timeline .mk { font: 600 20px/24px var(--font-mono); color: var(--accent); }
+.timeline .done { color: var(--ink-muted); font-size: 14px; }
+
+.worlds { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+
+.flow { display: grid; gap: 14px; }
+.flow-row { display: grid; gap: 8px; }
+.steps { display: flex; gap: 6px; flex-wrap: wrap; list-style: none; margin: 0; padding: 0; counter-reset: s; }
+.steps li { counter-increment: s; display: flex; align-items: center; gap: 6px; font-size: 14px; background: var(--surface-1); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; }
+.steps li::before { content: counter(s); font: 600 12px/18px var(--font-mono); color: var(--accent-ink); background: var(--accent); border-radius: 999px; width: 18px; text-align: center; }
+.steps li + li { position: relative; }
+
+/* ---------- Click-through ---------- */
+.ct { display: grid; gap: 12px; }
+.ct-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface-1); flex-wrap: wrap; }
+.seg button { font: 600 13px/18px var(--font-ui); color: var(--ink); background: transparent; border: 0; padding: 8px 12px; min-height: 36px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+.feat-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.feat-tabs button { font: 600 13px/18px var(--font-ui); color: var(--ink); background: var(--surface-1); border: 1px solid var(--line); border-radius: 999px; padding: 7px 12px; cursor: pointer; }
+.feat-tabs button[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.ct-main { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr) 260px; align-items: start; }
+@media (max-width: 900px) { .ct-main { grid-template-columns: minmax(0, 1fr); } }
+.ct-side { display: grid; gap: 10px; }
+.ct-side ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; }
+.ct-side ol button { width: 100%; text-align: left; font: 400 14px/20px var(--font-ui); color: var(--ink); background: var(--surface-1); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; cursor: pointer; }
+.ct-side ol button[aria-current="step"] { border-color: var(--accent); box-shadow: inset 3px 0 0 var(--accent); font-weight: 600; }
+.ct-nav { display: flex; gap: 8px; }
+.ct-nav button { flex: 1; font: 600 14px/20px var(--font-ui); min-height: 40px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface-1); color: var(--ink); cursor: pointer; }
+.ct-nav button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.ct-nav button:disabled { opacity: .45; cursor: default; }
+.caption { background: var(--surface-2); border-radius: 8px; padding: 10px 12px; font-size: 14px; line-height: 20px; }
+.stage { overflow: hidden; position: relative; min-width: 0; }
+.stage .mock { transform-origin: top left; position: absolute; top: 0; }
+
+/* Mock world tokens (dark worlds; from tokens.json) */
+.mock[data-world="sigmar"] { --g:#0e1014; --s1:#161a20; --s2:#1f242c; --ln:#2e3540; --ik:#ece4d2; --im:#a59c8a; --ac:#c9a24c; --ai:#1a1405; --a2:#4fb6c8; --ok2:#6cc28a; --wn:#e2b64a; --dg:#e8705f;
+  --fd:"Spectral SC", Georgia, serif; --dc:none; --dt:0; --rc:14px; --rk:8px; --rp:4px; --cc:none; --ck:none; --bw:1px; --fr:inset 0 0 0 1px #3a3220; --tx:none; }
+.mock[data-world="crisis"] { --g:#0f1220; --s1:#181d30; --s2:#232a42; --ln:#3b4466; --ik:#f7f3e8; --im:#b3b7c9; --ac:#f5c518; --ai:#14110a; --a2:#e23b2e; --ok2:#5fd38a; --wn:#ff9f43; --dg:#ff5a4e;
+  --fd:Bangers, Impact, sans-serif; --dc:uppercase; --dt:.03em; --rc:2px; --rk:2px; --rp:0; --cc:none; --ck:polygon(0 0,100% 0,97% 100%,0 100%); --bw:2px; --fr:4px 4px 0 0 #000; --tx:radial-gradient(circle, rgba(245,197,24,.16) 1.2px, transparent 1.4px) 0 0 / 8px 8px; }
+.mock[data-world="legion"] { --g:#12150f; --s1:#1b2018; --s2:#262c22; --ln:#3a4232; --ik:#e3e6d6; --im:#a3a991; --ac:#e8a33c; --ai:#1a1206; --a2:#9fb3c8; --ok2:#8fcf6a; --wn:#e8c547; --dg:#ef7259;
+  --fd:"Saira Stencil One", "Arial Black", sans-serif; --dc:uppercase; --dt:.04em; --rc:0; --rk:0; --rp:0; --cc:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px); --ck:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px); --bw:1px; --fr:inset 0 0 0 1px #3a4232;
+  --tx:repeating-linear-gradient(0deg, rgba(232,163,60,.05) 0 1px, transparent 1px 24px), repeating-linear-gradient(90deg, rgba(232,163,60,.05) 0 1px, transparent 1px 24px); }
+.mock[data-world="saga"] { --g:#06080f; --s1:#0e1220; --s2:#171d30; --ln:#263050; --ik:#e8eefc; --im:#9aa6c4; --ac:#5cc8ff; --ai:#04121c; --a2:#ff5c6c; --ok2:#5fe0a8; --wn:#ffd166; --dg:#ff5c6c;
+  --fd:Michroma, "Eurostile", sans-serif; --dc:uppercase; --dt:.06em; --rc:20px; --rk:999px; --rp:999px; --cc:none; --ck:none; --bw:1px; --fr:0 0 18px 0 rgba(92,200,255,.25);
+  --tx:radial-gradient(1px 1px at 20% 30%, rgba(232,238,252,.5), transparent), radial-gradient(1px 1px at 70% 60%, rgba(232,238,252,.35), transparent), radial-gradient(1.5px 1.5px at 40% 80%, rgba(92,200,255,.5), transparent); }
+.mock[data-world="gotham"] { --g:#0b0b0d; --s1:#141417; --s2:#1d1d22; --ln:#2f2f36; --ik:#ece9e1; --im:#a4a09a; --ac:#f2c230; --ai:#141005; --a2:#7a8aa6; --ok2:#7cc88f; --wn:#f2a33a; --dg:#e5534b;
+  --fd:Limelight, Georgia, serif; --dc:none; --dt:0; --rc:2px; --rk:2px; --rp:2px; --cc:polygon(0 10px,10px 10px,10px 0,calc(100% - 10px) 0,calc(100% - 10px) 10px,100% 10px,100% calc(100% - 10px),calc(100% - 10px) calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,10px calc(100% - 10px),0 calc(100% - 10px)); --ck:none; --bw:1px; --fr:inset 0 1px 0 0 #2f2f36;
+  --tx:repeating-linear-gradient(105deg, rgba(236,233,225,.035) 0 1px, transparent 1px 9px); }
+
+.mock { color: var(--ik); background: var(--tx), var(--g); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; font: 400 14px/20px var(--font-ui); position: relative; display: grid; }
+.mock.phone { width: 360px; height: 680px; grid-template-rows: auto 1fr auto; border-radius: 28px; }
+.mock.tablet { width: 920px; height: 620px; grid-template-columns: 72px 1fr; grid-template-rows: auto 1fr; }
+.mock.laptop { width: 1060px; height: 640px; grid-template-columns: 168px 1fr; grid-template-rows: auto 1fr; border-radius: 10px; }
+.mock .disp { font-family: var(--fd); text-transform: var(--dc); letter-spacing: var(--dt); }
+.mock .lbl { font: 600 11px/14px var(--font-ui); text-transform: uppercase; letter-spacing: .08em; color: var(--im); }
+.mock .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.m-head { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--ln); background: var(--s1); min-width: 0; }
+.mock.tablet .m-head, .mock.laptop .m-head { grid-column: 2; }
+.m-head .t { font-size: 20px; line-height: 24px; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.m-switch { display: flex; gap: 4px; }
+.m-switch span { width: 26px; height: 26px; border-radius: 999px; border: 1px solid var(--ln); display: grid; place-items: center; font: 600 9px/1 var(--font-ui); color: var(--im); }
+.m-switch span.on { border-color: var(--ac); color: var(--ik); }
+.m-switch i { width: 8px; height: 8px; border-radius: 999px; display: block; }
+.m-rail { grid-row: 1 / span 2; background: var(--s1); border-right: 1px solid var(--ln); display: flex; flex-direction: column; gap: 2px; padding: 10px 6px; }
+.m-rail .brand { font-family: var(--fd); color: var(--ac); font-size: 18px; padding: 4px 8px 12px; }
+.m-rail a { display: flex; align-items: center; gap: 8px; color: var(--im); text-decoration: none; font: 600 13px/16px var(--font-ui); padding: 8px; border-radius: var(--rk); }
+.mock.tablet .m-rail a { flex-direction: column; gap: 3px; font-size: 10px; padding: 8px 2px; text-align: center; }
+.m-rail a.on { color: var(--ik); background: var(--s2); }
+.m-rail svg, .m-tabs svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+.m-tabs { display: grid; grid-template-columns: repeat(5, 1fr); border-top: 1px solid var(--ln); background: var(--s1); padding-bottom: 6px; }
+.m-tabs a { display: grid; justify-items: center; gap: 2px; color: var(--im); text-decoration: none; font: 600 10px/12px var(--font-ui); padding: 8px 0 4px; }
+.m-tabs a.on { color: var(--ac); }
+.m-body { overflow: auto; padding: 14px; display: grid; gap: 12px; align-content: start; min-width: 0; }
+.mock.tablet .m-body, .mock.laptop .m-body { grid-column: 2; }
+.panes { display: grid; gap: 12px; align-items: start; min-width: 0; }
+.mock.tablet .panes.two, .mock.laptop .panes.two { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.mock.laptop .panes.three { grid-template-columns: 1fr 1.2fr 0.9fr; }
+.mock.tablet .panes.three { grid-template-columns: 1fr 1.3fr; }
+.mock.tablet .panes.three > :nth-child(3) { grid-column: 1 / -1; }
+.wc { background: var(--s1); border: var(--bw) solid var(--ln); border-radius: var(--rc); clip-path: var(--cc); box-shadow: var(--fr); padding: 12px; display: grid; gap: 8px; min-width: 0; }
+.wc.active { border-color: var(--ac); }
+.wb { font: 600 13px/18px var(--font-ui); border-radius: var(--rk); clip-path: var(--ck); border: 1px solid var(--ln); background: var(--s2); color: var(--ik); padding: 9px 12px; min-height: 40px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+.wb.acc { background: var(--ac); color: var(--ai); border-color: var(--ac); }
+.wb.ghost { background: transparent; }
+.wb.dg { color: var(--dg); }
+.wb.sm { min-height: 32px; padding: 5px 10px; }
+.row { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.row .grow { flex: 1; min-width: 0; }
+.list { display: grid; gap: 0; }
+.list > div { display: flex; align-items: center; gap: 10px; padding: 9px 2px; border-bottom: 1px solid var(--ln); min-width: 0; }
+.list > div:last-child { border-bottom: 0; }
+.pill { font: 600 11px/14px var(--font-ui); border-radius: var(--rp); padding: 3px 8px; border: 1px solid var(--ln); color: var(--im); white-space: nowrap; }
+.pill.ok { color: var(--ok2); border-color: var(--ok2); } .pill.warn { color: var(--wn); border-color: var(--wn); } .pill.dg { color: var(--dg); border-color: var(--dg); } .pill.acc { color: var(--ai); background: var(--ac); border-color: var(--ac); }
+.pill.rival { color: var(--a2); border-color: var(--a2); }
+.dot { width: 8px; height: 8px; border-radius: 999px; background: var(--wn); flex: none; }
+.bar { height: 6px; border-radius: 999px; background: var(--s2); overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--ok2); }
+.stagebar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; width: 110px; }
+.stagebar i { height: 6px; background: var(--s2); border-radius: 2px; }
+.stagebar i.f { background: var(--ok2); }
+.photo { aspect-ratio: 4/3; border-radius: var(--rp); background: repeating-linear-gradient(135deg, rgba(255,255,255,.04) 0 2px, transparent 2px 12px), var(--s2); border: 1px solid var(--ln); display: grid; place-items: end start; padding: 4px; max-width: 100%; }
+.photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 6px; }
+.stats4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+.stats4 div { background: var(--s2); border-radius: var(--rp); text-align: center; padding: 4px; }
+.stats4 b { display: block; font: 600 18px/22px var(--font-mono); }
+.pips { display: flex; gap: 4px; flex-wrap: wrap; }
+.pips i { width: 14px; height: 14px; border-radius: 999px; border: 1px solid var(--ok2); background: var(--ok2); }
+.pips i.x { background: transparent; border-color: var(--ln); }
+.mock[data-world="legion"] .pips i { border-radius: 0; transform: rotate(45deg) scale(.8); }
+.stripe { border-left: 4px solid var(--ac); }
+.stripe.opp { border-left-color: var(--a2); }
+.phases { display: flex; gap: 4px; flex-wrap: wrap; }
+.phases span { font: 600 11px/14px var(--font-ui); text-transform: uppercase; letter-spacing: .06em; padding: 5px 8px; border-radius: var(--rk); border: 1px solid var(--ln); color: var(--im); }
+.phases span.done { opacity: .55; }
+.phases span.now { background: var(--ac); color: var(--ai); border-color: var(--ac); }
+.score { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.score > div { background: var(--s2); border-radius: var(--rp); padding: 8px; text-align: center; }
+.score b { display: block; font: 600 26px/30px var(--font-mono); }
+.sheet { position: absolute; left: 0; right: 0; bottom: 0; background: var(--s1); border-top: 1px solid var(--ac); border-radius: 18px 18px 0 0; padding: 0; display: grid; grid-template-rows: auto 1fr auto; max-height: 72%; box-shadow: 0 -12px 40px rgba(0,0,0,.45); z-index: 3; }
+.mock.laptop .sheet { left: auto; right: 24px; bottom: auto; top: 60px; width: 420px; border-radius: 12px; border: 1px solid var(--ac); max-height: 80%; }
+.mock.tablet .sheet { left: 120px; right: 48px; }
+.sheet .sh-h { display: flex; align-items: center; gap: 8px; padding: 12px 14px; border-bottom: 1px solid var(--ln); }
+.sheet .sh-b { padding: 10px 14px; overflow: auto; display: grid; gap: 8px; }
+.sheet .sh-f { display: flex; gap: 8px; justify-content: flex-end; padding: 10px 14px; border-top: 1px solid var(--ln); }
+.sheet .x { width: 36px; height: 36px; border-radius: 999px; border: 1px solid var(--ln); display: grid; place-items: center; color: var(--im); }
+.scrim { position: absolute; inset: 0; background: rgba(0,0,0,.45); z-index: 2; }
+.toast { position: absolute; left: 50%; transform: translateX(-50%); bottom: 18px; z-index: 4; background: var(--s2); border: 1px solid var(--ac); border-radius: 999px; padding: 8px 8px 8px 14px; display: flex; gap: 10px; align-items: center; white-space: nowrap; box-shadow: 0 6px 20px rgba(0,0,0,.4); }
+.mock.phone .toast { bottom: 76px; }
+.radio { width: 18px; height: 18px; border-radius: 999px; border: 2px solid var(--ln); flex: none; }
+.radio.on { border-color: var(--ac); box-shadow: inset 0 0 0 4px var(--s1); background: var(--ac); }
+.check { width: 18px; height: 18px; border-radius: 4px; border: 2px solid var(--ln); flex: none; display: grid; place-items: center; font-size: 12px; line-height: 1; color: var(--ai); }
+.check.on { background: var(--ac); border-color: var(--ac); }
+.kanban { display: grid; grid-template-columns: repeat(4, minmax(120px, 1fr)); gap: 8px; }
+.mock.phone .kanban { grid-template-columns: repeat(4, 130px); overflow-x: auto; }
+.kanban > div { background: var(--s1); border: 1px solid var(--ln); border-radius: var(--rp); padding: 8px; display: grid; gap: 6px; align-content: start; }
+.kc { background: var(--s2); border-radius: var(--rp); padding: 6px 8px; font-size: 13px; }
+.kc.move { outline: 2px solid var(--ac); }
+.vbars { display: flex; align-items: flex-end; gap: 6px; height: 90px; border-bottom: 1px solid var(--ln); }
+.vbars i { flex: 1; background: var(--ac); border-radius: 3px 3px 0 0; opacity: .85; }
+.cardpair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.mock.phone .cardpair { grid-template-columns: 1fr; }
+.imgslot { min-height: 150px; border: 1px dashed var(--ln); border-radius: var(--rp); display: grid; place-items: center; text-align: center; color: var(--im); padding: 10px; background: repeating-linear-gradient(45deg, rgba(255,255,255,.03) 0 6px, transparent 6px 14px); }
+.dice { display: flex; gap: 6px; flex-wrap: wrap; }
+.dice span { width: 34px; height: 34px; border-radius: 6px; border: 1px solid var(--ln); background: var(--s2); display: grid; place-items: center; font: 600 16px/1 var(--font-mono); }
+.dice span.hit { border-color: var(--ok2); color: var(--ok2); }
+.code { font: 500 12px/18px var(--font-mono); background: var(--s2); border-radius: var(--rp); padding: 8px; white-space: pre-wrap; color: var(--ik); }
+.mock .rule-w { height: 3px; background: linear-gradient(90deg, transparent, var(--ac) 20%, var(--ac) 80%, transparent); }
+
+.spec { border-radius: 14px; overflow: hidden; }
+.spec .mock { width: 100%; height: auto; display: grid; gap: 10px; padding: 14px; border-radius: 14px; }
+.swatches { display: grid; grid-template-columns: repeat(5, 1fr); height: 18px; border-radius: 4px; overflow: hidden; }
+
+.qa { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+.qa .card p { color: var(--ink-muted); font-size: 14px; }
+footer { padding-top: 40px; color: var(--ink-muted); font-size: 13px; }
+@media (prefers-reduced-motion: no-preference) { .mock .wc, .sheet, .toast { transition: border-color .15s; } }
+</style>
+
+<div class="wrap">
+<header class="top">
+  <div class="label">Muster · private companion for miniature games · briefing of 5 Nov 2026</div>
+  <h1>Muster Briefing</h1>
+  <p class="lede">The full plan for Muster: what it does, how it compares with the apps people use today, the order it gets built in, how it looks in each game's world, and how every feature works, step by step. Every unit, place and player name on this page is invented.</p>
+  <hr class="rule">
+  <nav class="toc" aria-label="Sections">
+    <a href="#decisions">Decisions</a><a href="#compare">Compared</a><a href="#features">Features</a><a href="#milestones">Milestones</a><a href="#design">Design</a><a href="#workflows">Workflows</a><a href="#clickthrough">Click-throughs</a><a href="#open">Open questions</a>
+  </nav>
+</header>
+
+<section id="decisions">
+  <div class="sec-head"><div class="label">What changed today</div><h2>Decisions</h2><p>Heyhey decided these in the planning chat. They are written into the plan, the task list and the UI standard.</p></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Topic</th><th>Decision</th></tr></thead>
+    <tbody>
+      <tr><td>Storage</td><td>Named places, never free text. A whole unit goes to a place in one tap; a unit can be split across places down to single models.</td></tr>
+      <tr><td>Photos</td><td>Every unit and every model can have photos, tagged with the paint stage.</td></tr>
+      <tr><td>Devices</td><td>Phone, tablet and laptop are equal. Laptop: text rail. Tablet: icon rail. Phone: bottom tab bar. Game switcher in the header.</td></tr>
+      <tr><td>Table play</td><td>Both sides tracked on one tablet. The opponent's units are picked from the catalogue.</td></tr>
+      <tr><td>New features</td><td>Stats and game history, table helpers, campaigns (generic and AoS Path to Glory).</td></tr>
+      <tr><td>Dropped</td><td>Paint recipes and paint inventory. Also not wanted: wishlist, barcode scan, list QR, hobby sessions, opponent second device.</td></tr>
+      <tr><td>AMG import</td><td>A local importer fetches from URLs Heyhey lists, crawls AMG's play modes and scenarios, and keeps card and token images privately (after sign-in, never in the repo, never shared). Heyhey accepts the IP risk of this one exception.</td></tr>
+      <tr><td>Modes</td><td>AoS: Matched, Spearhead, Path to Glory. Crisis Protocol and Shatterpoint: standard plus every AMG mode and scenario.</td></tr>
+      <tr><td>Order</td><td>Age of Sigmar first, then Shatterpoint, then Crisis Protocol, Batman MG, Legion.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="compare">
+  <div class="sec-head"><div class="label">Survey of existing apps</div><h2>Compared with what exists</h2><p>No app covers more than two of Muster's areas. Each game has its own builder; painting apps never talk to lists or play. Full table with sources: <span class="num">docs/product/competitors.md</span>.</p></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>App</th><th>Games</th><th>Collection</th><th>Places</th><th>Paint</th><th>Lists</th><th>Checks</th><th>Table play</th><th>Stats</th><th>Photos</th></tr></thead>
+    <tbody>
+      <tr><td>Official AoS app</td><td>AoS</td><td class="c n">–</td><td class="c n">–</td><td class="c n">–</td><td class="c y">✓</td><td class="c y">✓</td><td class="c n">–</td><td class="c n">–</td><td class="c n">–</td></tr>
+      <tr><td>Batman MG app</td><td>BMG</td><td class="c n">–</td><td class="c n">–</td><td class="c n">–</td><td class="c y">✓</td><td class="c n">?</td><td class="c p">part</td><td class="c p">part</td><td class="c n">–</td></tr>
+      <tr><td>New Recruit</td><td>AoS +</td><td class="c n">?</td><td class="c n">–</td><td class="c n">–</td><td class="c y">✓</td><td class="c y">✓</td><td class="c n">–</td><td class="c n">–</td><td class="c n">–</td></tr>
+      <tr><td>Tabletop Admiral</td><td>Legion, SWS</td><td class="c n">–</td><td class="c n">–</td><td class="c n">–</td><td class="c y">✓</td><td class="c y">✓</td><td class="c n">–</td><td class="c n">–</td><td class="c n">–</td></tr>
+      <tr><td>Cerebro MCP</td><td>MCP</td><td class="c y">✓</td><td class="c n">–</td><td class="c n">–</td><td class="c y">✓</td><td class="c n">?</td><td class="c y">✓</td><td class="c n">?</td><td class="c n">–</td></tr>
+      <tr><td>ShatterpointDB / ShatterApp</td><td>SWS</td><td class="c n">–</td><td class="c n">–</td><td class="c n">–</td><td class="c y">✓</td><td class="c n">?</td><td class="c p">part</td><td class="c n">–</td><td class="c n">–</td></tr>
+      <tr><td>Tabletop Battles</td><td>AoS, 40k</td><td class="c n">–</td><td class="c n">–</td><td class="c n">–</td><td class="c n">–</td><td class="c n">–</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td></tr>
+      <tr><td>Longshanks / BCP</td><td>events</td><td class="c n">–</td><td class="c n">–</td><td class="c n">–</td><td class="c p">codes</td><td class="c n">–</td><td class="c p">scores</td><td class="c y">✓</td><td class="c n">–</td></tr>
+      <tr><td>Paint apps (Brushrage, Pile of Potential, Paintledger)</td><td>any</td><td class="c p">part</td><td class="c n">–</td><td class="c y">✓</td><td class="c n">–</td><td class="c n">–</td><td class="c n">–</td><td class="c n">–</td><td class="c p">part</td></tr>
+      <tr class="muster"><td>Muster</td><td>all five</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">both sides</td><td class="c y">✓</td><td class="c y">✓</td></tr>
+    </tbody>
+  </table></div>
+  <h3>Gaps Muster fills</h3>
+  <ul class="gaps">
+    <li><b>Storage places</b> per unit and per model. No app found does this.</li>
+    <li><b>Lists that know your shelf:</b> "only what I own", with each unit's paint stage.</li>
+    <li><b>One play engine</b> for five games, both sides on one tablet, undo on every action, a full log.</li>
+    <li><b>Private stats</b> across all games, with no tournament platform or subscription.</li>
+    <li><b>Photos</b> tied to unit, model, paint stage and game.</li>
+    <li><b>Campaigns</b> for any game, plus AoS Path to Glory.</li>
+  </ul>
+  <p class="label">What people complain about elsewhere, and Muster avoids: lists behind a subscription, abandoned apps, card data errors with no way to fix them (Muster has overrides), siloed tools per game.</p>
+</section>
+
+<section id="features">
+  <div class="sec-head"><div class="label">Ten features</div><h2>Feature overview</h2><p>The milestone that brings each feature, the devices it is tuned for, and what exists in the code today.</p></div>
+  <div class="grid" id="featureGrid"></div>
+</section>
+
+<section id="milestones">
+  <div class="sec-head"><div class="label">Build order</div><h2>Milestones</h2><p>Each milestone ends with a test Heyhey can do at the table or desk.</p></div>
+  <ol class="timeline" id="timeline"></ol>
+</section>
+
+<section id="design">
+  <div class="sec-head"><div class="label">Look and feel</div><h2>Design suggestions</h2><p>Each game is a world: the same layout and buttons, its own colours, display face, shapes and ground texture. The swatches below come straight from the design tokens.</p></div>
+  <div class="worlds" id="worldSpecs"></div>
+
+  <h3>Navigation on each device</h3>
+  <div class="grid">
+    <div class="card"><div class="label">Laptop · 1440 × 900</div><p>208 px text rail: Collection, Places, Lists, Play, Paint, Stats, Campaigns, Data packs. Up to three panes beside it. Dialogs are centred.</p></div>
+    <div class="card"><div class="label">Tablet · 1180 × 820</div><p>88 px icon rail with labels under the icons. Two panes, or three columns in play (phases, units of both sides, scoreboard). Dialogs become bottom sheets.</p></div>
+    <div class="card"><div class="label">Phone · 390 × 844</div><p>Bottom tab bar: Collection, Lists, Play, Paint, More. One pane. In play the phases become a top strip, the two sides switch with a segmented control and the scoreboard is a sheet.</p></div>
+  </div>
+
+  <h3>Suggestions for the new features</h3>
+  <div class="grid">
+    <div class="card"><h3>Place picker</h3><p>One bottom sheet for every move: places listed with a count of models, the current one marked, "New place" at the bottom. Picking a place moves the whole unit at once and offers Undo.</p></div>
+    <div class="card"><h3>Split sheet</h3><p>Opens from the unit's place row. A checkbox per model, "Select all", then a place. The unit row then reads "Split · 2 places" in muted ink, never a warning colour, because a split is normal.</p></div>
+    <div class="card"><h3>Two cards side by side</h3><p>Imported AMG units show Muster's own drawn card (numbers in the game's world) next to the imported card image. The image is labelled "Imported · private" with its source and date, so it is never mistaken for Muster's design.</p></div>
+    <div class="card"><h3>Opponent in the same colour logic</h3><p>Your side uses the accent stripe; the opponent uses <span class="num">accent-2</span>. Both get the same trackers. The one accent thing on a play screen stays the current phase.</p></div>
+    <div class="card"><h3>Photos as a timeline</h3><p>A unit's photos read left to right by paint stage, so progress shows at a glance. Model photos sit under the model; the unit shows the newest.</p></div>
+    <div class="card"><h3>Stats that explain themselves</h3><p>Every number names what it counts ("7 games · Shatterpoint · since March"). Tapping it opens the games behind it. Nothing is stored; all of it is counted from the game log.</p></div>
+  </div>
+
+  <h3>Inconsistencies to settle</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Found</th><th>Recommendation</th></tr></thead>
+    <tbody>
+      <tr><td>Touch targets: 44 px in the standard, 48 px in the design README</td><td>44 px minimum, 48 px for play controls</td></tr>
+      <tr><td>"Next phase" outlined on one board, filled on another</td><td>Outlined, so the current phase stays the one accent thing</td></tr>
+      <tr><td>Shatterpoint world: the error colour equals the opponent colour</td><td>Give the opponent its own hue</td></tr>
+      <tr><td>Crisis Protocol board uses a red that is not the game token</td><td>The token wins</td></tr>
+      <tr><td>A hover gold on the boards is not a token</td><td>Add an <span class="num">accent-hover</span> token per world</td></tr>
+      <tr><td>Navigation differs between boards and code</td><td>Decided today: text rail, icon rail, tab bar</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="workflows">
+  <div class="sec-head"><div class="label">Step by step</div><h2>Workflows</h2><p>The shortest path through each feature. The click-throughs below show the same steps as screens.</p></div>
+  <div class="flow" id="flows"></div>
+</section>
+
+<section id="clickthrough">
+  <div class="sec-head"><div class="label">Try it</div><h2>Click-throughs</h2><p>Pick a feature, a device and a world, then step through. These are sketches of the layout and the flow, not finished screens.</p></div>
+  <div class="ct">
+    <div class="feat-tabs" id="featTabs" role="group" aria-label="Feature"></div>
+    <div class="ct-bar">
+      <div class="seg" id="devSeg" role="group" aria-label="Device"></div>
+      <div class="seg" id="worldSeg" role="group" aria-label="World"></div>
+    </div>
+    <div class="ct-main">
+      <div class="stage" id="stage"></div>
+      <aside class="ct-side">
+        <div class="caption" id="caption"></div>
+        <div class="ct-nav"><button type="button" id="prev">← Back</button><button type="button" id="next" class="primary">Next →</button></div>
+        <div class="label">Steps</div>
+        <ol id="stepList"></ol>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section id="open">
+  <div class="sec-head"><div class="label">For Heyhey</div><h2>Open questions</h2><p>None of these blocks the start of M1, except the first.</p></div>
+  <div class="qa">
+    <div class="card"><h3>Photo store</h3><p>Vercel Blob (private) or the database? The recommendation is Blob, like Gullet Cove. Imported card images go to the same place. Needed for M1.</p></div>
+    <div class="card"><h3>AMG site terms</h3><p>Before the crawler runs (M3) its robots.txt and terms are read and noted. Which URLs go into the list is yours to choose.</p></div>
+    <div class="card"><h3>Your factions in the other games</h3><p>Crisis Protocol, Legion, Shatterpoint and Batman MG: decide later. Nothing in the plan waits for it.</p></div>
+    <div class="card"><h3>Path to Glory</h3><p>Which rules you type in by hand and which come from the AoS import. Settled when M8 starts.</p></div>
+    <div class="card"><h3>Place kinds</h3><p>Are case, box, shelf and "away" (club, friend, post) enough as kinds of place, or do you want your own?</p></div>
+    <div class="card"><h3>Paint stages</h3><p>The seven stages are configurable. Do you want different stages per game?</p></div>
+  </div>
+</section>
+
+<footer>Muster · private, behind sign-in. No publisher rules, art or logos on this page; every unit, place and player shown is invented. Source: docs/product/briefing.html.</footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (s) { return document.querySelector(s); };
+  var esc = function (t) { return String(t).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+
+  /* ---------- Features and milestones ---------- */
+  var FEATURES = [
+    { n: "Collection", m: "M1", dev: "all three", st: "Read-only list exists", d: ["Units per game and faction", "One row per model under its unit", "Shortfall: how many models a list still needs"] },
+    { n: "Storage places", m: "M1", dev: "phone first", st: "Planned", d: ["Named places, never free text", "Whole unit in one tap", "Split down to single models", "Filter by place; \"no place\" shown"] },
+    { n: "Photos", m: "M1", dev: "phone first", st: "Planned", d: ["On every unit and model", "Tagged with the paint stage", "Timeline per unit"] },
+    { n: "Paint tracker", m: "M1", dev: "laptop, phone", st: "Stage names exist", d: ["Seven configurable stages per model", "Board by stage", "Progress by faction, points and month"] },
+    { n: "Data packs", m: "M2 · M3", dev: "laptop", st: "Table exists", d: ["AoS from BSData", "AMG cards, modes and scenarios", "Card and token images kept privately", "Overrides for wrong values"] },
+    { n: "List builder", m: "M4", dev: "laptop, tablet", st: "Some checks exist", d: ["Each game's own list shape", "\"Only what I own\" and paint warnings", "Errors and warnings as you build", "Text export"] },
+    { n: "Table play", m: "M5", dev: "tablet first", st: "Phase rail exists", d: ["Both sides on one tablet", "Opponent units from the catalogue", "Undo on every action", "Modes and scenarios from the pack"] },
+    { n: "Table helpers", m: "M5", dev: "tablet, phone", st: "Planned", d: ["Dice roller", "Damage calculator", "Your own quick reference", "Turn timer"] },
+    { n: "Stats and history", m: "M7", dev: "all three", st: "Planned", d: ["Win/loss by game, list, faction, opponent, mode", "Matchup history", "Painted per month"] },
+    { n: "Campaigns", m: "M8", dev: "all three", st: "Planned", d: ["Generic campaign for any game", "AoS Path to Glory roster", "Per-unit history"] }
+  ];
+  $("#featureGrid").innerHTML = FEATURES.map(function (f) {
+    return '<div class="card"><div class="chips"><span class="chip m">' + esc(f.m) + '</span><span class="chip">' + esc(f.dev) + '</span><span class="chip ' + (f.st === "Planned" ? "" : "ok") + '">' + esc(f.st) + '</span></div><h3>' + esc(f.n) + '</h3><ul>' + f.d.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul></div>";
+  }).join("");
+
+  var MILES = [
+    ["M1", "Collection, storage places, photos, paint stages", "Your whole collection is in, every model can be found by its place, the painted-% dashboard is right."],
+    ["M2", "AoS importer", "Stats and points match the current Battle Profiles for your factions."],
+    ["M3", "AMG importer: Crisis Protocol, Shatterpoint, Legion", "One Shatterpoint unit and one MCP character show Muster's card next to the imported image; the modes list matches AMG's site."],
+    ["M4", "AoS list builder and checks", "A known-legal and a known-illegal list pass every rule."],
+    ["M5", "AoS table play with helpers", "A full five-round game, both sides, played and replayed from its log."],
+    ["M6", "Shatterpoint module", "One full game played, with AMG's modes and scenarios."],
+    ["M7", "Stats and history", "The numbers match a hand count of five recorded games."],
+    ["M8", "Campaigns", "A three-game campaign recorded end to end."],
+    ["M9", "Offline at the table", "A game keeps running with no signal and syncs on return."],
+    ["M10", "Crisis Protocol, Batman MG, Legion", "Each module plays one full game."]
+  ];
+  $("#timeline").innerHTML = MILES.map(function (m) {
+    return '<li><span class="mk">' + m[0] + '</span><div><h3>' + esc(m[1]) + '</h3><div class="done">Done when: ' + esc(m[2]) + "</div></div></li>";
+  }).join("");
+
+  /* ---------- Worlds ---------- */
+  var WORLDS = [
+    { id: "sigmar", game: "Age of Sigmar", name: "Mortal Realms", mood: "Gilded ledger on a war table", sw: ["#0e1014", "#161a20", "#c9a24c", "#4fb6c8", "#6cc28a"], phases: ["Hero", "Move", "Shoot", "Fight"] },
+    { id: "crisis", game: "Crisis Protocol", name: "Comic Crisis", mood: "Meanwhile, at the crisis…", sw: ["#0f1220", "#181d30", "#f5c518", "#e23b2e", "#5fd38a"], phases: ["Power", "Activate", "Cleanup"] },
+    { id: "legion", game: "Legion", name: "Frontline", mood: "OPS 03 · GRID 14-B · ROUND 2/6", sw: ["#12150f", "#1b2018", "#e8a33c", "#9fb3c8", "#8fcf6a"], phases: ["Command", "Activate", "End"] },
+    { id: "saga", game: "Shatterpoint", name: "Saga", mood: "A long time ago, at your table…", sw: ["#06080f", "#0e1220", "#5cc8ff", "#ff5c6c", "#5fe0a8"], phases: ["Order", "Activate", "Score"] },
+    { id: "gotham", game: "Batman MG", name: "Gotham Noir", mood: "Round 3 of 4 · it's raining again", sw: ["#0b0b0d", "#141417", "#f2c230", "#7a8aa6", "#7cc88f"], phases: ["Lead", "Plan", "Execute", "Recount"] }
+  ];
+  var W = {}; WORLDS.forEach(function (w) { W[w.id] = w; });
+  $("#worldSpecs").innerHTML = WORLDS.map(function (w) {
+    return '<div class="spec"><div class="mock" data-world="' + w.id + '"><div class="rule-w"></div><div class="disp" style="font-size:22px;line-height:26px">' + esc(w.name) + '</div><div class="lbl">' + esc(w.game) + '</div><div style="font-size:13px;color:var(--im)">' + esc(w.mood) + '</div><div class="swatches">' + w.sw.map(function (c) { return '<i style="background:' + c + '"></i>'; }).join("") + '</div><div class="phases">' + w.phases.map(function (p, i) { return '<span class="' + (i === 1 ? "now" : i === 0 ? "done" : "") + '">' + esc(p) + "</span>"; }).join("") + '</div><div class="wc"><div class="row"><b class="grow">Ember Wardens</b><span class="pill ok">Healthy</span></div><div class="pips"><i></i><i></i><i></i><i class="x"></i></div></div><div class="row"><span class="wb acc">Next</span><span class="wb ghost" style="border-color:var(--a2)">Opponent</span></div></div></div>';
+  }).join("");
+
+  /* ---------- Workflows ---------- */
+  var FLOWS = [
+    ["Collection and places", ["Pick the game", "Add unit: name, models", "Tap Place → pick \"Green case\"", "Split: tick 2 models → \"Shelf 2\"", "Add a photo to a model", "Find it later: Places → Green case"]],
+    ["Paint tracker", ["Open Paint", "Tap a model's stage", "It moves on; Undo for 6 s", "Progress updates by faction and month"]],
+    ["Data import", ["List AMG URLs in the local config", "Run the importer on the laptop", "Review new and changed items", "Use: cards, modes and scenarios appear in the app"]],
+    ["List builder", ["New list: mode and size", "Add units, \"only what I own\"", "Read the checks", "Fix: apply the suggested swap", "Export as text"]],
+    ["Table play", ["Pick your list", "Pick the opponent's faction and units", "Choose mode and scenario", "Play: phases, wounds, VP on both sides", "Undo a mistake", "End game: result goes to history"]],
+    ["Table helpers", ["Open from the play screen", "Roll dice or calculate damage", "Check your own quick reference", "Turn timer runs per side"]],
+    ["Stats", ["Open Stats", "Filter by game or opponent", "Tap a number to see its games"]],
+    ["Campaigns", ["Create: generic or Path to Glory", "Link each game as you play it", "After the game: renown, injuries, notes", "Ladder and roster update"]]
+  ];
+  $("#flows").innerHTML = FLOWS.map(function (f) {
+    return '<div class="flow-row"><h3>' + esc(f[0]) + '</h3><ol class="steps">' + f[1].map(function (s) { return "<li>" + esc(s) + "</li>"; }).join("") + "</ol></div>";
+  }).join("");
+
+  /* ---------- Click-through mocks ---------- */
+  var ICON = {
+    col: '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>',
+    pla: '<svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4-9 4z"/><path d="M3 7v10l9 4 9-4V7"/></svg>',
+    lis: '<svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>',
+    ply: '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1"/><circle cx="15.5" cy="15.5" r="1"/><circle cx="12" cy="12" r="1"/></svg>',
+    pnt: '<svg viewBox="0 0 24 24"><path d="M18 3l3 3-9 9-4 1 1-4z"/><path d="M5 21c2 0 3-1 3-3"/></svg>',
+    sta: '<svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+    cam: '<svg viewBox="0 0 24 24"><path d="M4 4h12l4 4v12H4z"/><path d="M8 12h8M8 16h5"/></svg>',
+    dat: '<svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>',
+    more: '<svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>'
+  };
+  var NAV = [["col", "Collection"], ["pla", "Places"], ["lis", "Lists"], ["ply", "Play"], ["pnt", "Paint"], ["sta", "Stats"], ["cam", "Campaigns"], ["dat", "Data packs"]];
+  var TABS = [["col", "Collection"], ["lis", "Lists"], ["ply", "Play"], ["pnt", "Paint"], ["more", "More"]];
+  var GAMES = [["sigmar", "AoS", "#c9a24c"], ["crisis", "MCP", "#e8705f"], ["legion", "LEG", "#9aa8b8"], ["saga", "SWS", "#6fb7ff"], ["gotham", "BMG", "#b49ae8"]];
+
+  function stagebar(n) { var s = ""; for (var i = 0; i < 7; i++) s += '<i class="' + (i < n ? "f" : "") + '"></i>'; return '<span class="stagebar" aria-label="' + n + ' of 7 stages">' + s + "</span>"; }
+  function pips(on, total) { var s = ""; for (var i = 0; i < total; i++) s += '<i class="' + (i < on ? "" : "x") + '"></i>'; return '<div class="pips">' + s + "</div>"; }
+  function sheet(title, body, foot) { return '<div class="scrim"></div><div class="sheet"><div class="sh-h"><b class="grow disp" style="font-size:17px">' + title + '</b><span class="x" aria-label="Close">✕</span></div><div class="sh-b">' + body + '</div><div class="sh-f">' + foot + "</div></div>"; }
+  function toast(t) { return '<div class="toast"><span>' + t + '</span><span class="wb sm">Undo</span></div>'; }
+
+  var UNITS = [
+    ["Ember Wardens", 10, "Green case", 5, ""], ["Ashfall Lancers", 5, "Split · 2 places", 3, ""], ["Hollow Bell Choir", 3, "Shelf 2", 7, ""],
+    ["Lantern Stalkers", 6, "No place", 1, "warn"], ["Old Iron Herald", 1, "Green case", 6, ""]
+  ];
+  function unitTable(highlight) {
+    return '<div class="wc"><div class="row"><span class="lbl grow">Brass Covenant · 25 models</span><span class="pill">All</span><span class="pill">No place</span></div><div class="list">' + UNITS.map(function (u, i) {
+      return '<div' + (i === highlight ? ' style="background:var(--s2);border-radius:6px"' : "") + '><div class="grow"><b>' + u[0] + '</b><div class="lbl" style="text-transform:none;letter-spacing:0">' + u[1] + ' models · <span style="color:' + (u[4] ? "var(--wn)" : "var(--im)") + '">' + u[2] + "</span></div></div>" + stagebar(u[3]) + "</div>";
+    }).join("") + "</div></div>";
+  }
+  var MODELS = function (places) { return '<div class="list">' + places.map(function (p, i) { return '<div><span class="grow">Model ' + (i + 1) + '</span><span class="pill' + (p === "No place" ? " warn" : "") + '">' + p + "</span></div>"; }).join("") + "</div>"; };
+
+  var FEATS = [
+    { id: "collection", name: "Collection & places", world: "sigmar", nav: "col", title: "Collection", steps: [
+      { t: "Collection", c: "The collection for the current game. Each unit shows its models, its place and its paint stage. \"No place\" is shown, never guessed.", r: function () { return { panes: [unitTable(-1), '<div class="wc"><div class="lbl">By place</div><div class="list"><div><span class="grow">Green case</span><span class="mono">11</span></div><div><span class="grow">Shelf 2</span><span class="mono">5</span></div><div><span class="grow">At the club</span><span class="mono">2</span></div><div><span class="grow" style="color:var(--wn)">No place</span><span class="mono">6</span></div></div><span class="wb acc">+ Add unit</span></div>'], cls: "two" }; } },
+      { t: "Open a unit", c: "Tap a unit. Its models are listed with their own place, stage and photos. The place row sits right at the top.", r: function () { return { panes: [unitTable(1), '<div class="wc active"><div class="disp" style="font-size:20px">Ashfall Lancers</div><div class="row"><span class="lbl grow">Place</span><span class="pill">Split · 2 places</span><span class="wb sm">Move unit</span></div>' + MODELS(["Green case", "Green case", "Green case", "Shelf 2", "Shelf 2"]) + "</div>"], cls: "two" }; } },
+      { t: "Move the whole unit", c: "\"Move unit\" opens the place picker. One tap on a place moves every model, and Undo stays available for a few seconds.", r: function () { return { panes: [unitTable(1), '<div class="wc active"><div class="disp" style="font-size:20px">Ashfall Lancers</div>' + MODELS(["Green case", "Green case", "Green case", "Shelf 2", "Shelf 2"]) + "</div>"], cls: "two", over: sheet("Move Ashfall Lancers", '<div class="list"><div><span class="radio on"></span><span class="grow">Green case</span><span class="mono">11</span></div><div><span class="radio"></span><span class="grow">Shelf 2</span><span class="mono">5</span></div><div><span class="radio"></span><span class="grow">Box A (to paint)</span><span class="mono">0</span></div><div><span class="radio"></span><span class="grow">At the club</span><span class="mono">2</span></div></div><span class="wb ghost">+ New place</span>', '<span class="wb">Cancel</span><span class="wb acc">Move 5 models</span>') }; } },
+      { t: "Split a unit", c: "To split, tick models and pick a place for just those. The unit then reads \"Split · 2 places\", in plain ink because a split is normal.", r: function () { return { panes: [unitTable(1), '<div class="wc active"><div class="disp" style="font-size:20px">Ashfall Lancers</div></div>'], cls: "two", over: sheet("Split Ashfall Lancers", '<div class="row"><span class="check on">✓</span><b class="grow">Select all</b></div><div class="list">' + [1, 1, 0, 0, 0].map(function (on, i) { return '<div><span class="check' + (on ? " on" : "") + '">' + (on ? "✓" : "") + '</span><span class="grow">Model ' + (i + 1) + '</span><span class="pill">Green case</span></div>'; }).join("") + '</div><div class="lbl">Move the 2 ticked to</div><div class="row"><span class="pill acc">Shelf 2</span><span class="pill">Box A</span><span class="pill">At the club</span></div>', '<span class="wb">Cancel</span><span class="wb acc">Move 2 models</span>') }; } },
+      { t: "Add a photo", c: "Photos go on the unit or on a single model, tagged with the paint stage they were taken at. The unit's photos read as a timeline.", r: function () { return { panes: [unitTable(1), '<div class="wc active"><div class="disp" style="font-size:20px">Ashfall Lancers · Model 4</div><div class="row"><span class="lbl grow">Place</span><span class="pill">Shelf 2</span></div><div class="lbl">Photos · timeline</div><div class="photos"><div class="photo"><span class="pill">Built</span></div><div class="photo"><span class="pill">Primed</span></div><div class="photo"><span class="pill ok">Base coat</span></div></div><span class="wb acc">+ Add photo</span></div>'], cls: "two", toast: "Photo added to Model 4 · Base coat" }; } },
+      { t: "Find by place", c: "Places lists everything in one spot, across all five games. This answers \"what do I pack for tonight?\"", nav: "pla", r: function () { return { panes: ['<div class="wc"><div class="list"><div style="background:var(--s2);border-radius:6px"><b class="grow">Green case</b><span class="mono">11</span></div><div><span class="grow">Shelf 2</span><span class="mono">5</span></div><div><span class="grow">Box A (to paint)</span><span class="mono">0</span></div><div><span class="grow">At the club</span><span class="mono">2</span></div></div><span class="wb ghost">+ New place</span></div>', '<div class="wc active"><div class="disp" style="font-size:20px">Green case</div><div class="lbl">11 models · 2 games</div><div class="list"><div><span class="grow">Ember Wardens</span><span class="mono">5 of 10</span></div><div><span class="grow">Ashfall Lancers</span><span class="mono">3 of 5</span></div><div><span class="grow">Old Iron Herald</span><span class="mono">1 of 1</span></div><div><span class="grow">Captain Vel (Shatterpoint)</span><span class="mono">2 of 2</span></div></div></div>'], cls: "two" }; } }
+    ]},
+    { id: "paint", name: "Paint tracker", world: "sigmar", nav: "pnt", title: "Paint", steps: [
+      { t: "Board by stage", c: "Models sit in columns by stage. No recipes and no paint stock: just where each model stands.", r: function () { return { panes: [kanban(-1)] }; } },
+      { t: "Move a model on", c: "Tap a model's next stage, or drag it on a laptop. It moves at once, with Undo.", r: function () { return { panes: [kanban(1)], toast: "Ember Wardens · Model 3 → Shaded" }; } },
+      { t: "Progress", c: "Painted share by faction and points, and models painted per month. All of it is counted, nothing is stored.", r: function () { return { panes: ['<div class="wc"><div class="lbl">Brass Covenant</div><div class="row"><b class="mono grow" style="font-size:26px">62%</b><span class="lbl">table-ready</span></div><div class="bar"><i style="width:62%"></i></div><div class="lbl">Moss Hollow</div><div class="row"><b class="mono grow" style="font-size:26px">31%</b></div><div class="bar"><i style="width:31%"></i></div></div>', '<div class="wc"><div class="lbl">Models painted per month</div><div class="vbars"><i style="height:30%"></i><i style="height:55%"></i><i style="height:20%"></i><i style="height:80%"></i><i style="height:65%"></i><i style="height:40%"></i></div><div class="row lbl"><span class="grow">Jun</span><span>Nov</span></div></div>'], cls: "two" }; } }
+    ]},
+    { id: "import", name: "Data import", world: "saga", nav: "dat", title: "Data packs", steps: [
+      { t: "Your sources", c: "You list the AMG pages to read in a config file on your laptop that is never committed. The importer runs there, slowly, after checking the site's rules for crawlers.", r: function () { return { panes: ['<div class="wc"><div class="lbl">Sources · Shatterpoint</div><div class="list"><div><span class="grow">Unit cards (PDF)</span><span class="pill ok">Read 2 Nov</span></div><div><span class="grow">Play modes and scenarios</span><span class="pill ok">Read 2 Nov</span></div><div><span class="grow">Rules update</span><span class="pill warn">Changed since</span></div></div></div>', '<div class="wc"><div class="lbl">Run on your laptop</div><div class="code">npm run import:amg -- shatterpoint\n✓ robots.txt allows /play-modes\n✓ 3 sources · 1 changed\n→ data/shatterpoint.pack.json</div></div>'], cls: "two" }; } },
+      { t: "Review the import", c: "Before a pack replaces the old one you see what is new, changed and missing. Nothing you own is touched.", r: function () { return { panes: ['<div class="wc"><div class="row"><span class="disp grow" style="font-size:18px">New pack</span><span class="lbl">2 Nov 2026</span></div><div class="list"><div><span class="grow">Units</span><span class="mono">+4 · 12 changed</span></div><div><span class="grow">Card images</span><span class="mono">96</span></div><div><span class="grow">Tokens</span><span class="mono">31</span></div><div><span class="grow">Modes and scenarios</span><span class="mono">+1</span></div><div><span class="grow" style="color:var(--wn)">No image found</span><span class="mono">2</span></div></div><div class="row"><span class="wb">Show changes</span><span class="wb acc">Use this pack</span></div></div>'] }; } },
+      { t: "Two cards side by side", c: "Muster's own card, drawn in the game's world, next to the imported image. The image is labelled private, with its source and date.", r: function () { return { panes: ['<div class="cardpair"><div class="wc active"><div class="disp" style="font-size:18px">Captain Vel</div><div class="lbl">Primary · 7 SP</div><div class="stats4"><div><b>9</b><span class="lbl">Force</span></div><div><b>5</b><span class="lbl">Dur</span></div><div><b>3</b><span class="lbl">Stam</span></div><div><b>2</b><span class="lbl">Def</span></div></div><div style="font-size:13px;color:var(--im)">Abilities one tap away.</div></div><div class="wc"><div class="imgslot">Imported card image<br><span class="lbl">Imported · private · source AMG · 2 Nov</span></div></div></div>'] }; } },
+      { t: "Modes and scenarios", c: "Modes and scenarios read from AMG's play pages become choices when you set up a game.", r: function () { return { panes: ['<div class="wc"><div class="lbl">Play modes</div><div class="list"><div><span class="radio on"></span><span class="grow">Standard</span></div><div><span class="radio"></span><span class="grow">Mode from AMG\'s site</span><span class="pill">imported</span></div></div><div class="lbl">Scenarios</div><div class="list"><div><span class="grow">Scenario A</span><span class="pill">imported</span></div><div><span class="grow">Scenario B</span><span class="pill">imported</span></div></div></div>'] }; } }
+    ]},
+    { id: "lists", name: "List builder", world: "sigmar", nav: "lis", title: "New list", steps: [
+      { t: "Start a list", c: "Pick the mode and the size. The list shape comes from the game module (regiments in AoS, squads in Shatterpoint).", r: function () { return { panes: ['<div class="wc"><div class="lbl">Mode</div><div class="row"><span class="pill acc">Matched</span><span class="pill">Spearhead</span><span class="pill">Path to Glory</span></div><div class="lbl">Size</div><div class="row"><span class="pill">1 000</span><span class="pill acc">2 000</span></div><span class="wb acc">Start</span></div>'] }; } },
+      { t: "Add from your shelf", c: "\"Only what I own\" hides what you don't have. An amber dot marks unpainted units.", r: function () { return { panes: [roster(1970), '<div class="wc"><div class="row"><span class="lbl grow">Add to regiment 2</span><span class="check on">✓</span><span class="lbl">Only what I own</span></div><div class="list"><div><span class="grow">Ember Wardens</span><span class="mono">own 10</span><span class="wb sm">+</span></div><div><span class="dot"></span><span class="grow">Lantern Stalkers</span><span class="mono">own 6</span><span class="wb sm">+</span></div><div style="opacity:.55"><span class="grow">Iron Choir</span><span class="mono">own 0</span></div></div></div>'], cls: "two" }; } },
+      { t: "Read the checks", c: "Checks update as you build. An error names the fix in the rulebook's own words.", r: function () { return { panes: [roster(2030), checks(true)], cls: "two" }; } },
+      { t: "Fix and export", c: "Apply the suggested swap. The list is legal; export it as text.", r: function () { return { panes: [roster(1990), checks(false)], cls: "two", toast: "Swapped: Ashfall Lancers → Ember Wardens" }; } }
+    ]},
+    { id: "play", name: "Table play", world: "sigmar", nav: "ply", title: "Battle round 3", steps: [
+      { t: "Set up both sides", c: "Your list, then the opponent's faction and units, picked from the catalogue. Then the mode and the scenario.", r: function () { return { panes: ['<div class="wc stripe"><div class="lbl">You</div><b>Brass Covenant · 1 990</b><div style="font-size:13px;color:var(--im)">from list "Tuesday 2k"</div></div>', '<div class="wc stripe opp"><div class="lbl">Opponent · Robin</div><b>Moss Hollow</b><div class="list"><div><span class="grow">Fungal Riders</span><span class="wb sm">+</span></div><div><span class="grow">Night Lurkers</span><span class="pill">added</span></div><div><span class="grow">Bog Warden</span><span class="pill">added</span></div></div></div>'], cls: "two" }; } },
+      { t: "Play: both sides", c: "Phases on the left, both armies in the middle, the score on the right. The current phase is the one accent thing.", r: function () { return { panes: playPanes(5), cls: "three" }; } },
+      { t: "Wound and undo", c: "A wound acts at once. A mis-tap is one Undo away; the log keeps every step.", r: function () { return { panes: playPanes(4), cls: "three", toast: "1 wound on Night Lurkers" }; } },
+      { t: "Score and end", c: "VP and CP for both sides by round. \"End game\" asks once, then saves the result to the history.", r: function () { return { panes: playPanes(4), cls: "three", over: sheet("End this game?", '<div class="score"><div><span class="lbl">You</span><b>14</b></div><div><span class="lbl">Robin</span><b style="color:var(--a2)">11</b></div></div><div style="font-size:13px;color:var(--im)">The game, both lists and the log go to your history.</div>', '<span class="wb">Keep playing</span><span class="wb acc">End and save</span>') }; } }
+    ]},
+    { id: "helpers", name: "Table helpers", world: "crisis", nav: "ply", title: "Helpers", steps: [
+      { t: "Dice roller", c: "Roll a pool and see the successes at once. Rolls are logged with the game.", r: function () { return { panes: ['<div class="wc"><div class="row"><span class="lbl grow">8 dice · hit on 4+</span><span class="wb acc sm">Roll</span></div><div class="dice">' + [6, 2, 4, 5, 1, 4, 3, 6].map(function (d) { return '<span class="' + (d >= 4 ? "hit" : "") + '">' + d + "</span>"; }).join("") + '</div><div class="row"><b class="mono" style="font-size:22px">5</b><span class="lbl">successes</span></div></div>'] }; } },
+      { t: "Damage calculator", c: "Attacks against a target's profile give the expected damage, so you can choose the better attack.", r: function () { return { panes: ['<div class="wc"><div class="lbl">Attack</div><div class="stats4"><div><b>8</b><span class="lbl">Dice</span></div><div><b>4+</b><span class="lbl">Hit</span></div><div><b>3</b><span class="lbl">Def</span></div><div><b>2</b><span class="lbl">Dmg</span></div></div><div class="row"><span class="lbl grow">Expected damage</span><b class="mono" style="font-size:26px">4.7</b></div></div>'] }; } },
+      { t: "Your quick reference and timer", c: "Rules you typed or imported, searchable. A turn timer runs per side.", r: function () { return { panes: ['<div class="wc"><div class="lbl">Quick reference</div><div class="list"><div><span class="grow">Cover</span><span class="pill">your note</span></div><div><span class="grow">Conditions</span><span class="pill">imported</span></div></div></div>', '<div class="wc"><div class="lbl">Turn timer</div><div class="score"><div><span class="lbl">You</span><b>04:12</b></div><div><span class="lbl">Robin</span><b style="color:var(--a2)">03:40</b></div></div></div>'], cls: "two" }; } }
+    ]},
+    { id: "stats", name: "Stats", world: "legion", nav: "sta", title: "Stats", steps: [
+      { t: "Overview", c: "Wins and losses per game. Each number says what it counts.", r: function () { return { panes: ['<div class="wc"><div class="list"><div><span class="grow">Age of Sigmar</span><span class="mono">7–3</span><div class="bar" style="width:80px"><i style="width:70%"></i></div></div><div><span class="grow">Shatterpoint</span><span class="mono">4–4</span><div class="bar" style="width:80px"><i style="width:50%"></i></div></div><div><span class="grow">Crisis Protocol</span><span class="mono">1–2</span><div class="bar" style="width:80px"><i style="width:33%"></i></div></div></div><div class="lbl">21 games · since March</div></div>'] }; } },
+      { t: "Matchups", c: "Results by opponent and their faction. Tap a row to see the games behind it.", r: function () { return { panes: ['<div class="wc"><div class="lbl">Age of Sigmar · by opponent</div><div class="list"><div><span class="grow">Robin · Moss Hollow</span><span class="mono">3–1</span></div><div><span class="grow">Sam · Bone Phalanx</span><span class="mono">2–2</span></div><div><span class="grow">Club night (various)</span><span class="mono">2–0</span></div></div></div>'] }; } },
+      { t: "Lists and modes", c: "Which of your lists win, per mode. All counted from the game log.", r: function () { return { panes: ['<div class="wc"><div class="list"><div><span class="grow">Tuesday 2k · Matched</span><span class="mono">5–1</span></div><div><span class="grow">Spearhead box</span><span class="mono">2–2</span></div></div></div>'] }; } }
+    ]},
+    { id: "campaign", name: "Campaigns", world: "gotham", nav: "cam", title: "Campaigns", steps: [
+      { t: "Your campaigns", c: "A generic campaign for any game, or AoS Path to Glory with its own roster.", r: function () { return { panes: ['<div class="wc"><div class="list"><div><b class="grow">Winter ladder</b><span class="pill">Generic · BMG</span></div><div><b class="grow">The Ember Road</b><span class="pill">Path to Glory</span></div></div><span class="wb acc">+ New campaign</span></div>'] }; } },
+      { t: "Roster", c: "Path to Glory: order of battle, renown and injuries per unit. Rules come from your own entry or the import.", r: function () { return { panes: ['<div class="wc"><div class="disp" style="font-size:20px">The Ember Road</div><div class="list"><div><span class="grow">Ember Wardens</span><span class="mono">Renown 3</span></div><div><span class="grow">Old Iron Herald</span><span class="mono">Renown 5</span><span class="pill warn">Injured</span></div></div><div class="lbl">Game 3 of 6</div></div>'] }; } },
+      { t: "After a game", c: "The finished game links to the campaign. You add renown, injuries and a note; the ladder updates.", r: function () { return { panes: ['<div class="wc"><div class="disp" style="font-size:20px">The Ember Road</div></div>'], over: sheet("After game 3", '<div class="list"><div><span class="grow">Ember Wardens</span><span class="wb sm">+1 renown</span></div><div><span class="grow">Old Iron Herald</span><span class="wb sm">Injury</span></div></div><div class="lbl">Note</div><div class="code">Held the bridge in the rain.</div>', '<span class="wb">Cancel</span><span class="wb acc">Save to campaign</span>') }; } }
+    ]}
+  ];
+
+  function kanban(moving) {
+    var cols = [["Built", ["Lantern Stalkers ×4", "Ember Wardens · M7"]], ["Primed", ["Ember Wardens · M3", "Ashfall Lancers ×2"]], ["Shaded", ["Hollow Bell Choir ×3"]], ["Based", ["Old Iron Herald", "Ember Wardens ×5"]]];
+    if (moving === 1) { cols[1][1] = ["Ashfall Lancers ×2"]; cols[2][1] = ["Ember Wardens · M3", "Hollow Bell Choir ×3"]; }
+    return '<div class="kanban">' + cols.map(function (c, ci) { return '<div><div class="lbl">' + c[0] + "</div>" + c[1].map(function (k, ki) { return '<div class="kc' + (moving === 1 && ci === 2 && ki === 0 ? " move" : "") + '">' + k + "</div>"; }).join("") + "</div>"; }).join("") + "</div>";
+  }
+  function roster(pts) {
+    var over = pts > 2000;
+    return '<div class="wc"><div class="row"><span class="disp grow" style="font-size:18px">Tuesday 2k</span><b class="mono" style="font-size:20px;color:' + (over ? "var(--dg)" : "var(--ac)") + '">' + pts.toLocaleString("en").replace(",", " ") + ' / 2 000</b></div><div class="lbl">Regiment 1</div><div class="list"><div><span class="grow">Old Iron Herald · General</span></div><div><span class="grow">Ember Wardens ×10</span></div></div><div class="lbl">Regiment 2</div><div class="list"><div><span class="grow">' + (pts === 1990 ? "Ember Wardens ×10" : "Ashfall Lancers ×5") + "</span></div></div></div>";
+  }
+  function checks(err) {
+    return '<div class="wc"><div class="lbl">Checks</div>' + (err ? '<div class="row"><span class="pill dg">Error</span><span class="grow">Over by 30 pts. Remove 30 pts or raise the battle size.</span></div><span class="wb acc sm">Apply swap: Lancers → Wardens</span>' : '<div class="row"><span class="pill ok">Legal</span><span class="grow">Every check passes.</span></div>') + '<div class="row"><span class="pill warn">Warning</span><span class="grow">Lantern Stalkers are unpainted.</span></div>' + (err ? "" : '<span class="wb">Export as text</span>') + "</div>";
+  }
+  function playPanes(lurkers) {
+    var w = W[state.world];
+    var ph = '<div class="wc"><div class="lbl">Round 3 of 5</div><div class="phases" style="flex-direction:column">' + w.phases.map(function (p, i) { return '<span class="' + (i < 1 ? "done" : i === 1 ? "now" : "") + '">' + p + "</span>"; }).join("") + '</div><span class="wb ghost">Next phase →</span></div>';
+    var units = '<div class="wc stripe"><div class="row"><b class="grow">Ember Wardens</b><span class="pill ok">Healthy</span></div>' + pips(10, 10) + '</div><div class="wc stripe opp"><div class="row"><b class="grow">Night Lurkers</b><span class="pill rival">Robin</span></div>' + pips(lurkers, 5) + '<div class="row"><span class="wb sm">−</span><span class="wb sm">+</span></div></div>';
+    var score = '<div class="wc"><div class="score"><div><span class="lbl">You VP</span><b>14</b></div><div><span class="lbl">Robin VP</span><b style="color:var(--a2)">11</b></div><div><span class="lbl">CP</span><b>2</b></div><div><span class="lbl">CP</span><b style="color:var(--a2)">1</b></div></div><span class="wb">Dice · Damage · Timer</span></div>';
+    return state.device === "phone" ? ['<div class="phases">' + w.phases.map(function (p, i) { return '<span class="' + (i < 1 ? "done" : i === 1 ? "now" : "") + '">' + p + "</span>"; }).join("") + '</div><div class="row"><span class="pill acc">Both</span><span class="pill">You</span><span class="pill rival">Robin</span></div>', units, score] : [ph, '<div style="display:grid;gap:10px">' + units + "</div>", score];
+  }
+
+  var state = { feat: 0, step: 0, device: "tablet", world: "sigmar" };
+  try { var saved = JSON.parse(localStorage.getItem("muster-briefing") || "{}"); if (saved.device) state.device = saved.device; } catch (e) {}
+
+  function frame(f, s, out) {
+    var d = state.device, navId = s.nav || f.nav;
+    var head = '<div class="m-head"><span class="t disp">' + esc(s.title || f.title) + '</span><span class="m-switch">' + GAMES.map(function (g) { return '<span class="' + (g[0] === state.world ? "on" : "") + '" title="' + g[1] + '"><i style="background:' + g[2] + '"></i></span>'; }).join("") + "</span></div>";
+    var rail = d === "phone" ? "" : '<nav class="m-rail">' + (d === "laptop" ? '<div class="brand">Muster</div>' : '<div class="brand" style="text-align:center;padding-inline:0">M</div>') + NAV.map(function (n) { return '<a class="' + (n[0] === navId ? "on" : "") + '">' + ICON[n[0]] + "<span>" + n[1] + "</span></a>"; }).join("") + "</nav>";
+    var tabs = d === "phone" ? '<nav class="m-tabs">' + TABS.map(function (n) { var on = n[0] === navId || (n[0] === "more" && ["pla", "sta", "cam", "dat"].indexOf(navId) >= 0); return '<a class="' + (on ? "on" : "") + '">' + ICON[n[0]] + "<span>" + n[1] + "</span></a>"; }).join("") + "</nav>" : "";
+    var body = '<div class="m-body"><div class="panes ' + (out.cls || "") + '">' + out.panes.join("") + "</div></div>";
+    return '<div class="mock ' + d + '" data-world="' + state.world + '" role="img" aria-label="' + esc(f.name + ", step " + (state.step + 1) + ": " + s.t + ", " + d) + '">' + rail + head + body + tabs + (out.over || "") + (out.toast ? toast(out.toast) : "") + "</div>";
+  }
+
+  function render() {
+    var f = FEATS[state.feat], s = f.steps[state.step];
+    $("#featTabs").innerHTML = FEATS.map(function (x, i) { return '<button type="button" data-feat="' + i + '" aria-pressed="' + (i === state.feat) + '">' + esc(x.name) + "</button>"; }).join("");
+    $("#devSeg").innerHTML = ["phone", "tablet", "laptop"].map(function (x) { return '<button type="button" data-dev="' + x + '" aria-pressed="' + (x === state.device) + '">' + x[0].toUpperCase() + x.slice(1) + "</button>"; }).join("");
+    $("#worldSeg").innerHTML = WORLDS.map(function (w) { return '<button type="button" data-world="' + w.id + '" aria-pressed="' + (w.id === state.world) + '">' + esc(w.game) + "</button>"; }).join("");
+    $("#stage").innerHTML = frame(f, s, s.r());
+    $("#caption").innerHTML = "<b>" + (state.step + 1) + " / " + f.steps.length + " · " + esc(s.t) + "</b><br>" + esc(s.c);
+    $("#stepList").innerHTML = f.steps.map(function (x, i) { return '<li><button type="button" data-step="' + i + '"' + (i === state.step ? ' aria-current="step"' : "") + ">" + (i + 1) + ". " + esc(x.t) + "</button></li>"; }).join("");
+    $("#prev").disabled = state.step === 0 && state.feat === 0;
+    fit();
+    $("#next").textContent = state.step < f.steps.length - 1 ? "Next →" : (state.feat < FEATS.length - 1 ? "Next feature →" : "Back to start");
+  }
+  function fit() {
+    var st = $("#stage"), m = st.firstElementChild; if (!m) return;
+    m.style.transform = "none";
+    var sc = Math.min(1, st.clientWidth / m.offsetWidth);
+    m.style.transform = "scale(" + sc + ")";
+    m.style.left = Math.max(0, (st.clientWidth - m.offsetWidth * sc) / 2) + "px";
+    st.style.height = Math.ceil(m.offsetHeight * sc) + "px";
+  }
+  window.addEventListener("resize", fit);
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    if (b.dataset.feat) { state.feat = +b.dataset.feat; state.step = 0; state.world = FEATS[state.feat].world; }
+    else if (b.dataset.dev) { state.device = b.dataset.dev; try { localStorage.setItem("muster-briefing", JSON.stringify({ device: state.device })); } catch (er) {} }
+    else if (b.dataset.world && b.closest("#worldSeg")) { state.world = b.dataset.world; }
+    else if (b.dataset.step) { state.step = +b.dataset.step; }
+    else if (b.id === "next") { var f = FEATS[state.feat]; if (state.step < f.steps.length - 1) state.step++; else { state.feat = (state.feat + 1) % FEATS.length; state.step = 0; state.world = FEATS[state.feat].world; } }
+    else if (b.id === "prev") { if (state.step > 0) state.step--; else if (state.feat > 0) { state.feat--; state.step = FEATS[state.feat].steps.length - 1; state.world = FEATS[state.feat].world; } }
+    else return;
+    render();
+  });
+  try { if (window.innerWidth < 700 && !JSON.parse(localStorage.getItem("muster-briefing") || "{}").device) state.device = "phone"; } catch (e) { if (window.innerWidth < 700) state.device = "phone"; }
+  render();
+})();
+</script>

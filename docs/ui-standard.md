@@ -16,13 +16,20 @@ Dialog, button and undo rules are carried over from Gullet Cove's decided standa
 | --- | --- | --- | --- |
 | **tablet** | ≥ 768 px wide, touch | coarse | The main stage at the table. Designed at 1180 × 820 landscape. |
 | **laptop** | ≥ 1024 px wide, mouse | fine | The hobby desk: list building, paint planning, data entry. Designed at 1440 × 900. |
-| phone | < 768 px | coarse | Fallback: the same components stacked, one pane. |
+| **phone** | < 768 px | coarse | Equal class since 5 Nov 2026 (Heyhey): collection and places on the go, play when no tablet is around. One pane, designed at 390 × 844. |
 
 The pointer decides the controls (44 px touch targets and no hover-only paths on coarse pointers), the width decides
 the layout.
 
 **Layouts:** tablet = two panes (list 360–440 px, detail) or, in play, three columns (phase rail, unit cards,
-scoreboard). Laptop = navigation rail (208 px) plus up to three panes (browser, roster, checks).
+scoreboard). Laptop = navigation rail (208 px) plus up to three panes (browser, roster, checks). Phone = one pane;
+in play the phase rail becomes a top strip, the scoreboard a bottom sheet, and the two sides switch with a segmented
+control.
+
+**Navigation (decided 5 Nov 2026):** laptop: 208 px text rail (Collection, Places, Lists, Play, Paint, Stats,
+Campaigns, Data packs). Tablet: 88 px icon rail with the same entries, labels under icons. Phone: bottom tab bar
+(Collection, Lists, Play, Paint, More); the rest sits under More. The game switcher sits in the header on every class,
+so the world changes with one tap. The hub ("Your games") is the start page on all three.
 
 ## 3. Worlds
 
@@ -98,3 +105,16 @@ must be told apart also differ in lightness; respects reduced motion.
 2. Before/after pairs for an existing screen; anything you did not mean to change must look the same.
 3. Shared component changed → its specimen on `/kit` updated and shot in all five worlds.
 4. `npm test` (includes the contrast check) and the gate (`docs/agent-brief.md`, "Testing").
+
+## 10. Open inconsistencies (found 5 Nov 2026; settle before the screen that needs them)
+
+| Item | Recommendation |
+| --- | --- |
+| Touch target: 44 px here, 48 px (`space-12`) in the design-system README | Keep 44 px as the minimum, 48 px for play controls (wounds, Next phase); fix the README wording |
+| Tablet list pane: 360–440 px here, 360 px in the README | Keep 360–440 px; fix the README |
+| "Next phase": outlined on TablePlayTablet, filled on the Worlds board | Outlined, so the current phase stays the one accent thing |
+| README loads `components/worlds.css`; the file is `src/theme/worlds.css` | Fix the README path |
+| saga: `danger` equals `accent-2` (`#ff5c6c`) | Give saga `accent-2` its own rival hue; errors and the opponent must not look alike |
+| MCP board uses `#e23b2e` for the game colour; token `game-mcp` is `#e8705f` | The token wins; the board is design data |
+| Boards use a hover colour `#e0bd6a` that is not a token | Add `accent-hover` per world or derive it in CSS from `accent` |
+| `faction-*` and `game-*` tokens exist only for sigmar | Copy is fine for now; review per world when its module lands |
