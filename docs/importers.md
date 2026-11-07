@@ -32,6 +32,41 @@ npx tsx scripts/importers/aos-battle-profiles-cli.ts \
 
 Pass `--source-date YYYY-MM` only if the document prints that date. Exact names are suggestions and are not auto-accepted. Unsupported table layouts stay unmatched. Unit size is preserved as a reviewed points-profile size and is not silently mapped to a minimum unit size. Enter unavailable Spearhead, Path to Glory, formation, or paid rules in a manual private pack and leave their validation sections explicitly unconfigured until reviewed.
 
+## Age of Sigmar Spearhead armies
+
+Ready-made Spearhead armies live in `catalogue.spearheads` of a private AoS pack (`aosSpearheadSchema`, `src/games/aos/schema.ts`). Their names and contents come only from Heyhey's own boxes and scans; the repo holds none of them, and every example here is invented. Packs without spearheads stay valid (`spearheads` defaults to `[]`).
+
+Each spearhead carries an id, name, optional `factionId`, a `source` (`title`, optional `printedDate` only if the source prints one, `kind`: `owner-scan` or `manual`), `units` (each: optional `unitId` linking a catalogue unit, `name`, `modelCount`, optional `isGeneral` and `notes`), record arrays `battleTraits`, `regimentAbilities` and `enhancements`, and `sections`, one status per section: `configured`, `incomplete` or `unconfigured` (the default). Nothing is inferred: a section stays unconfigured until the owner enters it, and an unlinked unit stays unlinked until the owner sets its `unitId`.
+
+Write a short owner file in the ignored `data/` folder, for example `data/spearheads.input.json`:
+
+```json
+{
+  "packId": "aos-spearheads-owner",
+  "revision": "owner-2026-11",
+  "spearheads": [
+    { "name": "Ember Wardens", "factionId": "test-faction",
+      "source": { "title": "Own scan of the box sheet", "kind": "owner-scan" },
+      "units": [
+        { "unitId": "test-hero", "name": "Test Hero", "modelCount": 1, "isGeneral": true },
+        { "name": "Test Trooper", "modelCount": 10 }
+      ] },
+    { "id": "ash-riders", "name": "Ash Riders" }
+  ]
+}
+```
+
+Then run:
+
+```sh
+npx tsx scripts/importers/spearhead-template-cli.ts --input data/spearheads.input.json \
+  [--pack data/import-drafts/aos-pack.json] [--out data/import-drafts/my.spearheads.pack.json]
+```
+
+It writes a review bundle to `data/import-drafts/<packId>.spearheads.pack.json` (input and output must stay inside `data/`). Ids default to a slug of the name. A section the owner filled starts `incomplete`; an empty one `unconfigured`; only an explicit `"sections": { "units": "configured" }` in the input (after checking against the box) marks a section configured. With `--pack`, unit ids not found in that AoS pack are reported as warnings; links are never guessed from names. Lists check composition against the units in the *same* pack, so compose the spearhead draft with the unit pack (`compose-packs-cli.ts`) before staging it in `/data`, where each spearhead is a `spearhead` review candidate.
+
+In the list builder (AoS, mode Spearhead) the panel "Start from a ready-made Spearhead" lists the selected pack's spearheads with faction, unit count and a configured/incomplete badge; choosing one fills the entries. A pack without spearheads shows an empty state that points to `/data`.
+
 ## Official Warhammer model image candidates
 
 Create a current local pack first, then put one product URL per entry in `data/sources.json` with `purpose: "product"` and the target `gameId`. Run:

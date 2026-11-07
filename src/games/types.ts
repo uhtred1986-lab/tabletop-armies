@@ -76,6 +76,8 @@ export interface ListFieldDefinition {
   optionsSource?: "units" | "factions" | "abilities" | "cards" | "modes" | "scenarios" | "battleForces" | "teamTactics" | "upgrades" | "enhancements" | "crises" | "objectives" | "equipment";
   required?: boolean;
   itemFields?: ListFieldDefinition[];
+  /** Fixed choices (for a "select") named by i18n keys, when the value is a schema enum rather than a pack record. */
+  choices?: { id: string; labelKey: string }[];
 }
 
 export interface ListSettingsFieldDefinition {
@@ -95,6 +97,31 @@ export interface ListBuilderVariant {
   settingsFields: ListSettingsFieldDefinition[];
   manual: true;
   validateList: (list: unknown, pack: unknown, settings: ListValidationSettings) => ListValidationResult;
+  /** Optional ready-made armies from the selected pack (AoS Spearhead). The shell asks this, never a game id. */
+  readyMade?: ReadyMadeSource;
+}
+
+/** One ready-made army offered by a pack, as the list builder's picker shows it. */
+export interface ReadyMadeOption {
+  id: string;
+  name: string;
+  factionName?: string;
+  unitCount: number;
+  /** False while any section of the army is unconfigured or incomplete in the owner's pack. */
+  configured: boolean;
+}
+
+/** Pure hooks a variant offers to start a list from a ready-made army in the selected pack. */
+export interface ReadyMadeSource {
+  /** Selection path and value that switch the picker on (for AoS: `selections.mode` = `spearhead`). */
+  when: { path: string; value: string };
+  /** Selection path that holds the chosen army's id. */
+  selectedPath: string;
+  /** i18n keys of the picker's words. */
+  labelKeys: { title: string; help: string; empty: string; noPack: string; dataLink: string; units: string; configured: string; incomplete: string; noFaction: string; replaceConfirm: string; unlinked: string };
+  options: (pack: unknown) => ReadyMadeOption[];
+  /** New selections for the chosen army, or undefined when the pack does not hold it. */
+  apply: (pack: unknown, id: string) => { selections: Record<string, unknown>; unlinkedCount: number } | undefined;
 }
 
 export interface TrackerDefinition {

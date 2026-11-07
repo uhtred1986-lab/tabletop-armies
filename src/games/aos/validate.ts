@@ -4,6 +4,7 @@ import type { Issue, Rule } from "../types";
 import { aosListSchema, aosPackSchema, type AosListInput } from "./schema";
 import { definitionIssues, listSelections, missingConfig, packSchemaIssues, settingsWithEnvelope, validationResult } from "../validation";
 import type { ListValidationResult, ListValidationSettings } from "../types";
+import { readSpearheads, spearheadRules } from "./spearhead";
 
 export interface AosUnitCost {
   unitId: string;
@@ -109,6 +110,9 @@ export const validateAosList = (input: unknown, rawPack: unknown, settings: List
   const issues: Issue[] = [...packSchemaIssues(aosPackSchema, rawPack), ...definitionIssues(envelope, "aos", rawPack)];
   if (!parsedList.success) return validationResult([...issues, { rule: "shape", severity: "error", messageKey: "issue.aos.shape", preventsCompleteValidation: true }]);
   const list = parsedList.data;
+  // Spearhead: the box fixes the composition, so points, regiments and matched-play-only rules do not run.
+  const spearheadMode = list.mode === "spearhead";
+  if (spearheadMode) issues.push(...runSpearheadRules(list, rawPack));
   const units = new Map<string, Data>((Array.isArray(parsedCatalogue.units) ? parsedCatalogue.units : []).map((u) => [String(data(u).id), data(u)]));
   const factions = Array.isArray(parsedCatalogue.factions) ? parsedCatalogue.factions.map(data) : [];
   const enhancements = new Map<string, Data>((Array.isArray(parsedCatalogue.enhancements) ? parsedCatalogue.enhancements : []).map((u) => [String(data(u).id), data(u)]));
@@ -117,10 +121,14 @@ export const validateAosList = (input: unknown, rawPack: unknown, settings: List
   for (const entry of list.entries) {
     const unit = units.get(entry.unitId);
     if (!unit) { issues.push({ rule: "unknown", severity: "error", messageKey: "issue.unit.unknown", values: { unit: entry.name }, path: `entries.${entry.unitId}`, preventsCompleteValidation: true }); continue; }
-    if (typeof unit.points !== "number") issues.push({ rule: "points.missing", severity: "error", messageKey: "issue.rules.configMissing", values: { path: `units.${entry.unitId}.points` }, preventsCompleteValidation: true });
-    if (["hero", "unit"].includes(String(unit.role)) && (typeof unit.minSize !== "number" || typeof unit.maxSize !== "number")) {
+    if (!spearheadMode && typeof unit.points !== "number") issues.push({ rule: "points.missing", severity: "error", messageKey: "issue.rules.configMissing", values: { path: `units.${entry.unitId}.points` }, preventsCompleteValidation: true });
+    if (!spearheadMode && ["hero", "unit"].includes(String(unit.role)) && (typeof unit.minSize !== "number" || typeof unit.maxSize !== "number")) {
       issues.push(missingConfig("unit.size.range", "issue.rules.configMissing", `units.${entry.unitId}.minSize/maxSize`));
     }
+    const profileFaction = typeof unit.factionId === "string" ? unit.factionId : "";
+    if (list.factionId && !profileFaction && !Boolean(unit.isRegimentOfRenown)) issues.push(missingConfig("faction.unit", "issue.rules.configMissing", `units.${entry.unitId}.factionId`));
+    else if (profileFaction && list.factionId && profileFaction !== list.factionId && !Boolean(unit.isRegimentOfRenown)) issues.push({ rule: "faction", severity: "error", messageKey: "issue.aos.faction", values: { unit: entry.name } });
+    if (spearheadMode) continue;
     const minSize = Number(unit.minSize ?? 0);
     const maxSize = Number(unit.maxSize ?? 0);
     if (entry.size === undefined) {
@@ -129,9 +137,6 @@ export const validateAosList = (input: unknown, rawPack: unknown, settings: List
     const reinforcedSize = Number(unit.reinforcedSize ?? (maxSize ? maxSize * 2 : 0));
     if (entry.reinforced && (!reinforcedSize || !entry.size || entry.size !== reinforcedSize)) issues.push({ rule: "reinforcement", severity: "error", messageKey: "issue.aos.reinforcement", values: { unit: entry.name }, path: `entries.${entry.unitId}.reinforced` });
     if (!entry.reinforced && maxSize && entry.size && entry.size > maxSize) issues.push({ rule: "reinforcement", severity: "error", messageKey: "issue.aos.reinforcement", values: { unit: entry.name }, path: `entries.${entry.unitId}.reinforced` });
-    const profileFaction = typeof unit.factionId === "string" ? unit.factionId : "";
-    if (list.factionId && !profileFaction && !Boolean(unit.isRegimentOfRenown)) issues.push(missingConfig("faction.unit", "issue.rules.configMissing", `units.${entry.unitId}.factionId`));
-    else if (profileFaction && list.factionId && profileFaction !== list.factionId && !Boolean(unit.isRegimentOfRenown)) issues.push({ rule: "faction", severity: "error", messageKey: "issue.aos.faction", values: { unit: entry.name } });
     for (const enhancementId of entry.enhancementIds) {
       const enhancement = enhancements.get(enhancementId);
       if (!enhancement) issues.push({ rule: "enhancement.unknown", severity: "error", messageKey: "issue.aos.enhancementUnknown", values: { enhancement: enhancementId } });
@@ -139,14 +144,15 @@ export const validateAosList = (input: unknown, rawPack: unknown, settings: List
       else if (!enhancement.allowedUnitIds.includes(entry.unitId)) issues.push({ rule: "enhancement.allowed", severity: "error", messageKey: "issue.aos.enhancementAllowed", values: { enhancement: String(enhancement.name), unit: entry.name } });
     }
   }
-  if (total > list.pointsLimit) issues.push({ rule: "points", severity: "error", messageKey: "issue.points.over", values: { over: total - list.pointsLimit, total, limit: list.pointsLimit } });
+  if (!spearheadMode && list.pointsLimit === undefined) issues.push(missingConfig("points.limit", "issue.rules.configMissing", "selections.pointsLimit"));
+  else if (!spearheadMode && list.pointsLimit !== undefined && total > list.pointsLimit) issues.push({ rule: "points", severity: "error", messageKey: "issue.points.over", values: { over: total - list.pointsLimit, total, limit: list.pointsLimit } });
   const counts = new Map<string, number>();
   for (const entry of list.entries) if (units.get(entry.unitId)?.unique) counts.set(entry.unitId, (counts.get(entry.unitId) ?? 0) + 1);
   for (const [id, count] of counts) if (count > 1) issues.push({ rule: "unique", severity: "error", messageKey: "issue.unique.twice", values: { unit: list.entries.find((entry) => entry.unitId === id)?.name ?? id } });
   const generals = list.entries.filter((entry) => entry.isGeneral || entry.unitId === list.generalUnitId);
   if (generals.length !== 1) issues.push({ rule: "general", severity: "error", messageKey: "issue.aos.general", values: { count: generals.length } });
   const regimentGroups = new Map<string, typeof list.entries>();
-  for (const entry of list.entries) if (entry.regimentId) regimentGroups.set(entry.regimentId, [...(regimentGroups.get(entry.regimentId) ?? []), entry]);
+  for (const entry of list.entries) if (!spearheadMode && entry.regimentId) regimentGroups.set(entry.regimentId, [...(regimentGroups.get(entry.regimentId) ?? []), entry]);
   for (const [regimentId, entries] of regimentGroups) {
     const heroes = entries.filter((entry) => units.get(entry.unitId)?.role === "hero");
     if (heroes.length !== 1) issues.push({ rule: "regiment.hero", severity: "error", messageKey: "issue.aos.regimentHero", values: { regiment: regimentId } });
@@ -157,6 +163,21 @@ export const validateAosList = (input: unknown, rawPack: unknown, settings: List
       else if (entry !== hero && allowed && !allowed.includes(entry.unitId)) issues.push({ rule: "regiment.option", severity: "error", messageKey: "issue.aos.regimentOption", values: { unit: entry.name } });
     }
   }
+  if (!spearheadMode) issues.push(...matchedArmyLimits(list, constraints, enhancements, regimentGroups.size));
+  return validationResult([...issues, ...commonEntryIssues(list, units, constraints, effectiveSettings, existing(factions))]);
+};
+
+const existing = (factions: Data[]) => new Set(factions.map((f) => String(f.id)));
+
+/** Spearhead rules (src/games/aos/spearhead.ts), one function per rule, over the pack's parsed spearheads. */
+const runSpearheadRules = (list: AosListInput, rawPack: unknown): Issue[] => {
+  const context = { spearheads: readSpearheads(rawPack) };
+  return spearheadRules.flatMap((rule) => rule(list, context, undefined));
+};
+
+/** Regiment, auxiliary, reinforcement and enhancement limits of a points-based army; never run for Spearhead. */
+const matchedArmyLimits = (list: AosListInput, constraints: Data, enhancements: Map<string, Data>, regimentCount: number): Issue[] => {
+  const issues: Issue[] = [];
   if (list.entries.some((entry) => !entry.regimentId && !entry.isAuxiliary)) issues.push({ rule: "regiment.missing", severity: "error", messageKey: "issue.aos.regimentMissing" });
   const configuredLimits = constraints.enhancementLimits as Record<string, number> | undefined;
   if (!configuredLimits || (enhancements.size > 0 && Object.keys(configuredLimits).length === 0)) issues.push(missingConfig("enhancement.limit", "issue.rules.configMissing", "settings.enhancementLimits"));
@@ -169,10 +190,16 @@ export const validateAosList = (input: unknown, rawPack: unknown, settings: List
     const limit = constraints[inputKey];
     if (typeof limit !== "number") issues.push(missingConfig(rule, "issue.rules.configMissing", inputKey));
     else {
-      const actual = inputKey === "regimentLimit" ? regimentGroups.size : inputKey === "auxiliaryLimit" ? list.entries.filter((entry) => entry.isAuxiliary).length : list.entries.filter((entry) => entry.reinforced).length;
+      const actual = inputKey === "regimentLimit" ? regimentCount : inputKey === "auxiliaryLimit" ? list.entries.filter((entry) => entry.isAuxiliary).length : list.entries.filter((entry) => entry.reinforced).length;
       if (actual > limit) issues.push({ rule, severity: "error", messageKey: key, values: { count: actual, limit } });
     }
   }
+  return issues;
+};
+
+/** Rules that hold in every mode: general role, Legends, matched legality (matched only), faction, date, collection. */
+const commonEntryIssues = (list: AosListInput, units: Map<string, Data>, constraints: Data, effectiveSettings: ListValidationSettings, existingFactionIds: Set<string>): Issue[] => {
+  const issues: Issue[] = [];
   for (const entry of list.entries) {
     const unit = units.get(entry.unitId);
     if (entry.isGeneral && unit?.role !== "hero") issues.push({ rule: "general.role", severity: "error", messageKey: "issue.aos.generalHero", values: { unit: entry.name } });
@@ -182,7 +209,6 @@ export const validateAosList = (input: unknown, rawPack: unknown, settings: List
     else if (list.mode === "matched" && unit?.matchedPlayLegal === undefined) issues.push(missingConfig("matched.legal", "issue.rules.configMissing", `units.${entry.unitId}.matchedPlayLegal`));
     if (unit?.scheduledLegendsDate && String(unit.scheduledLegendsDate) > String(constraints.today ?? "")) issues.push({ rule: "legends.scheduled", severity: "warning", messageKey: "issue.legends.soon", values: { unit: entry.name, date: String(unit.scheduledLegendsDate) } });
   }
-  const existingFactionIds = new Set(factions.map((f) => String(f.id)));
   if (list.factionId && !existingFactionIds.has(list.factionId)) issues.push({ rule: "faction.unknown", severity: "error", messageKey: "issue.aos.factionUnknown" });
   if (!list.factionId) issues.push(missingConfig("faction.selected", "issue.rules.configMissing", "selections.factionId"));
   if (constraints.today === undefined) issues.push(missingConfig("validation.date", "issue.rules.configMissing", "settings.today"));
@@ -198,5 +224,5 @@ export const validateAosList = (input: unknown, rawPack: unknown, settings: List
       for (const unitId of demandByUnit.keys()) if (!collection.paintedUnitIds.includes(unitId)) issues.push({ rule: "paint", severity: "warning", messageKey: "issue.list.notPainted", values: { unit: list.entries.find((entry) => entry.unitId === unitId)?.name ?? unitId } });
     } else issues.push(missingConfig("collection.paint", "issue.rules.configMissing", "collection.paintedModelCounts"));
   }
-  return validationResult(issues);
+  return issues;
 };

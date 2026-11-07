@@ -51,6 +51,7 @@ const defaultSections: Record<string, string> = {
   "team-tactic": "teamTactics", upgrade: "upgrades", stance: "stances", objective: "objectives",
   "order-card": "orderCards", "command-card": "commandCards", "battle-force": "battleForces",
   equipment: "equipment", "objective-card": "objectiveCards", "starter-box": "starterBoxes",
+  spearhead: "spearheads",
 };
 
 export function composeReviewedCatalogue(candidates: readonly ReviewedRecord[]) {

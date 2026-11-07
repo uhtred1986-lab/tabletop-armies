@@ -2,8 +2,8 @@
 import Link from "next/link";
 import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import type { GameId, ListBuilderVariant, ListFieldDefinition, ListSettingsFieldDefinition, ListValidationResult } from "@/games/types";
-import type { Locale } from "@/i18n";
+import type { GameId, ListBuilderVariant, ListFieldDefinition, ListSettingsFieldDefinition, ListValidationResult, ReadyMadeSource } from "@/games/types";
+import { formatNumber, type Locale } from "@/i18n";
 import { featureTranslator, type FeatureTranslate } from "@/i18n/features/play";
 import { deleteList, saveList } from "@/app/(app)/lists/actions";
 import { games } from "@/games/registry";
@@ -314,6 +314,23 @@ export function ListsWorkspace({ game, locale, variants, packs, lists, collectio
           <div className="list-fields">
             {variant.fields.map((field) => renderField(field, definition, (path, value) => onSelectionField(path, value), "", options, t))}
           </div>
+          {runtimeVariant?.readyMade && getAt(definition, runtimeVariant.readyMade.when.path) === runtimeVariant.readyMade.when.value && <ReadyMadePicker
+            source={runtimeVariant.readyMade}
+            pack={currentPack}
+            selectedId={getAt(definition, runtimeVariant.readyMade.selectedPath)}
+            locale={locale}
+            t={t}
+            onPick={(id) => {
+              const source = runtimeVariant.readyMade;
+              const picked = source && currentPack ? source.apply(currentPack.content, id) : undefined;
+              if (!source || !picked) return;
+              const entries = getAt(definition, "selections.entries");
+              const name = source.options(currentPack?.content).find((option) => option.id === id)?.name ?? id;
+              if (Array.isArray(entries) && entries.length > 0 && !window.confirm(t(source.labelKeys.replaceConfirm, { name }))) return;
+              setDefinition((current) => setAt(current, "selections", picked.selections));
+              setStatus(picked.unlinkedCount > 0 ? t(source.labelKeys.unlinked, { count: formatNumber(locale, picked.unlinkedCount) }) : "");
+            }}
+          />}
           {modeId && <p className="hint"><Link href={`/reference?gameId=${encodeURIComponent(game.id)}&recordId=${encodeURIComponent(modeId)}`}>{t("play.modeReference")}</Link></p>}
           {!!variant.settingsFields.length && <section className="settings-panel">
             <h2>{t("play.manualSettings")}</h2>
@@ -338,6 +355,29 @@ export function ListsWorkspace({ game, locale, variants, packs, lists, collectio
       </section>
     </div>
   );
+}
+
+function ReadyMadePicker({ source, pack, selectedId, locale, t, onPick }: { source: ReadyMadeSource; pack: PackView | undefined; selectedId: unknown; locale: Locale; t: FeatureTranslate; onPick: (id: string) => void }) {
+  const words = source.labelKeys;
+  const options = pack ? source.options(pack.content) : [];
+  return <section className="settings-panel" aria-labelledby="ready-made-title">
+    <h2 id="ready-made-title">{t(words.title)}</h2>
+    {!pack && <p className="hint">{t(words.noPack)}</p>}
+    {pack && options.length === 0 && <>
+      <p className="hint">{t(words.empty)}</p>
+      <p className="hint"><Link href="/data">{t(words.dataLink)}</Link></p>
+    </>}
+    {options.length > 0 && <>
+      <p className="hint">{t(words.help)}</p>
+      <div className="lists-index-items">
+        {options.map((option) => <button key={option.id} type="button" className="list-index-row" aria-current={option.id === selectedId ? "true" : undefined} onClick={() => onPick(option.id)}>
+          <span className="strong">{option.name}</span>
+          <span className="label">{option.factionName ?? t(words.noFaction)} · <span className="num">{t(words.units, { count: formatNumber(locale, option.unitCount) })}</span></span>
+          <span className={`validation-status ${option.configured ? "complete" : "incomplete"}`}>{option.configured ? t(words.configured) : t(words.incomplete)}</span>
+        </button>)}
+      </div>
+    </>}
+  </section>;
 }
 
 function renderSettingsField(field: ListSettingsFieldDefinition, values: Record<string, unknown>, onChange: (path: string, value: unknown) => void, pack: PackView | undefined, t: FeatureTranslate) {
@@ -374,6 +414,15 @@ function renderField(field: ListFieldDefinition, values: Record<string, unknown>
       })}
       <button type="button" className="btn secondary" onClick={() => onChange(path, [...rows, fieldsDefault(field.itemFields ?? [])])}>{t("play.addEntry")}</button>
     </fieldset>;
+  }
+  if (field.choices?.length) {
+    return <label key={path} className="field-label" htmlFor={id}>
+      {t(field.labelKey)}{field.required ? " *" : ""}
+      <select id={id} value={String(value ?? "")} onChange={(event) => onChange(path, event.target.value)}>
+        <option value="">{t("play.chooseOne")}</option>
+        {field.choices.map((choice) => <option key={choice.id} value={choice.id}>{t(choice.labelKey)}</option>)}
+      </select>
+    </label>;
   }
   const options = catalogOptions(pack, field.optionsSource);
   return <label key={path} className="field-label" htmlFor={id}>
