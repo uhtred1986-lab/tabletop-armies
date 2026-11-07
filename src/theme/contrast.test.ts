@@ -33,6 +33,10 @@ describe("world contrast", () => {
         }
       }
       expect(ratio(colour("accent-ink", theme), colour("accent", theme)), "accent-ink on accent").toBeGreaterThanOrEqual(4.5);
+      // World homes (docs/ui-standard.md §3, "World homes"): text written on the world's paper.
+      for (const text of ["paper-ink", "paper-muted"]) {
+        expect(ratio(colour(text, theme), colour("paper", theme)), `${text} on paper`).toBeGreaterThanOrEqual(4.5);
+      }
     });
   }
 });

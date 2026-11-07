@@ -5,6 +5,7 @@
 
 [data-world="sigmar"], [data-world="sigmar-light"] {
   --font-display: "Spectral SC", Georgia, serif;
+  --font-record: Spectral, Georgia, serif; /* world home: how the world writes its records */
   --display-case: none; --display-track: 0;
   --radius-card: 14px; --radius-control: 8px; --radius-chip: 4px;
   --clip-card: none; --clip-control: none;
@@ -15,6 +16,7 @@
 
 [data-world="crisis"] {
   --font-display: Bangers, Impact, sans-serif;
+  --font-record: "IBM Plex Sans Condensed", "Arial Narrow", sans-serif; /* world home: how the world writes its records */
   --display-case: uppercase; --display-track: .03em;
   --radius-card: 2px; --radius-control: 2px; --radius-chip: 0;
   --clip-card: none; --clip-control: polygon(0 0, 100% 0, 97% 100%, 0 100%);
@@ -25,6 +27,7 @@
 
 [data-world="legion"] {
   --font-display: "Saira Stencil One", "Arial Black", sans-serif;
+  --font-record: "Saira Condensed", "Arial Narrow", sans-serif; /* world home: how the world writes its records */
   --display-case: uppercase; --display-track: .04em;
   --radius-card: 0; --radius-control: 0; --radius-chip: 0;
   --clip-card: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
@@ -36,6 +39,7 @@
 
 [data-world="saga"] {
   --font-display: Michroma, "Eurostile", sans-serif;
+  --font-record: "Exo 2", "Segoe UI", sans-serif; /* world home: how the world writes its records */
   --display-case: uppercase; --display-track: .06em;
   --radius-card: 20px; --radius-control: 999px; --radius-chip: 999px;
   --clip-card: none; --clip-control: none;
@@ -46,6 +50,7 @@
 
 [data-world="gotham"] {
   --font-display: Limelight, Georgia, serif;
+  --font-record: "Special Elite", "Courier New", monospace; /* world home: how the world writes its records */
   --display-case: none; --display-track: 0;
   --radius-card: 2px; --radius-control: 2px; --radius-chip: 2px;
   --clip-card: polygon(0 10px, 10px 10px, 10px 0, calc(100% - 10px) 0, calc(100% - 10px) 10px, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 10px calc(100% - 10px), 0 calc(100% - 10px));

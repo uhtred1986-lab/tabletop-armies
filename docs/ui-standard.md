@@ -43,6 +43,22 @@ Each game is a world, set by `<html data-world="…" data-theme="…">` (same id
 | `saga` | Shatterpoint | Michroma, wide caps | saber blue / rival red | large radii, pills | glow frame, starfield |
 | `gotham` | Batman MG | Limelight | signal yellow / rain steel | stepped deco corners | double gold rules, rain |
 
+**World homes (Heyhey, 7 Nov 2026; board: [Tabletop Armies – five worlds](https://claude.ai/artifact/2Cf9guo34AkBp9cZWBwhAk)):**
+the home screen (`/`) is where a world may change its **layout**, not only its costume. Each game module names its
+`homeLayout`; `src/components/world-home/WorldHome.tsx` picks the component from it, never from a game id.
+
+| World | Layout | The idea |
+| --- | --- | --- |
+| sigmar | `ledger` | An open war ledger: factions as hanging banners that fill with ink as models are painted; ready-made Spearheads as ledger entries with gilded initials. |
+| crisis | `comic-page` | The screen is a comic page: panels with gutters, a splash panel for the squad or next game, caption boxes, a threat burst. |
+| legion | `field-map` | A tactical map: units as diamond order tokens, a telemetry strip (round, phase, VP), rank slots along the bottom. |
+| saga | `duel` | A letterboxed duel: your strike team facing theirs, struggle score and momentum in the middle, Force pips glowing. |
+| gotham | `case-file` | A manila case file on a rainy desk: the crew as a typewritten roster, crew checks pinned to a corkboard, a funding stamp. |
+
+Rules for world homes: everything shown is the owner's real data or an empty state that names the next action; never
+mock numbers. Colours stay tokens: the world's paper is `paper`, `paper-alt`, `paper-ink`, `paper-muted`, `paper-edge`
+(contrast-tested), records use `--font-record`. Outside the home, worlds still change only the costume (rule below).
+
 **A world may change:** colour roles, the `frame` shadow, the display face, radii and clip shapes, the ground texture,
 the ornament rule. **A world never changes:** layout, where buttons sit, sizes and touch targets, the `ui` and `mono`
 faces (IBM Plex Sans Condensed, IBM Plex Mono), behaviour, the words.

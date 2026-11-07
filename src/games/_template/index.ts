@@ -5,6 +5,7 @@ import type { GameModule } from "../types";
 export const template: GameModule = {
   id: "aos", // replace with the new GameId (add it to the GameId union in types.ts)
   world: "sigmar", // replace with the new WorldId
+  homeLayout: "ledger", // pick the layout your world uses (src/games/types.ts HomeLayout)
   nameKey: "game.template.name",
   factionLabelKey: "game.template.faction",
   phases: [],

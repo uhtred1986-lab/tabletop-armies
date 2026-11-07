@@ -5,6 +5,7 @@ import { shatterpointListBuilder } from "./list";
 export const shatterpoint: GameModule = {
   id: "shatterpoint",
   world: "saga",
+  homeLayout: "duel",
   nameKey: "game.shatterpoint.name",
   factionLabelKey: "game.shatterpoint.faction",
   phases: [

@@ -160,6 +160,12 @@ export interface Phase {
   labelKey: string;
 }
 
+/**
+ * How a game's home screen is laid out (docs/ui-standard.md §3, "World homes"; Heyhey, 7 Nov 2026). Each world gets its
+ * own home layout; the shell picks the component from this value, never from a game id.
+ */
+export type HomeLayout = "ledger" | "comic-page" | "field-map" | "duel" | "case-file";
+
 export interface GameModule {
   id: GameId;
   world: WorldId;
@@ -167,6 +173,8 @@ export interface GameModule {
   nameKey: string;
   /** i18n key: what this game calls a faction (faction, affiliation, era). */
   factionLabelKey: string;
+  /** The world's home screen layout. */
+  homeLayout: HomeLayout;
   /** Rounds in a standard game, if fixed. */
   rounds?: number;
   /** Phases of one turn or round, in order. */

@@ -6,6 +6,7 @@ import { bmgListBuilder } from "./list";
 export const bmg: GameModule = {
   id: "bmg",
   world: "gotham",
+  homeLayout: "case-file",
   nameKey: "game.bmg.name",
   factionLabelKey: "game.bmg.faction",
   rounds: 4,
