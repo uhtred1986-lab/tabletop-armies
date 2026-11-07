@@ -176,7 +176,7 @@
 .tone1 { --tone: var(--game-bmg); }
 .tone2 { --tone: var(--track-power); }
 .tone3 { --tone: var(--game-legion); }
-.tone4 { --tone: var(--game-mcp); }
+.tone4 { --tone: var(--game-shatterpoint); } /* not --game-mcp: in sigmar it matches --danger, and a painted banner must not read as an error */
 .tone5 { --tone: var(--paper-muted); }
 
 .cloth {
