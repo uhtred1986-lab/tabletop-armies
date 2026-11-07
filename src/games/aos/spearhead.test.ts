@@ -155,3 +155,19 @@ describe("spearhead lists in the complete AoS validator", () => {
     expect(validateAosList(envelope(matched), pack).issues.map((issue) => issue.rule)).toContain("points.limit");
   });
 });
+
+describe("Spearhead list shape", () => {
+  it("accepts a list without a points limit, also when the hidden points field is empty", async () => {
+    const { aosListSchema } = await import("./schema");
+    for (const pointsLimit of ["", undefined]) {
+      const parsed = aosListSchema.safeParse({ mode: "spearhead", spearheadId: "sp-ember", entries: [], ...(pointsLimit === undefined ? {} : { pointsLimit }) });
+      expect(parsed.success).toBe(true);
+      if (parsed.success) expect(parsed.data.pointsLimit).toBeUndefined();
+    }
+  });
+
+  it("still rejects a points limit that is not a positive number", async () => {
+    const { aosListSchema } = await import("./schema");
+    expect(aosListSchema.safeParse({ mode: "matched", pointsLimit: -5, entries: [] }).success).toBe(false);
+  });
+});

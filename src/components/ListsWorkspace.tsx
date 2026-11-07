@@ -395,6 +395,7 @@ function renderField(field: ListFieldDefinition, values: Record<string, unknown>
   const path = field.path.startsWith("selections.") ? field.path : base ? `${base}.${field.path}` : `selections.${field.path}`;
   const value = getAt(values, path);
   const id = `field-${path.replaceAll(".", "-")}`;
+  if (field.hiddenWhen && getAt(values, field.hiddenWhen.path) === field.hiddenWhen.value) return null;
   if (field.control === "repeater") {
     const rows = Array.isArray(value) ? value : [];
     return <fieldset className="repeater-field" key={path}>

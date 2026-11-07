@@ -69,7 +69,8 @@ export const aosPackSchema = cataloguePackSchema("aos", aosCatalogueSchema);
 
 export const aosListSchema = z.object({
   /** Required outside Spearhead (validator); a ready-made Spearhead has a fixed composition instead. */
-  pointsLimit: z.number().positive().optional(),
+  // An empty number field ("") means "not set": Spearhead lists hide the points field and have no points limit.
+  pointsLimit: z.preprocess((value) => (value === "" ? undefined : value), z.number().positive().optional()),
   factionId: z.string().optional(),
   mode: z.enum(["matched", "casual", "spearhead", "path-to-glory"]).default("matched"),
   generalUnitId: z.string().optional(),

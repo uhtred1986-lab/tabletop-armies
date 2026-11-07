@@ -34,7 +34,7 @@ export const aosListBuilder: ListBuilderVariant = {
       { id: "path-to-glory", labelKey: "list.aos.mode.pathToGlory" },
     ] },
     { path: "selections.factionId", labelKey: "list.field.faction", control: "faction-picker", optionsSource: "factions" },
-    { path: "selections.pointsLimit", labelKey: "list.field.pointsLimit", control: "number", required: true },
+    { path: "selections.pointsLimit", labelKey: "list.field.pointsLimit", control: "number", required: true, hiddenWhen: { path: "selections.mode", value: "spearhead" } },
     { path: "selections.generalUnitId", labelKey: "list.field.general", control: "unit-picker", optionsSource: "units" },
     { path: "selections.entries", labelKey: "list.field.entries", control: "repeater", itemFields: [
       { path: "unitId", labelKey: "list.field.unit", control: "unit-picker", optionsSource: "units", required: true },

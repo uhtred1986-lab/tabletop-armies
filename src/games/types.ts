@@ -78,6 +78,8 @@ export interface ListFieldDefinition {
   itemFields?: ListFieldDefinition[];
   /** Fixed choices (for a "select") named by i18n keys, when the value is a schema enum rather than a pack record. */
   choices?: { id: string; labelKey: string }[];
+  /** Hide the field while another selection has this value (e.g. no points limit in AoS Spearhead mode). */
+  hiddenWhen?: { path: string; value: string };
 }
 
 export interface ListSettingsFieldDefinition {
