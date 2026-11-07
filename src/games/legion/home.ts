@@ -1,4 +1,5 @@
 import { listSelections } from "../validation";
+import { STANDARD_RANK_LIMITS } from "./validate";
 import { legionListSchema } from "./schema";
 
 /**
@@ -6,8 +7,8 @@ import { legionListSchema } from "./schema";
  * and the rank slots. Pure (CLAUDE.md rule 2) and computed per request, nothing stored (rule 3).
  *
  * Rank limits are shown only where the list's own data configures them (a battle force's `rankLimits`, or the
- * `rankLimits` setting for a non-standard mode), in the same order the validator reads them. The standard Army's
- * limits live inside `validate.ts` and are not exported, so a standard list shows counts without maxima here.
+ * `rankLimits` setting for a non-standard mode, or the standard Army's limits exported by `validate.ts`), in the same
+ * order the validator reads them.
  */
 
 export const LEGION_RANKS = ["commander", "operative", "corps", "special-forces", "support", "heavy-support"] as const;
@@ -100,7 +101,7 @@ export function legionFieldMap(definition: unknown, pack: unknown): LegionFieldM
     return { id, name: typeof card?.name === "string" ? card.name : null, pips: typeof card?.pips === "number" ? card.pips : null };
   });
 
-  // Same reading order as validate.ts, without the standard Army's built-in limits (not exported there).
+  // Same reading order as validate.ts, including the standard Army's limits from there.
   const modeId = list.modeId ?? "standard";
   const force = list.battleForceId ? rows(catalogue.battleForces).find((f) => String(f.id) === list.battleForceId) : undefined;
   const configured = envelope.settings.rankLimits ?? data(content.constraints).rankLimits;
@@ -109,7 +110,7 @@ export function legionFieldMap(definition: unknown, pack: unknown): LegionFieldM
     const forceLimits = data(force.rankLimits);
     const forMode = data(forceLimits[modeId] ?? forceLimits);
     source = Object.keys(forMode).length ? forMode : data(configured);
-  } else if (modeId !== "standard") source = data(configured);
+  } else source = modeId === "standard" ? data(STANDARD_RANK_LIMITS) : data(configured);
 
   const ranks: FieldRank[] = LEGION_RANKS.map((rank) => {
     const at = tokens.filter((token) => token.rank === rank);

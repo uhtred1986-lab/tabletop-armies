@@ -16,9 +16,8 @@ export async function CaseFile({ data }: { data: HomeData }) {
   const t = await getT();
   const num = (n: number) => formatNumber(data.locale, n);
   const list = data.lists[0];
-  // The home only carries the default pack; a crew built on another pack is named in Lists instead.
-  const packMatches = list !== undefined && data.pack !== undefined && list.packId === data.pack.id;
-  const summary = list ? caseFileSummary(list.definition, packMatches ? data.pack?.content : undefined) : undefined;
+  // Every list carries the pack it was built against, so a crew on an older or other pack still shows its numbers.
+  const summary = list ? caseFileSummary(list.definition, list.packContent) : undefined;
   const pins = list ? casePins(list.issues, list.status) : [];
   const active = data.activeGame;
 
@@ -46,7 +45,7 @@ export async function CaseFile({ data }: { data: HomeData }) {
           num={num}
           list={list}
           summary={summary}
-          packState={!list ? "none" : data.pack === undefined ? "missing" : packMatches ? "ok" : "other"}
+          packState={!list ? "none" : list.packContent === undefined ? "missing" : "ok"}
           noModels={data.totals.models === 0}
           moreCrews={Math.max(0, data.lists.length - 1)}
           primary={!list && !active}

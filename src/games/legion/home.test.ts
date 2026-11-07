@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { STANDARD_RANK_LIMITS } from "./validate";
 import { legionFieldMap, paintedPercent, rankSlots } from "./home";
 
 // Invented units only (CLAUDE.md, IP line).
@@ -45,12 +46,14 @@ describe("Legion field map", () => {
     expect(a.ranks.find((r) => r.rank === "corps")).toMatchObject({ count: 3, units: ["Reed Wardens"] });
   });
 
-  it("shows no rank limits for a standard list without a battle force (never invents maxima)", () => {
+  it("shows the standard Army's limits for a standard list without a battle force, the same ones the validator uses", () => {
     const map = legionFieldMap(list({ units }), pack)!;
-    expect(map.limitsConfigured).toBe(false);
-    expect(map.ranks.every((r) => r.limit === null)).toBe(true);
-    expect(rankSlots(map.ranks.find((r) => r.rank === "corps")!)).toEqual([true, true, true]);
-    expect(rankSlots(map.ranks.find((r) => r.rank === "support")!)).toEqual([]);
+    expect(map.limitsConfigured).toBe(true);
+    for (const rank of map.ranks) expect(rank.limit).toEqual(STANDARD_RANK_LIMITS[rank.rank as keyof typeof STANDARD_RANK_LIMITS]);
+    const corps = map.ranks.find((r) => r.rank === "corps")!;
+    const slots = rankSlots(corps);
+    expect(slots.length).toBe(Math.max(corps.count, STANDARD_RANK_LIMITS.corps.max));
+    expect(slots.filter(Boolean).length).toBe(corps.count);
   });
 
   it("reads limits from the battle force, then from settings for a non-standard mode", () => {
@@ -66,8 +69,9 @@ describe("Legion field map", () => {
     expect(recon.limitsConfigured).toBe(true);
     // More units than the maximum: every unit still gets a filled slot.
     expect(rankSlots(recon.ranks.find((r) => r.rank === "corps")!)).toEqual([true, true, true]);
-    // Settings are ignored for a standard list, as the validator does.
-    expect(legionFieldMap(list({ units }, { rankLimits }), pack)!.limitsConfigured).toBe(false);
+    // Settings are ignored for a standard list, as the validator does: it keeps the standard Army's limits.
+    const standard = legionFieldMap(list({ units }, { rankLimits }), pack)!;
+    expect(standard.ranks.find((r) => r.rank === "corps")!.limit).toEqual(STANDARD_RANK_LIMITS.corps);
   });
 
   it("names command cards from the pack and keeps unknown ones by id", () => {

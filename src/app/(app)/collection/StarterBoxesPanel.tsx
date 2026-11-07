@@ -28,7 +28,7 @@ export function StarterBoxesPanel({ boxes, t, onAddOwnedUnit }: { boxes: Starter
           <p className={styles.starterStatus}>{contentsEntered ? t("collection.starter.contentsReady") : t("collection.starter.contentsNeeded")}</p>
           {!contentsEntered ? <p>{t("collection.starter.empty")}</p> : null}
           {!box.statsConfigured ? <p className={styles.starterNote}>{t("collection.starter.statsUnconfigured")}</p> : null}
-          {productUrl ? <a href={productUrl} target="_blank" rel="noreferrer">{t("collection.starter.productLink")}</a> : null}
+          {productUrl ? <a className="touch-link" href={productUrl} target="_blank" rel="noreferrer">{t("collection.starter.productLink")}</a> : null}
           <button type="button" className="w-btn secondary" onClick={onAddOwnedUnit}>{t("collection.starter.addOwnedUnit")}</button>
         </article>;
       })}

@@ -328,7 +328,7 @@ function PlayWorkspaceSession(props: Props) {
               <span>{list.name}</span>
               <small className={`validation-status ${list.validation.status}`}>{list.validation.status === "complete" ? t("play.completeValidation") : t("play.incompleteValidation")}</small>
             </label>
-          )) : <p className="hint">{t("play.noListsForGame")} <Link href="/lists">{t("play.listBuilder")}</Link></p>}
+          )) : <p className="hint">{t("play.noListsForGame")} <Link href="/lists" className="touch-link">{t("play.listBuilder")}</Link></p>}
         </fieldset>
         {!ownListIds.length && <p className="hint">{t("play.selectOwnList")}</p>}
         <p className="hint">{t("play.startValidationNote")}</p>

@@ -18,6 +18,8 @@ export interface HomeList {
   /** ISO timestamp of the last change. */
   updatedAt: string;
   packId: number | null;
+  /** Content of the pack this list was built against (not necessarily the default pack); undefined without one. */
+  packContent?: unknown;
   /** The game module's list shape, as saved. Each world reads it through its own game module. */
   definition: Record<string, unknown>;
   status: "complete" | "incomplete";

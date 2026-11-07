@@ -44,7 +44,7 @@ export async function loadHomeData(game: GameModule, locale: "de" | "en"): Promi
     const pack = row.packId === null ? undefined : packById.get(row.packId);
     const settings = definition.settings && typeof definition.settings === "object" ? definition.settings as Record<string, unknown> : {};
     const validation = variant?.validateList(definition, pack?.content ?? {}, { collection, constraints: settings }) ?? { issues: [], status: "incomplete" as const };
-    return { id: row.id, name: row.name, updatedAt: row.updatedAt.toISOString(), packId: row.packId, definition, status: validation.status, issues: validation.issues };
+    return { id: row.id, name: row.name, updatedAt: row.updatedAt.toISOString(), packId: row.packId, packContent: pack?.content, definition, status: validation.status, issues: validation.issues };
   });
 
   const defaultId = defaultListPackId(packs.map((p) => ({ id: p.id, content: p.content as Record<string, unknown> })));

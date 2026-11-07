@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import type { HomeData, HomeGame, HomeList } from "@/features/home/types";
+import { listPack } from "@/features/home/list-pack";
 import type { StringKey, T } from "@/i18n";
 import { formatNumber } from "@/i18n";
 import { getT } from "@/i18n/server";
@@ -16,7 +17,7 @@ export async function FieldMap({ data }: { data: HomeData }) {
   const t = await getT();
   const n = (value: number) => formatNumber(data.locale, value);
   const list = data.lists[0];
-  const packContent = list && data.pack && (list.packId === null || list.packId === data.pack.id) ? data.pack.content : undefined;
+  const packContent = listPack(list)?.content;
   const map = list ? legionFieldMap(list.definition, packContent) : null;
   const primary = data.activeGame
     ? { href: `/play?id=${data.activeGame.id}`, key: "home.fieldmap.action.continue" as const }

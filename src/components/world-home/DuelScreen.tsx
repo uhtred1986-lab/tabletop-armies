@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { HomeData } from "@/features/home/types";
+import { listPack } from "@/features/home/list-pack";
 import { getT } from "@/i18n/server";
 import { formatNumber, strings, type StringKey, type T } from "@/i18n";
 import { gameById } from "@/games/registry";
@@ -14,7 +15,7 @@ import styles from "./duel.module.css";
  */
 export async function DuelScreen({ data }: { data: HomeData }) {
   const t = await getT();
-  const view = duelView(data);
+  const view = duelView({ ...data, pack: listPack(data.lists[0]) ?? data.pack });
   const n = (value: number) => formatNumber(data.locale, value);
   const date = (iso: string) =>
     new Intl.DateTimeFormat(data.locale === "de" ? "de-AT" : "en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" })

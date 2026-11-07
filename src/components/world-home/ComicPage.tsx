@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { HomeData, HomeGame } from "@/features/home/types";
+import { listPack } from "@/features/home/list-pack";
 import { comicSquad, type ComicSquad } from "@/games/mcp/home";
 import { getT } from "@/i18n/server";
 import { formatNumber, type T } from "@/i18n";
@@ -15,7 +16,7 @@ export async function ComicPage({ data }: { data: HomeData }) {
   const n = (value: number) => formatNumber(data.locale, value);
   const date = (iso: string) => formatDay(data.locale, iso);
   const list = data.lists[0];
-  const squad = list ? comicSquad(list, data.pack) : undefined;
+  const squad = list ? comicSquad(list, listPack(list)) : undefined;
   const playHref = data.activeGame ? `/play?id=${data.activeGame.id}` : "/play";
 
   return (

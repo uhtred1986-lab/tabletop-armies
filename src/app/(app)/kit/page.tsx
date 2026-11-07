@@ -36,7 +36,7 @@ export default async function KitPage() {
         <label>{t("kit.input")}<input defaultValue={t("kit.trooper")} /></label>
         <label>{t("kit.select")}<select defaultValue={stage}>{PAINT_STAGES.map((value) => <option key={value} value={value}>{t(`paint.stage.${value}`)}</option>)}</select></label>
         <label>{t("kit.notes")}<textarea placeholder={t("kit.notes")} /></label>
-        <a href="/reference">{t("kit.referenceLink")}</a>
+        <a className="touch-link" href="/reference">{t("kit.referenceLink")}</a>
       </section>
       <DialogSpecimen />
     </>

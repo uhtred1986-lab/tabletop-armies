@@ -875,3 +875,24 @@ a.btn {
   .mobile-nav a[aria-current=page] { color: var(--accent); box-shadow: inset 0 2px var(--accent); }
   .app-dialog { position: fixed; inset: auto 0 0; margin: 0; width: 100%; max-height: 92dvh; border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
 }
+
+/* A text link inside a sentence still needs a 44 px tap area on touch screens (docs/ui-standard.md §2);
+   with a mouse it stays plain inline text. */
+.touch-link { display: inline-block; }
+@media (pointer: coarse) {
+  .touch-link { display: inline-flex; align-items: center; min-height: 44px; }
+}
+
+/* Long hashes and ids in code must wrap instead of pushing the page sideways on a phone. */
+.main code { overflow-wrap: anywhere; word-break: break-all; }
+
+/* Wide world faces (saga's Michroma) must not squeeze the header buttons: the head wraps, buttons keep one line. */
+.list-panel-head, .list-editor-head, .list-editor-actions { flex-wrap: wrap; }
+.list-panel-head > div { min-width: 0; }
+.list-panel-head .page-title { overflow-wrap: anywhere; }
+.list-panel-head > .btn, .list-editor-head > .btn, .list-editor-actions > .btn { white-space: nowrap; flex: none; }
+/* Import history shows full source URLs; they must wrap on a phone instead of widening the page. */
+.data-run, .data-section { min-width: 0; overflow-wrap: anywhere; }
+/* Long German compounds in wide world faces (saga's Michroma caps) must not push a phone page sideways:
+   headings hyphenate, and break as a last resort. */
+.main :is(h1, h2, h3) { hyphens: auto; overflow-wrap: anywhere; }

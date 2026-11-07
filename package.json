@@ -16,7 +16,9 @@
     "gate": "node scripts/gate.mjs",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "shots": "node scripts/shots.mjs",
+    "tmp-branch": "tsx scripts/tmp-branch.mts"
   },
   "dependencies": {
     "@napi-rs/canvas": "^1.1.0",
