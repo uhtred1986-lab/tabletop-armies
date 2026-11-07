@@ -1,0 +1,486 @@
+/* The war ledger (sigmar world home, docs/ui-standard.md §3). Tokens only: the world's paper, its ink and display
+   faces; shadows are black mixed to transparent. The one accent thing is `.primary`. */
+
+.ledger {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1320px;
+  min-height: clamp(560px, calc(100vh - 136px), 800px);
+  font-family: var(--font-record);
+  color: var(--paper-ink);
+}
+
+/* Bookmark tabs in the top edge of the book. Links, not a second navigation: the rail stays. */
+.tabs {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-1);
+  padding: 0 var(--space-8);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tab {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid color-mix(in srgb, var(--paper-edge) 70%, transparent);
+  border-bottom: 0;
+  border-radius: var(--radius-control) var(--radius-control) 0 0;
+  background: var(--paper-alt);
+  color: var(--paper-muted);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 20px;
+  text-decoration: none;
+}
+
+.tab:hover {
+  color: var(--paper-ink);
+}
+
+.tabCurrent {
+  min-height: 48px;
+  background: var(--paper);
+  border-color: var(--paper-edge);
+  color: var(--paper-ink);
+}
+
+.tab:focus-visible {
+  outline-offset: -3px;
+}
+
+/* The open book: two pages and a stitched gutter. */
+.book {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 8px minmax(0, 1fr);
+  border-radius: var(--radius-sm) var(--radius-lg) var(--radius-lg) var(--radius-sm);
+  overflow: hidden;
+  box-shadow:
+    0 30px 80px color-mix(in srgb, black 55%, transparent),
+    inset 0 0 0 1px var(--paper-edge);
+}
+
+.page {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 32px 44px 24px;
+  background: linear-gradient(180deg, var(--paper), var(--paper-alt));
+}
+
+.pageLeft {
+  box-shadow: inset -28px 0 36px -30px color-mix(in srgb, black 70%, transparent);
+}
+
+.pageRight {
+  box-shadow: inset 28px 0 36px -30px color-mix(in srgb, black 70%, transparent);
+}
+
+.gutter {
+  background: linear-gradient(90deg,
+    color-mix(in srgb, black 55%, var(--paper-alt)),
+    var(--paper-edge) 50%,
+    color-mix(in srgb, black 55%, var(--paper-alt)));
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.title,
+.subtitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--paper-ink);
+  text-wrap: balance;
+}
+
+.title {
+  font-size: 40px;
+  line-height: 44px;
+}
+
+.subtitle {
+  font-size: 32px;
+  line-height: 38px;
+}
+
+.lede {
+  margin: 0;
+  max-width: 56ch;
+  font-style: italic;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--paper-muted);
+}
+
+/* The gilt hairline: the world's own ornament rule. */
+.rule {
+  height: 1px;
+  flex: none;
+  background: var(--rule);
+  opacity: 0.8;
+}
+
+/* Banners hanging from the shelf. auto-fill keeps one banner narrow when the host is small. */
+.banners {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  /* One row: the tracks shrink before they wrap, so the shelf never pushes the book past the fold. */
+  grid-template-columns: repeat(var(--count, 5), minmax(0, 104px));
+  justify-content: start;
+  gap: var(--space-4) 18px;
+  align-items: start;
+}
+
+.bannerItem {
+  min-width: 0;
+}
+
+.banner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding-bottom: var(--space-1);
+  border-radius: var(--radius-chip);
+  color: var(--paper-ink);
+  text-decoration: none;
+}
+
+.banner:hover .cloth {
+  box-shadow: inset 0 0 0 1px var(--paper-ink);
+}
+
+.cord {
+  width: 4px;
+  height: 14px;
+  background: var(--paper-edge);
+}
+
+/* Each tone is an existing world token, chosen by position, never by faction name. */
+.tone0 { --tone: var(--accent-2); }
+.tone1 { --tone: var(--game-bmg); }
+.tone2 { --tone: var(--track-power); }
+.tone3 { --tone: var(--game-legion); }
+.tone4 { --tone: var(--game-mcp); }
+.tone5 { --tone: var(--paper-muted); }
+
+.cloth {
+  position: relative;
+  width: 100%;
+  height: clamp(150px, 25vh, 280px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background: color-mix(in srgb, black 30%, var(--paper-alt));
+  clip-path: polygon(0 0, 100% 0, 100% 88%, 50% 100%, 0 88%);
+  box-shadow: inset 0 0 0 1px var(--paper-edge);
+}
+
+.ink {
+  display: block;
+  height: var(--fill);
+  background: repeating-linear-gradient(180deg,
+    var(--tone) 0 2px,
+    color-mix(in srgb, var(--tone) 78%, var(--paper-alt)) 2px 4px);
+  opacity: 0.9;
+}
+
+/* On a plate of paper, so the number reads whatever the ink level. */
+.percent {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 2px 6px;
+  border-radius: var(--radius-chip);
+  background: var(--paper);
+  color: var(--paper-ink);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 18px;
+  line-height: 24px;
+  white-space: nowrap;
+}
+
+.bannerName {
+  max-width: 100%;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 18px;
+  text-align: center;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+.bannerCount {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--paper-muted);
+}
+
+.tally {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: var(--space-3);
+  font-size: 15px;
+  color: var(--paper-muted);
+}
+
+/* The chronicle at the foot of the host page: the last or running game, the last list. */
+.chronicle {
+  margin-top: auto;
+  padding-top: var(--space-3);
+  border-top: 1px solid color-mix(in srgb, var(--paper-edge) 60%, transparent);
+  display: flex;
+  flex-direction: column;
+}
+
+.chronicleLine {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: var(--space-3);
+  font-size: 15px;
+  line-height: 22px;
+  color: var(--paper-muted);
+}
+
+.inlineAction {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--paper-ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--paper-edge);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+}
+
+.inlineAction:hover {
+  text-decoration-color: currentColor;
+  color: var(--paper-ink);
+}
+
+/* Ready-made armies as ledger entries. */
+.entries {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.entry {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-4);
+  padding: 10px 4px;
+  border-bottom: 1px solid color-mix(in srgb, var(--paper-edge) 70%, transparent);
+}
+
+/* The drop cap: the entry's own first letter, gilded in the display face; it stays part of the word. */
+.initial {
+  float: left;
+  margin: 3px 3px 0 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 46px;
+  line-height: 40px;
+  color: var(--accent);
+}
+
+.entryText {
+  min-width: 0;
+  display: block;
+}
+
+.entryName {
+  display: block;
+  font-size: 19px;
+  line-height: 24px;
+  overflow-wrap: anywhere;
+}
+
+.entryDetail {
+  display: block;
+  margin-top: 2px;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--paper-muted);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badgeDot {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-pill);
+  background: currentColor;
+  box-shadow: inset 0 0 0 3px color-mix(in srgb, black 35%, transparent);
+}
+
+.badgeReady { color: var(--ok); }
+.badgeOpen { color: var(--warn); }
+
+.spacer {
+  flex: 1;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.primary,
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 var(--space-6);
+  border-radius: var(--radius-control);
+  text-decoration: none;
+  text-align: center;
+}
+
+.primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 17px;
+}
+
+.primary:hover {
+  color: var(--accent-ink);
+  background: color-mix(in srgb, var(--accent) 88%, var(--paper-ink));
+}
+
+.secondary {
+  border: 1px solid var(--paper-edge);
+  background: transparent;
+  color: var(--paper-ink);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.secondary:hover {
+  color: var(--paper-ink);
+  border-color: var(--paper-ink);
+}
+
+/* Empty parts name what is missing and offer the step. */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-6) 0;
+  max-width: 46ch;
+}
+
+.emptyTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 28px;
+  color: var(--paper-ink);
+}
+
+.emptyBody {
+  margin: 0;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--paper-muted);
+}
+
+.emptyShelf {
+  display: flex;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+/* Three bare banner shapes: the shelf waiting for its first faction. */
+.emptyShelf span {
+  width: 30px;
+  height: 72px;
+  background: color-mix(in srgb, var(--paper-edge) 45%, transparent);
+  clip-path: polygon(0 0, 100% 0, 100% 84%, 50% 100%, 0 84%);
+}
+
+/* Tablet: the pages grow narrower; padding and banners follow. */
+@media (max-width: 1279px) {
+  .page {
+    padding: 32px 28px 28px;
+  }
+  .title { font-size: 34px; line-height: 40px; }
+  .subtitle { font-size: 28px; line-height: 34px; }
+  .banners { gap: var(--space-3) 12px; }
+  .percent { font-size: 15px; line-height: 20px; }
+  .bannerName { font-size: 13px; line-height: 16px; }
+  .bannerCount { font-size: 11px; white-space: nowrap; }
+  .tabs { padding: 0 var(--space-4); }
+}
+
+/* Phone: the two pages stack, the gutter becomes the fold between them. */
+@media (max-width: 767px) {
+  .ledger { min-height: 0; }
+  .book {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 8px auto;
+    border-radius: var(--radius-sm) var(--radius-sm) var(--radius-lg) var(--radius-lg);
+  }
+  .gutter {
+    background: linear-gradient(180deg,
+      color-mix(in srgb, black 55%, var(--paper-alt)),
+      var(--paper-edge) 50%,
+      color-mix(in srgb, black 55%, var(--paper-alt)));
+  }
+  .pageLeft,
+  .pageRight { box-shadow: none; }
+  .page { padding: 24px 18px; }
+  .title { font-size: 30px; line-height: 36px; }
+  .subtitle { font-size: 24px; line-height: 30px; }
+  .banners { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4) var(--space-4); }
+  .cloth { height: 140px; }
+  .percent { font-size: 15px; line-height: 20px; top: 10px; }
+  .bannerName { font-size: 13px; line-height: 16px; }
+  .tabs { padding: 0 var(--space-2); }
+  .tab { padding: var(--space-2) var(--space-3); font-size: 14px; }
+  .entry { gap: var(--space-2); grid-template-columns: minmax(0, 1fr); }
+  .actions > * { flex: 1 1 100%; }
+}
