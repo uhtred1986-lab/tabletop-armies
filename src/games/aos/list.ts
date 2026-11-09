@@ -2,6 +2,7 @@ import type { ListBuilderVariant } from "../types";
 import { aosListSchema } from "./schema";
 import { validateAosList } from "./validate";
 import { listDefinitionSchema } from "../catalogue";
+import { importAosListText } from "./list-import";
 import { readSpearheads, selectionsFromSpearhead, spearheadEntries, spearheadSummaries } from "./spearhead";
 
 export const aosListBuilder: ListBuilderVariant = {
@@ -11,6 +12,7 @@ export const aosListBuilder: ListBuilderVariant = {
   selectionsSchema: aosListSchema,
   manual: true,
   validateList: validateAosList,
+  importText: importAosListText,
   readyMade: {
     when: { path: "selections.mode", value: "spearhead" },
     selectedPath: "selections.spearheadId",

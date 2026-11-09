@@ -421,6 +421,14 @@ textarea::placeholder {
   background: var(--surface-2);
 }
 
+.list-paste summary {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 600;
+}
+
 .manual-note,
 .hint {
   margin: 0;

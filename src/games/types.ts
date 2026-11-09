@@ -101,6 +101,19 @@ export interface ListBuilderVariant {
   validateList: (list: unknown, pack: unknown, settings: ListValidationSettings) => ListValidationResult;
   /** Optional ready-made armies from the selected pack (AoS Spearhead). The shell asks this, never a game id. */
   readyMade?: ReadyMadeSource;
+  /**
+   * Optional paste-import of a list the game's own app exported as text (AoS). Pure; the shell offers the paste
+   * panel only when a variant has it, never by game id.
+   */
+  importText?: (text: string, packs: { id: number; content: unknown }[]) => ListTextImport;
+}
+
+/** A draft list read from pasted text. Lines the import could not match come back, never guessed into the list. */
+export interface ListTextImport {
+  /** Row id of the owner's pack the draft was matched against, if any pack fit. */
+  packRowId?: number;
+  definition: ListDefinition;
+  unmatched: string[];
 }
 
 /** One ready-made army offered by a pack, as the list builder's picker shows it. */
