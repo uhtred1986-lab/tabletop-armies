@@ -92,3 +92,12 @@ Merge once the gate is green on the exact head you pushed and the issue's "Done 
   regenerate on the newer `main` before merging. The merge to `main` is what migrates production (after its backup).
 - **After a merge, unasked:** delete the merged remote branch and any other fully merged ones; never touch
   `--no-merged` branches, report them. Then verify `git log origin/main`, not the PR state.
+
+## Reading production and checking a deploy
+
+- `npm run prod:read -- "select …"` reads the production database (`--branch <name>` for another branch, `--json` for
+  JSON). It runs in a READ ONLY transaction, so Postgres refuses writes. It checks the Neon project is tabletop-armies
+  and never prints the connection string. Writes still need the backup branch first (CLAUDE.md).
+- `npm run deploy:status [-- --wait]` lists the latest Vercel production deploys of `main`; `--wait` follows the newest
+  until it is READY and prints the build log's tail on an error. Read-only: it never deploys or promotes.
+- Both share `scripts/lib/neon-api.mts` / the Vercel API with `npm run tmp-branch`; none reads `NEON_PROJECT_ID`.

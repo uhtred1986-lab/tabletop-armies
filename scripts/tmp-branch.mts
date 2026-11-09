@@ -13,40 +13,19 @@
  * Then: `npm run dev` reads .env.development.local; unset any DATABASE_URL your shell inherited first.
  */
 import { readFileSync, writeFileSync } from "node:fs";
+import { PROJECT, assertOwnProject, branches, connectionUri, neon } from "./lib/neon-api.mts";
 
-const API = "https://console.neon.tech/api/v2";
-const PROJECT = process.env.TMP_BRANCH_PROJECT?.trim() || "long-mountain-10123121";
 /** The isolated v1 test branch (`dev-all-milestones-v1-20261105`), never production. */
 const PARENT = process.env.TMP_BRANCH_PARENT?.trim() || "br-red-recipe-b9p3guih";
-const KEY = process.env.NEON_API_KEY?.trim();
-
-async function neon(path: string, init: RequestInit = {}): Promise<Record<string, unknown>> {
-  if (!KEY) throw new Error("NEON_API_KEY is not set");
-  const res = await fetch(`${API}${path}`, { ...init, headers: { Authorization: `Bearer ${KEY}`, "Content-Type": "application/json", Accept: "application/json", ...init.headers } });
-  const body = await res.text();
-  if (!res.ok) throw new Error(`Neon ${init.method ?? "GET"} ${path}: HTTP ${res.status} ${body.slice(0, 200)}`);
-  return body ? JSON.parse(body) as Record<string, unknown> : {};
-}
 
 async function branchId(name: string): Promise<string> {
-  const { branches } = await neon(`/projects/${PROJECT}/branches`) as { branches: { id: string; name: string; default?: boolean }[] };
-  const branch = branches.find((b) => b.name === name);
+  const branch = (await branches()).find((b) => b.name === name);
   if (!branch) throw new Error(`No branch named ${name}`);
   if (branch.default) throw new Error("Refusing to touch the default (production) branch");
   return branch.id;
 }
 
-async function uri(name: string): Promise<string> {
-  const id = await branchId(name);
-  const { uri: value } = await neon(`/projects/${PROJECT}/connection_uri?branch_id=${id}&database_name=muster&role_name=muster_owner&pooled=true`) as { uri: string };
-  return value;
-}
-
-/** Every command first proves it is talking to this app's project, never another app's. */
-async function assertOwnProject(): Promise<void> {
-  const { project } = await neon(`/projects/${PROJECT}`) as { project: { name: string } };
-  if (project.name !== "tabletop-armies") throw new Error(`Project ${PROJECT} is "${project.name}", not tabletop-armies; refusing`);
-}
+const uri = async (name: string) => connectionUri(await branchId(name));
 
 const [command, name, file] = process.argv.slice(2);
 if (!command || !name) throw new Error("Usage: tmp-branch.mts <create|env|sql|delete> <tmp-name> [sql-file]");
