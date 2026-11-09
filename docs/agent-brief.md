@@ -55,6 +55,16 @@ There is no automatic CI (`checks.yml` is manual only). Run what proves the chan
    `package.json` or the lockfile.
 4. **Never skip, weaken or delete a test to get green.** A red `main` is fixed first, before any new work.
 
+
+### Screen proof on a throwaway branch
+
+- `npm run tmp-branch -- create tmp-<task>-<yyyymmdd>` makes a child of the isolated test branch (never production;
+  the script checks the project is tabletop-armies and the name starts with `tmp-`). `env` writes
+  `.env.development.local`, `sql <file>` seeds invented data over HTTPS, `delete` removes it again.
+- `npm run shots -- --base http://localhost:3000 --games aos,mcp --routes /,/lists` screenshots at 1440×900, 1180×820
+  and 390×844 into `data/shots/` and fails on page errors, horizontal overflow or tap targets under 44 px on touch.
+- `src/games/labels.test.ts` fails when a game module shows a label that has no English or German string.
+
 ## Screens
 
 - Read `docs/ui-standard.md` first; its proof checklist (§9) wins over the notes below.

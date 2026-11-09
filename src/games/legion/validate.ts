@@ -5,7 +5,8 @@ import { legionListSchema, legionPackSchema } from "./schema";
 type Data = Record<string, unknown>;
 const data = (value: unknown): Data => value && typeof value === "object" ? value as Data : {};
 const rows = (value: unknown): Data[] => Array.isArray(value) ? value.map(data) : [];
-const STANDARD_RANK_LIMITS = {
+/** The standard Army's rank limits; also read by the field-map home (home.ts) so both agree. */
+export const STANDARD_RANK_LIMITS = {
   commander: { min: 1, max: 2 }, operative: { min: 0, max: 2 }, corps: { min: 3, max: 6 },
   "special-forces": { min: 0, max: 3 }, support: { min: 0, max: 3 }, "heavy-support": { min: 0, max: 2 },
 } as const;

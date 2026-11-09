@@ -2,6 +2,7 @@ import type { ListBuilderVariant } from "../types";
 import { aosListSchema } from "./schema";
 import { validateAosList } from "./validate";
 import { listDefinitionSchema } from "../catalogue";
+import { readSpearheads, selectionsFromSpearhead, spearheadEntries, spearheadSummaries } from "./spearhead";
 
 export const aosListBuilder: ListBuilderVariant = {
   id: "army",
@@ -10,10 +11,30 @@ export const aosListBuilder: ListBuilderVariant = {
   selectionsSchema: aosListSchema,
   manual: true,
   validateList: validateAosList,
+  readyMade: {
+    when: { path: "selections.mode", value: "spearhead" },
+    selectedPath: "selections.spearheadId",
+    labelKeys: {
+      title: "list.aos.spearhead.title", help: "list.aos.spearhead.help", empty: "list.aos.spearhead.empty", noPack: "list.aos.spearhead.noPack",
+      dataLink: "list.aos.spearhead.dataLink", units: "list.aos.spearhead.units", configured: "list.aos.spearhead.configured",
+      incomplete: "list.aos.spearhead.incomplete", noFaction: "list.aos.spearhead.noFaction", replaceConfirm: "list.aos.spearhead.replaceConfirm",
+      unlinked: "list.aos.spearhead.unlinked",
+    },
+    options: (pack) => spearheadSummaries(pack).map(({ id, name, factionName, unitCount, configured }) => ({ id, name, factionName, unitCount, configured })),
+    apply: (pack, id) => {
+      const spearhead = readSpearheads(pack).find((candidate) => candidate.id === id);
+      return spearhead ? { selections: selectionsFromSpearhead(spearhead), unlinkedCount: spearheadEntries(spearhead).unlinked.length } : undefined;
+    },
+  },
   fields: [
-    { path: "selections.mode", labelKey: "list.field.mode", control: "select", optionsSource: "modes", required: true },
+    { path: "selections.mode", labelKey: "list.field.mode", control: "select", required: true, choices: [
+      { id: "matched", labelKey: "list.aos.mode.matched" },
+      { id: "casual", labelKey: "list.aos.mode.casual" },
+      { id: "spearhead", labelKey: "list.aos.mode.spearhead" },
+      { id: "path-to-glory", labelKey: "list.aos.mode.pathToGlory" },
+    ] },
     { path: "selections.factionId", labelKey: "list.field.faction", control: "faction-picker", optionsSource: "factions" },
-    { path: "selections.pointsLimit", labelKey: "list.field.pointsLimit", control: "number", required: true },
+    { path: "selections.pointsLimit", labelKey: "list.field.pointsLimit", control: "number", required: true, hiddenWhen: { path: "selections.mode", value: "spearhead" } },
     { path: "selections.generalUnitId", labelKey: "list.field.general", control: "unit-picker", optionsSource: "units" },
     { path: "selections.entries", labelKey: "list.field.entries", control: "repeater", itemFields: [
       { path: "unitId", labelKey: "list.field.unit", control: "unit-picker", optionsSource: "units", required: true },

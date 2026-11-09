@@ -12,6 +12,7 @@ dice and the database never know which game they hold; anything game-specific go
 | Profile schema | The unit/character profile this game stores (zod) | `src/games/<id>/schema.ts` |
 | `validateList` | Pure rules `(list, pack, settings) → Issue[]` | `src/games/<id>/validate.ts` + tests |
 | Play loop | Rounds and phases, and which trackers a unit shows | `src/games/<id>/play.ts` |
+| `readyMade` (optional, per list variant) | Ready-made armies a pack offers (AoS Spearhead): `options(pack)` for the picker, `apply(pack, id)` for the selections; the list builder shows the picker when `when.path` equals `when.value` | `src/games/<id>/list.ts` |
 
 ## Per game
 

@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = { width: "device-width", initialScale: 1 };
 
 const FONTS =
-  "https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+Condensed:wght@400;600&family=Limelight&family=Michroma&family=Saira+Stencil+One&family=Spectral+SC:wght@600&display=swap";
+  "https://fonts.googleapis.com/css2?family=Bangers&family=Exo+2:wght@400;600&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+Condensed:wght@400;600&family=Limelight&family=Michroma&family=Saira+Condensed:wght@400;600&family=Saira+Stencil+One&family=Special+Elite&family=Spectral:ital,wght@0,400;0,600;1,400&family=Spectral+SC:wght@600&display=swap";
 
 /** The world is chosen on the server from the game cookie, so the first paint is already in the right look. */
 export default async function RootLayout({ children }: { children: ReactNode }) {

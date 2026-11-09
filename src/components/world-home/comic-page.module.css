@@ -1,0 +1,564 @@
+/* The crisis world home: a comic page. Light gutters (paper), dark panels with heavy ink borders and an offset
+   shadow. Tokens only (src/theme/tokens.css); the accent marks one thing: the primary action in the splash. */
+
+.page {
+  --ink-line: 3px solid var(--paper-edge);
+  --drop: 5px 5px 0 0 var(--paper-edge);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-areas:
+    "splash splash cast cast"
+    "crises crises tactics tactics"
+    "prev prev prev prev";
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--paper);
+  border: var(--ink-line);
+  box-shadow: var(--drop);
+  color: var(--ink);
+  font-family: var(--font-record);
+}
+
+.page > * {
+  min-width: 0;
+}
+
+/* Shared panel skin. */
+.splash,
+.hero,
+.more,
+.emptyPanel,
+.crises,
+.tactics,
+.previously {
+  border: var(--ink-line);
+  box-shadow: 4px 4px 0 0 var(--paper-edge);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.panelTitle,
+.castTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 1.1;
+  letter-spacing: 0.04em;
+}
+
+/* Splash. */
+.splash {
+  grid-area: splash;
+  position: relative;
+  overflow: hidden;
+  min-height: 440px;
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-6);
+  background:
+    repeating-conic-gradient(from 0deg at 82% 22%, color-mix(in srgb, var(--surface-2) 80%, transparent) 0deg 6deg, transparent 6deg 14deg),
+    linear-gradient(100deg, var(--surface-1) 45%, var(--surface-2));
+}
+
+.splashTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.caption {
+  max-width: 32rem;
+  margin: 0;
+  padding: 6px 14px;
+  background: var(--paper);
+  color: var(--paper-ink);
+  border: 2px solid var(--paper-edge);
+  box-shadow: 3px 3px 0 0 var(--paper-edge);
+  font-size: 16px;
+  line-height: 1.35;
+  font-weight: 600;
+  transform: skewX(-6deg);
+  position: relative;
+  z-index: 1;
+}
+
+.splashBody {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.kicker {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink-muted);
+}
+
+.headline {
+  margin: 0;
+  max-width: 14ch;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(44px, 5.2vw, 74px);
+  line-height: 0.95;
+  letter-spacing: 0.03em;
+  color: var(--paper-alt);
+  text-shadow: 4px 4px 0 var(--paper-edge);
+  overflow-wrap: anywhere;
+}
+
+.lede {
+  margin: var(--space-2) 0 0;
+  max-width: 30rem;
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+.status {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.status[data-status="complete"] { color: var(--ok); }
+.status[data-status="incomplete"] { color: var(--warn); }
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.cta,
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  border: 3px solid var(--paper-edge);
+  text-decoration: none;
+}
+
+.cta {
+  padding: 6px 26px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  box-shadow: 4px 4px 0 0 var(--paper-edge);
+  font-family: var(--font-display);
+  font-size: 26px;
+  letter-spacing: 0.04em;
+  transform: skewX(-8deg);
+}
+
+.cta > span {
+  display: inline-block;
+  transform: skewX(8deg);
+}
+
+.cta:hover {
+  box-shadow: 6px 6px 0 0 var(--paper-edge);
+  translate: -1px -1px;
+}
+
+.secondary {
+  padding: 6px 18px;
+  background: var(--paper-alt);
+  color: var(--paper-ink);
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.secondary:hover {
+  background: var(--paper);
+}
+
+.cta:focus-visible,
+.secondary:focus-visible,
+.more:focus-visible,
+.gameRow:focus-visible,
+.textLink:focus-visible,
+.textLinkDark:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* The threat burst: a red ornament ring around a white burst. */
+.burst {
+  flex: none;
+  margin: calc(-1 * var(--space-2)) calc(-1 * var(--space-2)) 0 0;
+  width: 160px;
+  height: 160px;
+  display: grid;
+  place-items: center;
+  background: var(--accent-2);
+  clip-path: polygon(50% 0, 61% 22%, 85% 8%, 78% 34%, 100% 42%, 80% 58%, 94% 82%, 68% 76%, 58% 100%, 46% 78%, 22% 94%, 26% 68%, 0 60%, 20% 44%, 6% 18%, 32% 24%);
+}
+
+.burstInner {
+  width: 78%;
+  height: 78%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper-alt);
+  color: var(--paper-ink);
+  clip-path: inherit;
+  font-family: var(--font-display);
+}
+
+.burstNumber {
+  font-size: 44px;
+  line-height: 1;
+}
+
+.burstLabel {
+  font-size: 13px;
+  letter-spacing: 0.04em;
+}
+
+/* Character panels. */
+.cast {
+  grid-area: cast;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: minmax(0, 1fr);
+  gap: var(--space-3);
+}
+
+.cast:has(> .castTitle) {
+  grid-template-rows: auto;
+  align-content: start;
+}
+
+.castTitle {
+  grid-column: 1 / -1;
+  color: var(--paper-ink);
+}
+
+.hero {
+  min-height: 150px;
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  background: var(--surface-1);
+}
+
+.tag {
+  align-self: flex-start;
+  margin: 0;
+  padding: 3px 10px;
+  background: var(--paper);
+  color: var(--paper-ink);
+  border: 2px solid var(--paper-edge);
+  font-size: 13px;
+  font-weight: 600;
+  transform: skewX(-6deg);
+}
+
+.heroName {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 28px;
+  line-height: 1.05;
+  letter-spacing: 0.03em;
+  overflow-wrap: anywhere;
+}
+
+.heroNote {
+  margin: auto 0 0;
+  color: var(--ink-muted);
+  font-size: 15px;
+}
+
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin: auto 0 0;
+}
+
+.stats div {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.stats dt {
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+
+.stats dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 28px;
+  line-height: 1.1;
+}
+
+.more {
+  min-height: 150px;
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-1);
+  background: var(--paper-alt);
+  color: var(--paper-ink);
+  text-decoration: none;
+}
+
+.more:hover { background: var(--paper); }
+
+.moreCount {
+  font-family: var(--font-display);
+  font-size: 34px;
+  letter-spacing: 0.03em;
+}
+
+.emptyPanel {
+  grid-column: 1 / -1;
+  grid-row: span 2;
+  min-height: 200px;
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--space-4);
+  background: var(--surface-1);
+  border-style: dashed;
+}
+
+.emptyPanel p {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 28px;
+  line-height: 1.1;
+  letter-spacing: 0.03em;
+}
+
+/* Crises (a white panel) and team tactics (a dark panel). */
+.crises {
+  grid-area: crises;
+  padding: var(--space-4) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  background: var(--paper-alt);
+  color: var(--paper-ink);
+}
+
+.crisisList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: var(--space-2);
+}
+
+.crisis {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border: 2px solid var(--paper-edge);
+}
+
+.crisisType {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--paper-muted);
+}
+
+.crisisName {
+  font-size: 17px;
+  overflow-wrap: anywhere;
+}
+
+.crisisThreat {
+  font-size: 13px;
+  color: var(--paper-muted);
+}
+
+.tactics {
+  grid-area: tactics;
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  background: var(--surface-1);
+}
+
+.chips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.chip {
+  padding: 6px 10px;
+  background: var(--paper-alt);
+  color: var(--paper-ink);
+  border: 2px solid var(--paper-edge);
+  font-weight: 600;
+}
+
+.chipMore {
+  padding: 6px 10px;
+  border: 2px dashed var(--ink-muted);
+  color: var(--ink);
+}
+
+.inlineEmpty,
+.inlineEmptyDark,
+.empty {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.inlineEmptyDark { color: var(--ink); }
+
+.textLink,
+.textLinkDark {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-weight: 600;
+}
+
+.textLink { color: var(--paper-ink); }
+.textLinkDark { color: var(--ink); }
+
+/* Previously: the last games, a strip along the bottom of the page. */
+.previously {
+  grid-area: prev;
+  padding: var(--space-3) var(--space-4);
+  background: var(--paper-alt);
+  color: var(--paper-ink);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.previouslyHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.games {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  gap: var(--space-2);
+}
+
+.gameRow {
+  min-height: 44px;
+  padding: 8px 12px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0 var(--space-3);
+  border: 2px solid var(--paper-edge);
+  color: var(--paper-ink);
+  text-decoration: none;
+}
+
+.gameRow:hover { background: var(--paper); }
+
+.gameRow[data-running] {
+  border-style: dashed;
+  border-width: 3px;
+}
+
+.gameDate {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  color: var(--paper-muted);
+}
+
+.gameResult {
+  font-family: var(--font-display);
+  font-size: 19px;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-align: right;
+}
+
+.gameOpponent {
+  grid-column: 1 / -1;
+  font-size: 15px;
+  overflow-wrap: anywhere;
+}
+
+/* Tablet in portrait and narrow laptops: splash over the cast. */
+@media (max-width: 1023px) {
+  .page {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas:
+      "splash splash"
+      "cast cast"
+      "crises tactics"
+      "prev prev";
+  }
+
+  .splash { min-height: 380px; }
+}
+
+/* Phone: one column in reading order. */
+@media (max-width: 640px) {
+  .page {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "splash" "cast" "crises" "tactics" "prev";
+    padding: var(--space-3);
+  }
+
+  .splash {
+    min-height: 0;
+    padding: var(--space-4);
+  }
+
+  .caption { font-size: 14px; }
+
+  .burst {
+    width: 116px;
+    height: 116px;
+  }
+
+  .burstNumber { font-size: 34px; }
+  .burstLabel { font-size: 11px; }
+
+  .cast { grid-template-columns: minmax(0, 1fr); grid-auto-rows: auto; }
+  .hero, .more { min-height: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta:hover { translate: none; }
+}

@@ -4,6 +4,12 @@ import { referenceDe } from "./features/reference.de";
 import { collectionDe } from "./features/collection.de";
 import { campaignsDe } from "./features/campaigns.de";
 import { rulesDe } from "./features/rules.de";
+import { homeDe } from "./features/home.de";
+import { homeLedgerDe } from "./features/homeLedger.de";
+import { homeComicDe } from "./features/homeComic.de";
+import { homeFieldDe } from "./features/homeField.de";
+import { homeDuelDe } from "./features/homeDuel.de";
+import { homeCaseDe } from "./features/homeCase.de";
 // Deutsche UI-Texte. Gleiche Schlüssel wie en.ts. Spielbegriffe in der Sprache des jeweiligen Regelwerks
 // (die Regelwerke sind englisch, daher bleiben Phasen- und Werte-Namen meist englisch).
 import type { StringKey } from "./en";
@@ -15,6 +21,12 @@ export const de: Record<StringKey, string> = {
   ...collectionDe,
   ...campaignsDe,
   ...rulesDe,
+  ...homeDe,
+  ...homeLedgerDe,
+  ...homeComicDe,
+  ...homeFieldDe,
+  ...homeDuelDe,
+  ...homeCaseDe,
   "nav.places": "Lagerplätze",
   "nav.stats": "Statistik",
   "nav.campaigns": "Kampagnen",

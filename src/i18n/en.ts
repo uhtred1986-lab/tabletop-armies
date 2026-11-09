@@ -4,6 +4,12 @@ import { referenceEn } from "./features/reference.en";
 import { collectionEn } from "./features/collection.en";
 import { campaignsEn } from "./features/campaigns.en";
 import { rulesEn } from "./features/rules.en";
+import { homeEn } from "./features/home.en";
+import { homeLedgerEn } from "./features/homeLedger.en";
+import { homeComicEn } from "./features/homeComic.en";
+import { homeFieldEn } from "./features/homeField.en";
+import { homeDuelEn } from "./features/homeDuel.en";
+import { homeCaseEn } from "./features/homeCase.en";
 // English UI strings. Same keys as de.ts (a test checks it). Game terms use each rulebook's own words.
 export const en = {
   ...importsEn,
@@ -12,6 +18,12 @@ export const en = {
   ...collectionEn,
   ...campaignsEn,
   ...rulesEn,
+  ...homeEn,
+  ...homeLedgerEn,
+  ...homeComicEn,
+  ...homeFieldEn,
+  ...homeDuelEn,
+  ...homeCaseEn,
   "nav.places": "Places",
   "nav.stats": "Statistics",
   "nav.campaigns": "Campaigns",

@@ -6,6 +6,7 @@ import { mcpRosterBuilder, mcpSquadBuilder } from "./list";
 export const mcp: GameModule = {
   id: "mcp",
   world: "crisis",
+  homeLayout: "comic-page",
   nameKey: "game.mcp.name",
   factionLabelKey: "game.mcp.faction",
   phases: [

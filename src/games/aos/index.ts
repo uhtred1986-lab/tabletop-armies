@@ -4,6 +4,7 @@ import { aosListBuilder } from "./list";
 export const aos: GameModule = {
   id: "aos",
   world: "sigmar",
+  homeLayout: "ledger",
   nameKey: "game.aos.name",
   factionLabelKey: "game.aos.faction",
   rounds: 5,

@@ -12,6 +12,7 @@ export const playDe: Record<keyof typeof playEn, string> = {
   "play.addEntry": "Eintrag hinzufügen",
   "play.removeEntry": "Eintrag entfernen",
   "play.selection": "Auswahl",
+  "play.chooseOne": "Bitte wählen",
   "play.chooseOrEnter": "Aus Paket wählen oder Kennung eingeben",
   "play.manualId": "Manuelle Kennung",
   "play.manualIds": "Manuelle Kennungen, durch Komma getrennt",

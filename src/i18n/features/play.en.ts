@@ -15,6 +15,7 @@ export const playEn = {
   "play.addEntry": "Add entry",
   "play.removeEntry": "Remove entry",
   "play.selection": "Selection",
+  "play.chooseOne": "Choose one",
   "play.chooseOrEnter": "Choose from your pack or enter an id",
   "play.manualId": "Manual id",
   "play.manualIds": "Manual ids separated by commas",

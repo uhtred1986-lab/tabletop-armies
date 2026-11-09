@@ -6,6 +6,7 @@ import { legionListBuilder } from "./list";
 export const legion: GameModule = {
   id: "legion",
   world: "legion",
+  homeLayout: "field-map",
   nameKey: "game.legion.name",
   factionLabelKey: "game.legion.faction",
   rounds: 6,

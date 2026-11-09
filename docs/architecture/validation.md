@@ -21,6 +21,26 @@ battle size."), never a generic message.
 | List built on an older data pack | DataPack date | Warning |
 | Units not owned / not painted | Owner's collection | Warning (optional) |
 
+### Spearhead (ready-made armies)
+
+A list in mode `spearhead` names `selections.spearheadId`; its entries are created from the pack's spearhead with
+`selectionsFromSpearhead` (`src/games/aos/spearhead.ts`, one entry per box unit at its model count, General flagged).
+Rules, one function each in `spearhead.ts`:
+
+| Rule | Message key | Severity |
+| --- | --- | --- |
+| `spearheadReferenced`: a spearhead is chosen and is in the pack | `issue.aos.spearheadNone`, `issue.aos.spearheadUnknown` | Error (incomplete) |
+| `spearheadSectionsConfigured`: every section configured, every unit linked | `issue.rules.configMissing` | Warning (incomplete) |
+| `spearheadComposition`: no extra or missing units, no changed model counts | `issue.aos.spearheadExtra`, `issue.aos.spearheadMissingUnit`, `issue.aos.spearheadModelCount` | Error |
+| `spearheadGeneral`: the box's General is the list's General | `issue.aos.spearheadGeneral` | Error |
+| `spearheadEnhancements`: enhancements come from the spearhead's own section | `issue.aos.spearheadEnhancement` | Error |
+
+In Spearhead mode the points limit, unit points and size ranges, regiments, regiment/auxiliary/reinforcement and
+enhancement limits and matched-play legality do not run; the box fixes the composition. Unknown units, faction,
+exactly one General, uniques, Legends and collection warnings still do. Outside Spearhead a missing points limit is an
+explicit `issue.rules.configMissing`. Any further Spearhead rule (enhancement count, battle size) waits for the owner's
+source (`docs/TASKS.md`, "To verify").
+
 Other games' rules: `docs/architecture/game-modules.md` and the plan.
 
 ## How

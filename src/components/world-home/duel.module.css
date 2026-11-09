@@ -1,0 +1,317 @@
+/* The saga world home: a letterboxed duel. Tokens only (docs/ui-standard.md §3); accent is your side,
+   accent-2 the opponent's side and never an error. */
+
+.letterbox {
+  /* The bars: the world's deepest paper, opaque, above and below the stage. */
+  background: var(--paper-alt);
+  padding-block: 56px;
+  margin-inline: calc(-1 * var(--space-8));
+}
+
+.stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 420px) minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 20px 32px;
+  padding: 26px 40px 32px;
+  min-height: clamp(560px, calc(100dvh - 260px), 760px);
+  color: var(--paper-ink);
+  font-family: var(--font-record);
+  background:
+    radial-gradient(ellipse at 50% 120%, color-mix(in srgb, var(--accent-2) 18%, transparent), transparent 55%),
+    linear-gradient(180deg, color-mix(in srgb, var(--ground) 52%, transparent), color-mix(in srgb, var(--ground) 82%, transparent) 60%, color-mix(in srgb, var(--ground) 90%, transparent)),
+    var(--texture);
+}
+
+.head {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.title {
+  margin: 0;
+  font-size: 22px;
+  line-height: 28px;
+  font-weight: 400;
+  color: var(--paper-ink);
+}
+
+.sideLabel {
+  margin: 0;
+  font-family: var(--font-record);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  color: var(--paper-muted);
+}
+
+.you,
+.them,
+.struggle {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  justify-content: center;
+  min-width: 0;
+}
+
+.them { text-align: right; align-items: stretch; }
+.struggle { align-items: center; text-align: center; gap: 18px; }
+
+/* Cards: opaque paper, glowing in the side's colour. */
+.card {
+  background: var(--paper);
+  border-radius: var(--radius-card);
+  padding: 12px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.mine { box-shadow: 0 0 22px color-mix(in srgb, var(--accent) 28%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--accent) 45%, transparent); }
+.theirs { box-shadow: 0 0 22px color-mix(in srgb, var(--accent-2) 22%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--accent-2) 45%, transparent); }
+.theirs { align-items: flex-end; }
+
+.empty { gap: 12px; padding: 18px; }
+.mine.empty { align-items: flex-start; }
+
+.teamHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.teamName {
+  margin: 0;
+  font-size: 22px;
+  line-height: 28px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.chip {
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 600;
+  padding: 3px 12px;
+  border-radius: var(--radius-control);
+  color: var(--paper-alt);
+}
+
+.chipOk { background: var(--ok); }
+.chipWarn { background: var(--warn); }
+
+.issue {
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--warn);
+}
+
+.squad { display: flex; flex-direction: column; gap: 8px; }
+
+.squadHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.squadName {
+  margin: 0;
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 600;
+  color: var(--paper-ink);
+}
+
+.points {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--paper-muted);
+}
+
+.pips { display: inline-flex; gap: 5px; }
+
+.pip {
+  inline-size: 12px;
+  block-size: 12px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--paper-ink) 15%, transparent);
+}
+
+.pipOn { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+.pipOver { background: var(--warn); }
+
+.units > .card {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  column-gap: var(--space-3);
+  padding-block: 10px;
+}
+
+.units {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.unitName {
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.meta {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--paper-muted);
+}
+
+.note {
+  margin: 0;
+  font-size: 15px;
+  line-height: 22px;
+  color: var(--paper-muted);
+  max-inline-size: 36ch;
+}
+
+.opponent {
+  margin: 0;
+  font-family: var(--font-display);
+  text-transform: var(--display-case);
+  letter-spacing: var(--display-track);
+  font-size: 22px;
+  line-height: 30px;
+  overflow-wrap: anywhere;
+}
+
+/* The middle: the duel itself. */
+.running { display: flex; flex-direction: column; gap: 4px; }
+
+.score { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 14px; inline-size: 100%; }
+
+.scoreLine {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  font-size: clamp(56px, 5.6vw, 84px);
+  line-height: 1;
+  color: var(--paper-ink);
+}
+
+.caption { display: flex; flex-direction: column; gap: 2px; }
+
+.vs { font-size: 0.45em; color: var(--paper-muted); }
+.scoreThem { color: var(--accent-2); }
+.scoreEmpty { min-block-size: 1em; }
+
+.momentum {
+  position: relative;
+  inline-size: 100%;
+  block-size: 10px;
+  border-radius: var(--radius-control);
+  background: color-mix(in srgb, var(--accent-2) 55%, transparent);
+  overflow: hidden;
+}
+
+.momentumYou {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  background: var(--accent);
+  box-shadow: 0 0 16px var(--accent);
+}
+
+/* The one accent thing on the screen. */
+.primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 52px;
+  padding: 0 30px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  box-shadow: 0 0 22px color-mix(in srgb, var(--accent) 45%, transparent);
+  animation: hum 3.2s ease-in-out infinite;
+}
+
+.primary:focus-visible { outline: 2px solid var(--paper-ink); outline-offset: 3px; }
+
+@keyframes hum {
+  50% { box-shadow: 0 0 34px color-mix(in srgb, var(--accent) 65%, transparent); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .primary { animation: none; }
+}
+
+.ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 44px;
+  padding: 0 22px;
+  border: 1px solid color-mix(in srgb, var(--paper-ink) 40%, transparent);
+  color: var(--paper-ink);
+  text-decoration: none;
+  font-size: 15px;
+}
+
+.ghost:hover { border-color: var(--paper-ink); }
+
+.quiet {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 44px;
+  color: var(--paper-ink);
+  font-size: 15px;
+  text-underline-offset: 4px;
+  align-self: flex-start;
+}
+
+.quiet:hover { color: var(--accent); }
+
+/* Tablet: thinner bars, tighter stage. */
+@media (max-width: 1279px) {
+  .letterbox { padding-block: 40px; }
+  .stage { padding: 22px 24px 26px; gap: 18px 20px; grid-template-columns: minmax(0, 1fr) minmax(260px, 340px) minmax(0, 1fr); }
+  .card { padding: 10px 14px; }
+  .unitName { font-size: 16px; line-height: 22px; }
+}
+
+/* The bars run edge to edge: they follow the main column's own padding (base.css). */
+@media (min-width: 768px) and (max-width: 1023px), (min-width: 768px) and (pointer: coarse) {
+  .letterbox { margin-inline: calc(-1 * var(--space-4)); }
+}
+
+/* Phone: no letterbox; you on top, the duel in the middle, them below. */
+@media (max-width: 767px) {
+  .letterbox { padding-block: 0; margin-inline: 0; background: none; }
+  .stage { grid-template-columns: minmax(0, 1fr); padding: 0; gap: 24px; min-height: 0; background: none; }
+  .them { text-align: left; }
+  .theirs { align-items: flex-start; }
+  .struggle { padding-block: 8px; }
+}
