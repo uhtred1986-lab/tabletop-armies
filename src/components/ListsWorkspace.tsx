@@ -8,6 +8,7 @@ import { featureTranslator, type FeatureTranslate } from "@/i18n/features/play";
 import { deleteList, saveList } from "@/app/(app)/lists/actions";
 import { games } from "@/games/registry";
 import { getVariant } from "@/lib/lists/modules";
+import { packLabel } from "@/lib/lists/pack-label";
 import { defaultListPackId } from "@/lib/lists/default-pack";
 import type { OwnerCollectionSnapshot } from "@/games/types";
 
@@ -279,7 +280,7 @@ export function ListsWorkspace({ game, locale, variants, packs, lists, collectio
           setDefinition((current) => setAt(current, "dataPackId", pack ? String(record(pack.content).packId ?? "manual") : "manual"));
         }}>
           <option value="manual">{t("play.manualPack")}</option>
-          {packs.map((pack) => <option key={pack.id} value={pack.id}>{pack.source} · {pack.sourceDate} · {String(record(pack.content).revision ?? "")}</option>)}
+          {packs.map((pack) => <option key={pack.id} value={pack.id}>{packLabel(pack)}</option>)}
         </select>
         {packs.length === 0 && <p className="hint">{t("play.noPack")}</p>}
         <div className="w-rule" />
