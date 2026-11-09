@@ -364,7 +364,7 @@ export function ListsWorkspace({ game, locale, variants, packs, lists, collectio
               setStatus(picked.unlinkedCount > 0 ? t(source.labelKeys.unlinked, { count: formatNumber(locale, picked.unlinkedCount) }) : "");
             }}
           />}
-          {modeId && <p className="hint"><Link href={`/reference?gameId=${encodeURIComponent(game.id)}&recordId=${encodeURIComponent(modeId)}`}>{t("play.modeReference")}</Link></p>}
+          {modeId && <p className="hint"><Link className="touch-link" href={`/reference?gameId=${encodeURIComponent(game.id)}&recordId=${encodeURIComponent(modeId)}`}>{t("play.modeReference")}</Link></p>}
           {!!variant.settingsFields.length && <section className="settings-panel">
             <h2>{t("play.manualSettings")}</h2>
             <p className="hint">{t("play.settingsOwnerEntered")}</p>

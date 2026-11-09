@@ -1,20 +1,24 @@
 "use client";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type MouseEvent } from "react";
-import type { CataloguePack, ListValidationResult } from "@/games/types";
 import type { Locale } from "@/i18n";
-import { applyPlayOperation, loadPlayEvents, startGame } from "@/app/(app)/play/actions";
+import { applyPlayOperation, loadPlayEvents } from "@/app/(app)/play/actions";
 import { featureTranslator } from "@/i18n/features/play";
-import { enqueueOperation, listQueuedOperations, loadSnapshot, markOperation, payloadHash, saveSnapshot, setActiveOfflineOwner, type OfflineOperation } from "@/lib/play/offline-store";
+import { enqueueOperation, listQueuedOperations, loadSnapshot, markOperation, saveSnapshot, setActiveOfflineOwner, type OfflineOperation } from "@/lib/play/offline-store";
 import { applyQueuedOperations, nextOperationSequence, replayPlay, trackerValue } from "@/lib/play/model";
 import type { PlayEvent, PlayModuleSnapshot, PlaySide, PlayStartSnapshot, TrackerValue } from "@/lib/play/replay";
+import { scoreGame } from "@/lib/play/score";
+import type { SetupSource } from "@/lib/play/setup-source";
+import { SetupWizard, type SetupList, type SetupPack } from "./play/SetupWizard";
+import { RoundPanel } from "./play/RoundPanel";
+import { BattleplanMap } from "./play/BattleplanMap";
+import { ResultCardButton } from "./play/ResultCardButton";
 
-type GameList = { id: number; name: string; definition: Record<string, unknown>; validation: ListValidationResult; variantId: string; packId: number | null };
+type GameList = SetupList;
 type ListVariant = { id: string; labelKey: string };
-type PackView = { id: number; sourceDate: string; revision: string; content: CataloguePack };
+type PackView = SetupPack;
 type HistoryRow = { id: number; opponent: string; playedOn: string; result: "win" | "loss" | "draw" | null; listIds: number[] };
-type Props = { owner: string; locale: Locale; game: PlayModuleSnapshot; lists: GameList[]; listVariants: ListVariant[]; packs: PackView[]; currentPack?: PackView; history: HistoryRow[]; selectedGame?: HistoryRow; initialEvents: PlayEvent[]; opponents: { id: string; name: string }[] };
+type Props = { owner: string; locale: Locale; game: PlayModuleSnapshot; lists: GameList[]; listVariants: ListVariant[]; packs: PackView[]; currentPack?: PackView; history: HistoryRow[]; selectedGame?: HistoryRow; initialEvents: PlayEvent[]; setupSource: SetupSource };
 
 const subscribeOnline = (callback: () => void) => {
   window.addEventListener("online", callback);
@@ -28,48 +32,6 @@ const getOnlineSnapshot = () => navigator.onLine;
 const getServerOnlineSnapshot = () => true;
 
 const record = (value: unknown): Record<string, unknown> => value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : {};
-const withoutUndefined = (value: unknown): unknown => {
-  if (Array.isArray(value)) return value.map(withoutUndefined);
-  if (value && typeof value === "object") return Object.fromEntries(Object.entries(value as Record<string, unknown>).filter(([, item]) => item !== undefined).map(([key, item]) => [key, withoutUndefined(item)]));
-  return value;
-};
-const unique = <T,>(items: T[], key: (item: T) => string) => [...new Map(items.map((item) => [key(item), item])).values()];
-
-function unitsForList(list: GameList, pack?: PackView): { id: string; name: string }[] {
-  const known = new Map<string, string>();
-  const catalogue = record(pack?.content.catalogue);
-  if (Array.isArray(catalogue.units)) for (const item of catalogue.units) {
-    const row = record(item);
-    if (typeof row.id === "string" && typeof row.name === "string") known.set(row.id, row.name);
-  }
-  const found: { id?: string; name: string }[] = [];
-  const visit = (value: unknown) => {
-    if (Array.isArray(value)) { value.forEach(visit); return; }
-    if (!value || typeof value !== "object") return;
-    const row = value as Record<string, unknown>;
-    for (const key of ["unitId", "modelId"]) {
-      const id = row[key];
-      if (typeof id === "string") {
-        const name = typeof row.name === "string" ? row.name : known.get(id);
-        if (name) found.push({ id, name });
-      }
-    }
-    for (const [key, item] of Object.entries(row)) {
-      if (Array.isArray(item) && /(unit|character|model)Ids$/.test(key)) {
-        for (const id of item) if (typeof id === "string" && known.has(id)) found.push({ id, name: known.get(id)! });
-      } else visit(item);
-    }
-  };
-  visit(list.definition.selections);
-  const counts = new Map<string, number>();
-  return found.map((unit) => {
-    const key = unit.id ?? unit.name;
-    const occurrence = (counts.get(key) ?? 0) + 1;
-    counts.set(key, occurrence);
-    return { id: `${list.id}:${key}:${occurrence}`, name: unit.name };
-  });
-}
-
 function trackerInitialValue(tracker: PlayModuleSnapshot["trackers"][number]): number | boolean | string {
   if (tracker.kind === "toggle") return false;
   if (tracker.kind === "track") return tracker.options?.[0]?.id ?? "";
@@ -85,22 +47,15 @@ export function PlayWorkspace(props: Props) {
 }
 
 function PlayWorkspaceSession(props: Props) {
-  const { owner, locale, game, lists, packs, currentPack, history, selectedGame, initialEvents, opponents } = props;
+  const { owner, locale, game, lists, packs, currentPack, history, selectedGame, initialEvents, setupSource } = props;
   const t = featureTranslator(locale);
-  const router = useRouter();
   const [confirmedEvents, setConfirmedEvents] = useState(initialEvents);
   const confirmedEventsRef = useRef(initialEvents);
   const [operations, setOperations] = useState<OfflineOperation[]>([]);
   const [status, setStatus] = useState("");
   const [syncing, setSyncing] = useState(false);
   const online = useSyncExternalStore(subscribeOnline, getOnlineSnapshot, getServerOnlineSnapshot);
-  const [opponentName, setOpponentName] = useState("");
-  const [opponentFaction, setOpponentFaction] = useState("");
-  const [opponentListName, setOpponentListName] = useState("");
-  const [ownListIds, setOwnListIds] = useState<number[]>([]);
-  const [opponentUnitIds, setOpponentUnitIds] = useState<string[]>([]);
-  const [manualOpponentUnits, setManualOpponentUnits] = useState("");
-  const [starting, setStarting] = useState(false);
+  const [photoReminderRound, setPhotoReminderRound] = useState<number | null>(null);
   const [selectedUnit, setSelectedUnit] = useState("");
   const [timerNow, setTimerNow] = useState(0);
   const [diceCount, setDiceCount] = useState(1);
@@ -236,47 +191,6 @@ function PlayWorkspaceSession(props: Props) {
     await task;
   }
 
-  async function start() {
-    if (!navigator.onLine || starting || !opponentName.trim()) return;
-    const chosenLists = lists.filter((list) => ownListIds.includes(list.id));
-    const selectedOpponentUnits = opponents.filter((unit) => opponentUnitIds.includes(unit.id)).map((unit) => ({ id: unit.id, name: unit.name }));
-    const customOpponentUnits: { id?: string; name: string }[] = manualOpponentUnits.split(",").map((name) => name.trim()).filter(Boolean).map((name, index) => ({ id: `manual-${index + 1}-${name}`, name }));
-    const opponentUnits = unique([...selectedOpponentUnits, ...customOpponentUnits], (unit) => unit.id ?? unit.name);
-    const snapshots = chosenLists.map((list) => ({
-      id: list.id,
-      name: list.name,
-      selections: list.definition,
-    }));
-    const unitsById = chosenLists.flatMap((list) => unitsForList(list, packs.find((pack) => pack.id === list.packId) ?? currentPack));
-    const ownerFaction = chosenLists.map((list) => {
-      const selections = record(list.definition.selections);
-      return typeof list.definition.factionId === "string" ? list.definition.factionId : typeof selections.factionId === "string" ? selections.factionId : undefined;
-    }).find(Boolean);
-    const snapshot: PlayStartSnapshot = {
-      schemaVersion: 1,
-      gameId: game.id,
-      module: game,
-      modeId: chosenLists[0] && (chosenLists[0].definition.modeId as string | undefined),
-      sides: {
-        owner: { factionId: ownerFaction, listIds: chosenLists.map((list) => list.id), lists: snapshots, units: unitsById },
-        opponent: { name: opponentName.trim(), factionId: opponentFaction.trim() || undefined, listName: opponentListName.trim() || undefined, units: opponentUnits },
-      },
-    };
-    const payload = { gameId: game.id, listIds: chosenLists.map((list) => list.id), opponentName: opponentName.trim(), opponentFaction: opponentFaction.trim() || undefined, opponentList: opponentListName.trim() || undefined, opponentUnits, snapshot };
-    const operationId = crypto.randomUUID();
-    const hash = await payloadHash(withoutUndefined(payload));
-    setStarting(true);
-    setStatus("");
-    const result = await startGame({ ...payload, operationId, payloadHash: hash });
-    if (!result.ok) {
-      setStatus(t(`play.error.${result.error}`));
-      setStarting(false);
-      return;
-    }
-    router.push(`/play?id=${result.value.playedGameId}`);
-    router.refresh();
-  }
-
   async function resolveQueue(choice: "rebase" | "discard") {
     if (!selectedGame || !conflictOps.length) return;
     if (choice === "discard") {
@@ -311,31 +225,7 @@ function PlayWorkspaceSession(props: Props) {
 
   if (!selectedGame) return <>
     <div className="play-workspace setup">
-      <section className="w-card card-pad play-start-form">
-        <h1 className="w-display page-title">{t("play.title")}</h1>
-        <p className="hint">{t(game.name ? "play.startDescription" : "play.title")}</p>
-        <label className="field-label">{t("play.opponentName")} *<input value={opponentName} onChange={(event) => setOpponentName(event.target.value)} required /></label>
-        <label className="field-label">{t("play.opponentFaction")}<input value={opponentFaction} onChange={(event) => setOpponentFaction(event.target.value)} /></label>
-        <label className="field-label">{t("play.opponentList")}<input value={opponentListName} onChange={(event) => setOpponentListName(event.target.value)} /></label>
-        <label className="field-label">{t("play.opponentUnits")}<select multiple size={Math.min(5, Math.max(2, opponents.length))} value={opponentUnitIds} onChange={(event) => setOpponentUnitIds(Array.from(event.target.selectedOptions, (option) => option.value))}>
-          {opponents.map((unit) => <option key={unit.id} value={unit.id}>{unit.name}</option>)}
-        </select><input value={manualOpponentUnits} onChange={(event) => setManualOpponentUnits(event.target.value)} placeholder={t("play.manualOpponentUnits")} /></label>
-        <fieldset className="play-list-choice">
-          <legend>{t("play.ownLists")}</legend>
-          {lists.length ? lists.map((list) => (
-            <label className="list-choice" key={list.id}>
-              <input type="checkbox" checked={ownListIds.includes(list.id)} onChange={(event) => setOwnListIds((current) => event.target.checked ? [...current, list.id] : current.filter((id) => id !== list.id))} />
-              <span>{list.name}</span>
-              <small className={`validation-status ${list.validation.status}`}>{list.validation.status === "complete" ? t("play.completeValidation") : t("play.incompleteValidation")}</small>
-            </label>
-          )) : <p className="hint">{t("play.noListsForGame")} <Link href="/lists" className="touch-link">{t("play.listBuilder")}</Link></p>}
-        </fieldset>
-        {!ownListIds.length && <p className="hint">{t("play.selectOwnList")}</p>}
-        <p className="hint">{t("play.startValidationNote")}</p>
-        {status && <p role="status">{status}</p>}
-        <button type="button" className="btn" disabled={starting || !opponentName.trim() || !ownListIds.length || !online} onClick={() => void start()}>{t("play.start")}</button>
-        {!online && <p className="hint">{t("play.startOnlineOnly")}</p>}
-      </section>
+      <SetupWizard locale={locale} game={game} lists={lists} packs={packs} currentPack={currentPack} setupSource={setupSource} />
       <section className="w-card card-pad play-history">
         <h2>{t("play.history")}</h2>
         {history.length ? history.map((row) => <HistoryButton key={row.id} row={row} current={false} game={game} locale={locale} />) : <p className="hint">{t("play.noGames")}</p>}
@@ -349,12 +239,21 @@ function PlayWorkspaceSession(props: Props) {
   const roundUnitOptions = [...units.owner, ...units.opponent].map((unit) => ({ id: unit.id ?? unit.name, name: unit.name }));
   const elapsed = state?.timer.status === "running" && state.timer.startedAt ? state.timer.elapsedMs + Math.max(0, timerNow - state.timer.startedAt) : state?.timer.elapsedMs ?? 0;
   const latestNote = [...viewEvents].reverse().find((event) => event.kind === "game_note")?.payload?.text;
+  const score = state ? scoreGame(state) : undefined;
+  const battleplan = state?.start.setup?.battleplan;
+  const factionNames = Object.fromEntries(packs.flatMap((pack) => {
+    const factions = record(pack.content.catalogue).factions;
+    return Array.isArray(factions) ? factions.flatMap((item) => { const row = record(item); return typeof row.id === "string" && typeof row.name === "string" ? [[row.id, row.name] as const] : []; }) : [];
+  }));
 
   function nextPhase() {
     if (!state || !currentPhase) return;
     const nextIndex = state.phaseIndex + 1;
     if (nextIndex < sessionGame.phases.length) void append("phase_advanced", { phaseIndex: nextIndex, activeSide: currentSide });
-    else if (sessionGame.rounds === undefined || state.round < sessionGame.rounds) void append("round_advanced", { round: state.round + 1, activeSide: currentSide });
+    else if (sessionGame.rounds === undefined || state.round < sessionGame.rounds) {
+      void append("round_advanced", { round: state.round + 1, activeSide: currentSide });
+      if (state.start.setup?.photoReminder) setPhotoReminderRound(state.round + 1);
+    }
   }
 
   function setTracker(tracker: PlayModuleSnapshot["trackers"][number], scope: "game" | "side" | "unit" | "round", side?: PlaySide, unitId?: string, value?: number | boolean | string) {
@@ -388,7 +287,7 @@ function PlayWorkspaceSession(props: Props) {
       <label className="field-label">{t("play.selectUnit")}<select value={selectedUnit} onChange={(event) => setSelectedUnit(event.target.value)}><option value="">{t("play.chooseUnit")}</option>{(["owner", "opponent"] as const).flatMap((side) => roundUnitOptions.map((unit) => unit.id && (units[side] ?? []).some((item) => (item.id ?? item.name) === unit.id) ? <option key={`${side}-${unit.id}`} value={`${side}:${unit.id}`}>{t(`play.${side}Side`)} · {unit.name}</option> : []))}</select></label>
       {selectedUnit.split(":").length > 1 && (() => { const [side, ...rest] = selectedUnit.split(":"); return controlTracker(tracker, "unit", side as PlaySide, rest.join(":")); })()}
     </section>;
-    if (tracker.scope === "round") return <section className="play-tracker" key={tracker.id}><h3>{t(tracker.label)} · {t("play.round", { round: state?.round ?? 1 })}</h3>{controlTracker(tracker, "round")}</section>;
+    if (tracker.scope === "round") return <section className="play-tracker" key={tracker.id}><h3>{t(tracker.label)} · {t("round.title", { round: state?.round ?? 1 })}</h3>{controlTracker(tracker, "round")}</section>;
     return <section className="play-tracker" key={tracker.id}><h3>{t(tracker.label)}</h3>{controlTracker(tracker, "game")}</section>;
   }
 
@@ -430,7 +329,7 @@ function PlayWorkspaceSession(props: Props) {
 
   const currentRoundDone = sessionGame.rounds !== undefined && (state?.round ?? 1) >= sessionGame.rounds && (state?.phaseIndex ?? 0) >= sessionGame.phases.length - 1;
   const phaseRail = <nav className="play-phase-rail" aria-label={t("play.phase")}>
-    <div className="play-round-label">{t("play.round", { round: state?.round ?? 1 })}{sessionGame.rounds ? ` / ${sessionGame.rounds}` : ""}</div>
+    <div className="play-round-label">{t("round.title", { round: state?.round ?? 1 })}{sessionGame.rounds ? ` / ${sessionGame.rounds}` : ""}</div>
     <div className="play-active-chip">{t(`play.${currentSide}Side`)}</div>
     {sessionGame.phases.map((phase, index) => <div key={phase.id} className="play-phase" aria-current={index === state?.phaseIndex ? "step" : undefined}>{phase.label}</div>)}
     <div className="play-rail-actions">
@@ -441,7 +340,7 @@ function PlayWorkspaceSession(props: Props) {
 
   return <div className="play-workspace table-play">
     <header className="table-play-header">
-      <div><div className="label">{sessionGame.name} · {t("play.round", { round: state?.round ?? 1 })}{sessionGame.rounds ? ` / ${sessionGame.rounds}` : ""}</div><h1 className="w-display page-title">{String(record(startSnapshotFromEvent(confirmedEvents)?.sides.owner.lists[0]).name ?? t("play.title"))}</h1><div className="hint">{t("play.vs")} {startSnapshotFromEvent(confirmedEvents)?.sides.opponent.name ?? selectedGame.opponent}</div></div>
+      <div><div className="label">{sessionGame.name} · {t("round.title", { round: state?.round ?? 1 })}{sessionGame.rounds ? ` / ${sessionGame.rounds}` : ""}</div><h1 className="w-display page-title">{String(record(startSnapshotFromEvent(confirmedEvents)?.sides.owner.lists[0]).name ?? t("play.title"))}</h1><div className="hint">{t("play.vs")} {startSnapshotFromEvent(confirmedEvents)?.sides.opponent.name ?? selectedGame.opponent}</div></div>
       <div className="play-side-switch" role="group" aria-label={t("play.activeSide")}>
         <button type="button" aria-pressed={currentSide === "owner"} className="btn secondary" onClick={() => setSide("owner")}>{t("play.ownerSide")}</button>
         <button type="button" aria-pressed={currentSide === "opponent"} className="btn secondary" onClick={() => setSide("opponent")}>{t("play.opponentSide")}</button>
@@ -462,10 +361,15 @@ function PlayWorkspaceSession(props: Props) {
       </main>
       <aside className="play-score-column" aria-label={t("play.trackers")}>
         <div className="play-scores">
-          {(["owner", "opponent"] as const).map((side) => <section className={`play-score ${side}`} key={side}><span className="label">{t(`play.${side}Side`)}</span><strong>{String(state?.trackers[`side:${side}:::victory-points`] ?? 0)}</strong><small>{t("play.victoryPoints")}</small></section>)}
+          {(["owner", "opponent"] as const).map((side) => <section className={`play-score ${side}`} key={side}><span className="label">{t(`play.${side}Side`)}</span><strong>{sessionGame.setup ? score?.[side].total ?? 0 : String(state?.trackers[`side:${side}:::victory-points`] ?? 0)}</strong><small>{t("play.victoryPoints")}</small></section>)}
         </div>
+        {battleplan && <details className="play-tool play-battleplan">
+          <summary><h2>{battleplan.number ? `${battleplan.number} · ` : ""}{battleplan.name}</h2></summary>
+          {battleplan.map ? <BattleplanMap map={battleplan.map} t={t} /> : <p className="hint">{t("setup.noMap")}</p>}
+        </details>}
+        {state && sessionGame.setup && <RoundPanel state={state} game={sessionGame} t={t} append={(kind, payload) => void append(kind, payload)} />}
         <h2>{t("play.trackers")}</h2>
-        {(sessionGame.trackers ?? []).filter((tracker) => tracker.scope !== "unit").map(renderTracker)}
+        {(sessionGame.trackers ?? []).filter((tracker) => tracker.scope !== "unit" && tracker.scope !== "side-round").map(renderTracker)}
         {sessionGame.tools.orderDeck && <section className="play-tool">
           <h2>{t("play.orderDeck")}</h2>
           <div className="play-order-pool">{(state?.orders ?? []).map((id, index) => <button type="button" className="play-order" key={`${id}-${index}`} onClick={() => removeOrder(id)}>{sessionGame.orderOptions.find((order) => order.id === id)?.label ?? id} · {t("play.remove")}</button>)}</div>
@@ -498,9 +402,14 @@ function PlayWorkspaceSession(props: Props) {
         <section className="play-tool play-result">
           <h2>{state?.completed ? t("play.done") : t("play.result")}</h2>
           {(["win", "loss", "draw"] as const).map((result) => <button type="button" key={result} className="btn secondary" aria-pressed={state?.completed === result} onClick={() => recordResult(result)}>{t(`play.${result}`)}</button>)}
+          {state && <ResultCardButton state={state} locale={locale} playedOn={selectedGame.playedOn} factionNames={factionNames} />}
         </section>
       </aside>
     </div>
+    {photoReminderRound !== null && <div className="play-reminder w-card card-pad" role="status">
+      <span>{t("round.photoReminder", { round: photoReminderRound })}</span>
+      <button type="button" className="btn secondary" onClick={() => setPhotoReminderRound(null)}>{t("round.dismiss")}</button>
+    </div>}
     {conflictOps.length > 0 && <section className="play-conflict w-card card-pad" role="alert">
       <h2>{t("play.syncConflict")}</h2><p>{t("play.syncQueueNeedsResolution", { count: operations.length })}</p>
       <div className="row-gap"><button type="button" className="btn secondary" onClick={() => void resolveQueue("rebase")}>{t("play.rebaseConflictAction")}</button><button type="button" className="btn danger" onClick={() => void resolveQueue("discard")}>{t("play.discardConflictAction")}</button></div>

@@ -904,3 +904,79 @@ a.btn {
 /* Long German compounds in wide world faces (saga's Michroma caps) must not push a phone page sideways:
    headings hyphenate, and break as a last resort. */
 .main :is(h1, h2, h3) { hyphens: auto; overflow-wrap: anywhere; }
+
+/* Guided pre-game and round scoring (issues #9, #10). Tokens only. */
+.setup-wizard { display: grid; gap: var(--space-4); min-width: 0; }
+.setup-steps { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0; padding: 0; list-style: none; counter-reset: setup-step; }
+.setup-steps li { counter-increment: setup-step; display: inline-flex; align-items: center; gap: var(--space-2); padding: var(--space-1) var(--space-3); border: 1px solid var(--line); border-radius: var(--radius-pill); color: var(--ink-muted); font-size: 0.9rem; }
+.setup-steps li::before { content: counter(setup-step); font-variant-numeric: tabular-nums; font-weight: 600; }
+.setup-steps li[aria-current="step"] { border-color: var(--accent); color: var(--ink); }
+.setup-steps li.done { color: var(--ink); }
+.setup-body { display: grid; gap: var(--space-3); min-width: 0; }
+.setup-opponent { display: grid; gap: var(--space-3); min-width: 0; border: 1px solid var(--line); border-radius: var(--radius-control); padding: var(--space-3); }
+.setup-nav { display: flex; flex-wrap: wrap; gap: var(--space-2); justify-content: flex-end; }
+.setup-nav .btn { min-height: 44px; min-width: 120px; }
+.setup-randomize { justify-self: start; min-height: 44px; }
+.setup-rolloff { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-3); border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--surface-2); }
+.setup-rolloff p { margin: var(--space-1) 0 0; }
+.setup-toggle { display: flex; gap: var(--space-3); align-items: flex-start; min-height: 44px; }
+.setup-toggle input { width: 22px; height: 22px; margin-top: 2px; }
+.setup-toggle span { display: grid; gap: 2px; }
+.setup-summary { display: grid; grid-template-columns: max-content 1fr; gap: var(--space-2) var(--space-4); margin: 0; }
+.setup-summary-row { display: contents; }
+.setup-summary dt { color: var(--ink-muted); }
+.setup-summary dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+
+.segmented { display: inline-flex; border: 1px solid var(--line); border-radius: var(--radius-control); overflow: hidden; }
+.segmented button { min-height: 44px; min-width: 92px; padding: 0 var(--space-3); border: 0; background: var(--surface-1); color: var(--ink); font: inherit; }
+.segmented button + button { border-left: 1px solid var(--line); }
+.segmented button[aria-pressed="true"] { background: color-mix(in srgb, var(--accent) 24%, var(--surface-1)); box-shadow: inset 0 0 0 2px var(--accent); color: var(--ink); font-weight: 600; }
+
+.battleplan-list { display: grid; gap: 1px; border: 1px solid var(--line); border-radius: var(--radius-control); overflow: hidden; background: var(--line); }
+.battleplan-option { display: grid; grid-template-columns: auto 2.5rem 1fr; align-items: center; gap: var(--space-3); min-height: 48px; padding: 0 var(--space-3); background: var(--surface-1); cursor: pointer; }
+.battleplan-option:has(input:checked) { background: var(--surface-2); box-shadow: inset 3px 0 0 var(--accent); }
+.battleplan-number { font-family: var(--font-display); font-size: 1.5rem; text-align: right; color: var(--ink-muted); }
+.battleplan-detail { display: grid; gap: var(--space-3); grid-template-columns: minmax(0, 1fr); }
+.battleplan-scoring { margin: var(--space-1) 0 0; padding-left: 1.2em; }
+.battleplan-map { margin: 0; display: grid; gap: var(--space-1); }
+.battleplan-map svg { width: 100%; height: auto; border: 3px solid var(--frame); border-radius: var(--radius-sm); }
+.battleplan-board { fill: var(--surface-2); }
+.battleplan-territory { stroke: var(--line); stroke-width: 0.15; }
+.battleplan-territory.attacker { fill: color-mix(in srgb, var(--danger) 55%, var(--surface-2)); }
+.battleplan-territory.defender { fill: color-mix(in srgb, var(--accent-2) 55%, var(--surface-2)); }
+.battleplan-territory.neutral { fill: color-mix(in srgb, var(--ink-muted) 25%, var(--surface-2)); }
+.battleplan-label { fill: var(--ink); font-family: var(--font-display); letter-spacing: 0.05em; text-transform: uppercase; }
+.battleplan-objective { fill: var(--brass); stroke: var(--ink); stroke-width: 0.2; }
+.play-battleplan summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; }
+.play-battleplan summary h2 { display: inline; }
+
+.round-panel { display: grid; gap: var(--space-3); min-width: 0; }
+.round-panel-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: var(--space-2); }
+.round-panel-head h2 { margin: 0; font-size: 17px; }
+.round-shown select { min-height: 44px; }
+.round-picks { display: grid; gap: var(--space-2); }
+.round-pick { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.round-side { display: grid; gap: var(--space-3); padding: var(--space-3); border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--surface-2); min-width: 0; }
+.round-side.owner { box-shadow: inset 3px 0 0 var(--accent); }
+.round-side.opponent { box-shadow: inset 3px 0 0 var(--accent-2); }
+.round-side-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--space-2); }
+.round-side-head h3 { margin: 0; }
+.round-side-vp strong { font-size: 1.4rem; }
+.round-side-vp small { color: var(--ink-muted); }
+.round-pool { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); }
+.round-pool > .label { flex-basis: 100%; }
+.round-stepper { display: inline-flex; align-items: center; gap: var(--space-2); }
+.round-stepper .num { display: grid; justify-items: center; min-width: 3.5rem; font-size: 1.2rem; }
+.round-stepper small { font-size: 0.75rem; color: var(--ink-muted); }
+.round-pool-total { margin-left: auto; font-weight: 600; }
+.round-objectives { display: grid; gap: var(--space-2); }
+.round-score-buttons { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: var(--space-2); }
+.round-score-button { display: grid; gap: 2px; min-height: 52px; padding: var(--space-2); border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--surface-1); color: var(--ink); font: inherit; text-align: center; overflow-wrap: anywhere; }
+.round-score-button small { color: var(--ink-muted); }
+.round-score-button[aria-pressed="true"] { background: color-mix(in srgb, var(--accent) 24%, var(--surface-1)); border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); font-weight: 600; }
+.round-score-button[aria-pressed="true"] small { color: var(--ink); }
+.round-tactic { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: var(--space-2); }
+.round-tactic select { min-height: 44px; width: 100%; }
+.round-tactic .btn { min-height: 44px; }
+.round-tactic .btn[aria-pressed="true"] { background: color-mix(in srgb, var(--ok) 28%, var(--surface-1)); box-shadow: inset 0 0 0 2px var(--ok); color: var(--ink); }
+.play-reminder { position: sticky; bottom: var(--space-3); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); border-color: var(--accent); z-index: 5; }
