@@ -101,6 +101,19 @@ export interface ListBuilderVariant {
   validateList: (list: unknown, pack: unknown, settings: ListValidationSettings) => ListValidationResult;
   /** Optional ready-made armies from the selected pack (AoS Spearhead). The shell asks this, never a game id. */
   readyMade?: ReadyMadeSource;
+  /**
+   * Optional paste-import of a list the game's own app exported as text (AoS). Pure; the shell offers the paste
+   * panel only when a variant has it, never by game id.
+   */
+  importText?: (text: string, packs: { id: number; content: unknown }[]) => ListTextImport;
+}
+
+/** A draft list read from pasted text. Lines the import could not match come back, never guessed into the list. */
+export interface ListTextImport {
+  /** Row id of the owner's pack the draft was matched against, if any pack fit. */
+  packRowId?: number;
+  definition: ListDefinition;
+  unmatched: string[];
 }
 
 /** One ready-made army offered by a pack, as the list builder's picker shows it. */
@@ -130,7 +143,8 @@ export interface TrackerDefinition {
   id: string;
   labelKey: string;
   kind: "counter" | "toggle" | "resource" | "track";
-  scope: "game" | "side" | "unit" | "round";
+  /** "side-round": one value per side per battle round (e.g. command points gained that round). */
+  scope: "game" | "side" | "unit" | "round" | "side-round";
   min?: number;
   max?: number;
   derived?: boolean;
@@ -194,6 +208,27 @@ export interface GameModule {
   trackers?: TrackerDefinition[];
   /** Capability flags used to show game-specific action panels without game-id branches. */
   playTools?: { orderDeck?: boolean; struggleTrack?: boolean };
+  /** A guided pre-game and per-round scoring (Heyhey, 9 Nov 2026, issues #9 and #10). Content comes from the owner's pack. */
+  playSetup?: PlaySetupDefinition;
+}
+
+/**
+ * What a game's guided pre-game asks and what each round records. Battleplans, their maps and scoring, and tactics are
+ * read from the owner's private pack sections named here, never from code.
+ */
+export interface PlaySetupDefinition {
+  /** Catalogue section with battleplans (`id`, `name`, optional `number`, `mode`, `map`, `scoring`). */
+  battleplanSection: string;
+  /** Catalogue section with tactics chosen each round (`id`, `name`, optional `points`, `mode`). */
+  tacticSection?: string;
+  /** One-off roll-offs before round 1, each won by a side (e.g. attacker, priority). */
+  rollOffs: { id: string; labelKey: string; helpKey: string }[];
+  /** Asked each round, each answered with a side (e.g. priority, went first). */
+  roundPicks: { id: string; labelKey: string }[];
+  /** Pools computed from two side-round counters (e.g. command points = gained − spent). */
+  pools: { id: string; labelKey: string; gainedTracker: string; spentTracker: string }[];
+  /** Side counter added to the computed victory points (points the scoring buttons do not cover). */
+  extraPointsTracker?: string;
 }
 
 export const runRules = <L, P, S>(rules: Rule<L, P, S>[], list: L, pack: P, settings: S): Issue[] =>

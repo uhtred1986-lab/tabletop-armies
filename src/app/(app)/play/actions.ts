@@ -245,6 +245,11 @@ function moduleMatches(snapshot: PlayStartSnapshot, gameId: string): boolean {
       return !expected || tracker.id !== expected.id || tracker.kind !== expected.kind || tracker.scope !== expected.scope || tracker.min !== expected.min || tracker.max !== expected.max ||
         JSON.stringify(tracker.options?.map((option) => option.id) ?? []) !== JSON.stringify(expected.options?.map((option) => option.id) ?? []);
     })) return false;
+  const setup = definition.playSetup;
+  const ids = (items?: { id: string }[]) => JSON.stringify(items?.map((item) => item.id) ?? []);
+  if (!!setup !== !!frozen.setup || (setup && frozen.setup && (ids(setup.rollOffs) !== ids(frozen.setup.rollOffs) || ids(setup.roundPicks) !== ids(frozen.setup.roundPicks) ||
+    JSON.stringify(setup.pools.map((pool) => [pool.id, pool.gainedTracker, pool.spentTracker])) !== JSON.stringify(frozen.setup.pools.map((pool) => [pool.id, pool.gainedTracker, pool.spentTracker])) ||
+    setup.extraPointsTracker !== frozen.setup.extraPointsTracker))) return false;
   const tools = definition.playTools ?? {};
   return (frozen.tools.orderDeck ?? false) === (tools.orderDeck ?? false) && (frozen.tools.struggleTrack ?? false) === (tools.struggleTrack ?? false);
 }

@@ -13,6 +13,12 @@ dice and the database never know which game they hold; anything game-specific go
 | `validateList` | Pure rules `(list, pack, settings) → Issue[]` | `src/games/<id>/validate.ts` + tests |
 | Play loop | Rounds and phases, and which trackers a unit shows | `src/games/<id>/play.ts` |
 | `readyMade` (optional, per list variant) | Ready-made armies a pack offers (AoS Spearhead): `options(pack)` for the picker, `apply(pack, id)` for the selections; the list builder shows the picker when `when.path` equals `when.value` | `src/games/<id>/list.ts` |
+| `importText` (optional, per list variant) | Paste-import of a list the game's own app exports as text (AoS: `src/games/aos/list-import.ts`): `importText(text, packs)` returns the pack row it matched, a draft definition and the `unmatched` lines; nothing is guessed, the shell shows the paste panel only when the variant has it | `src/games/<id>/list.ts` |
+
+AoS Spearhead armies, battleplans and battle tactics enter only through the owner's private pack. How to write the
+owner file, the map coordinate convention (inches, origin top-left, territories as polygons with a side, objectives as
+points) and the template commands: `docs/importers.md`, "Age of Sigmar Spearhead armies" and "Age of Sigmar
+battleplans and battle tactics".
 
 ## Per game
 

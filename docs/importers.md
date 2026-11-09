@@ -67,6 +67,42 @@ It writes a review bundle to `data/import-drafts/<packId>.spearheads.pack.json` 
 
 In the list builder (AoS, mode Spearhead) the panel "Start from a ready-made Spearhead" lists the selected pack's spearheads with faction, unit count and a configured/incomplete badge; choosing one fills the entries. A pack without spearheads shows an empty state that points to `/data`.
 
+## Age of Sigmar battleplans and battle tactics
+
+Battleplans and battle tactics live in `catalogue.battleplans` and `catalogue.battleTactics` of a private AoS pack (`aosBattleplanSchema`, `aosBattleTacticSchema`, `src/games/aos/schema.ts`). Names, maps and scoring come only from Heyhey's own copy; the repo holds none of them, and every example here is invented. Both sections default to `[]`.
+
+**Map convention.** Coordinates are inches on the board, origin at the top-left corner as the owner's map is drawn, `x` to the right, `y` down. `map.width` and `map.height` are the board size. Territories are polygons (`points`, at least three `[x, y]` corners) with a `side` of `attacker`, `defender` or `neutral`; objectives are points (`x`, `y`, optional `label`). Every corner and objective must lie on the board (0 to width, 0 to height), else the template refuses the input.
+
+Write a short owner file in the ignored `data/` folder, for example `data/battleplans.input.json`:
+
+```json
+{
+  "packId": "aos-battleplans-owner",
+  "revision": "owner-2026-11",
+  "source": { "title": "Own notes from my copy", "kind": "manual" },
+  "battleplans": [
+    { "name": "Test Plan of Embers", "number": 1, "mode": "matched",
+      "map": { "width": 44, "height": 30,
+        "territories": [
+          { "side": "attacker", "points": [[0, 0], [44, 0], [44, 8], [0, 8]] },
+          { "side": "defender", "points": [[0, 22], [44, 22], [44, 30], [0, 30]] }
+        ],
+        "objectives": [{ "x": 22, "y": 15, "label": "Centre" }] },
+      "scoring": [{ "label": "Hold one test marker", "points": 1 }] },
+    { "name": "Test Plan Without Map" }
+  ],
+  "battleTactics": [{ "name": "Test Gambit", "points": 4 }]
+}
+```
+
+Then run:
+
+```sh
+npm run battleplans:template -- [--input data/battleplans.input.json] [--out data/import-drafts/my.battleplans.pack.json]
+```
+
+It writes a review bundle to `data/import-drafts/<packId>.battleplans.pack.json` (input and output must stay inside `data/`; it never touches the database). Battleplan, battle tactic and scoring ids default to a slug of the name or label; duplicates are refused. `source` (`title`, optional `printedDate` only if the source prints one, `kind`: `owner-scan` or `manual`) becomes the pack provenance and is kept on each record. Nothing is filled in: a battleplan without a map, territories, objectives or scoring, and a tactic without points, are listed as warnings. In `/data` each entry is a `battleplan` or `battle-tactic` review candidate.
+
 ## Official Warhammer model image candidates
 
 Create a current local pack first, then put one product URL per entry in `data/sources.json` with `purpose: "product"` and the target `gameId`. Run:

@@ -19,9 +19,24 @@ export const aos: GameModule = {
   ],
   trackers: [
     { id: "wounds", labelKey: "tracker.aos.wounds", kind: "counter", scope: "unit" },
-    { id: "command-points", labelKey: "tracker.aos.commandPoints", kind: "resource", scope: "side" },
-    { id: "victory-points", labelKey: "tracker.aos.victoryPoints", kind: "counter", scope: "side" },
+    { id: "cp-gained", labelKey: "tracker.aos.cpGained", kind: "counter", scope: "side-round", min: 0 },
+    { id: "cp-spent", labelKey: "tracker.aos.cpSpent", kind: "counter", scope: "side-round", min: 0 },
+    { id: "victory-points", labelKey: "tracker.aos.extraVictoryPoints", kind: "counter", scope: "side" },
   ],
+  playSetup: {
+    battleplanSection: "battleplans",
+    tacticSection: "battleTactics",
+    rollOffs: [
+      { id: "attacker", labelKey: "setup.aos.attacker", helpKey: "setup.aos.attackerHelp" },
+      { id: "priority", labelKey: "setup.aos.priority", helpKey: "setup.aos.priorityHelp" },
+    ],
+    roundPicks: [
+      { id: "priority", labelKey: "setup.aos.roundPriority" },
+      { id: "went-first", labelKey: "setup.aos.wentFirst" },
+    ],
+    pools: [{ id: "command-points", labelKey: "tracker.aos.commandPoints", gainedTracker: "cp-gained", spentTracker: "cp-spent" }],
+    extraPointsTracker: "victory-points",
+  },
   listBuilder: {
     schema: aosListBuilder.schema,
     fields: aosListBuilder.fields,

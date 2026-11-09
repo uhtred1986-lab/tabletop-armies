@@ -17,6 +17,7 @@ describe("game module labels", () => {
         game.nameKey, game.factionLabelKey,
         ...game.phases.map((p) => p.labelKey),
         ...(game.trackers ?? []).flatMap((t) => [t.labelKey, ...(t.options ?? []).map((o) => o.labelKey)]),
+        ...(game.playSetup ? [...game.playSetup.rollOffs.flatMap((r) => [r.labelKey, r.helpKey]), ...game.playSetup.roundPicks.map((r) => r.labelKey), ...game.playSetup.pools.map((p) => p.labelKey)] : []),
         ...variants.flatMap((v) => [v.labelKey, ...keysOf(v.fields), ...v.settingsFields.map((f) => f.labelKey), ...Object.values(v.readyMade?.labelKeys ?? {})]),
         ...keysOf(game.listBuilder?.fields ?? []),
         ...(game.listBuilder?.settingsFields ?? []).map((f) => f.labelKey),

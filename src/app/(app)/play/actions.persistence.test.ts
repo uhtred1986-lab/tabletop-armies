@@ -7,6 +7,7 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import * as schema from "@/db/schema";
 import type { PlayStartSnapshot } from "@/lib/play/replay";
 import { gameById } from "@/games/registry";
+import { playModuleSnapshot } from "@/lib/play/module-snapshot";
 
 const mocks = vi.hoisted(() => ({
   db: undefined as unknown,
@@ -42,19 +43,7 @@ const moduleDefinition = gameById("aos");
 const snapshot: PlayStartSnapshot = {
   schemaVersion: 1,
   gameId: "aos",
-  module: {
-    id: "aos", world: moduleDefinition.world, name: "Test game", rounds: moduleDefinition.rounds,
-    phases: moduleDefinition.phases.map((phase) => ({ id: phase.id, label: phase.id })),
-    trackers: (moduleDefinition.trackers ?? []).map((tracker) => ({ ...tracker, label: tracker.id, options: tracker.options?.map((option) => ({ id: option.id, label: option.id })) })),
-    tools: moduleDefinition.playTools ?? {},
-    orderOptions: [],
-    labels: {
-      round: "Round", phase: "Phase", owner: "Owner", opponent: "Opponent", nextPhase: "Next phase", nextRound: "Next round",
-      changeSide: "Change side", undo: "Undo", activeSide: "Active side", trackers: "Trackers", orderDeck: "Order deck",
-      struggle: "Struggle", timer: "Timer", value: "Value", add: "Add", remove: "Remove", game: "Game", actions: "Actions",
-      sync: "Sync", noGames: "No games", reconnect: "Reconnect", record: "Record",
-    },
-  },
+  module: playModuleSnapshot(moduleDefinition, (key) => key),
   sides: {
     owner: { listIds: [], lists: [], units: [] },
     opponent: { name: "Sample Rival", units: [] },

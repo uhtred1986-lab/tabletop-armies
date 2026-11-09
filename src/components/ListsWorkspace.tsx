@@ -137,6 +137,8 @@ export function ListsWorkspace({ game, locale, variants, packs, lists, collectio
   const [savedBaseline, setSavedBaseline] = useState(JSON.stringify(selected?.definition ?? (initialVariant ? emptyDefinition(game, initialVariant, currentPack) : {})));
   const [status, setStatus] = useState("");
   const [busy, setBusy] = useState(false);
+  const [pasteText, setPasteText] = useState("");
+  const [pasteUnmatched, setPasteUnmatched] = useState<string[]>([]);
   const variant = variants.find((value) => value.id === variantId) ?? variants[0];
   const runtimeGame = games.find((candidate) => candidate.id === game.id);
   const runtimeVariant = runtimeGame ? getVariant(runtimeGame, variant?.id ?? "") : undefined;
@@ -177,6 +179,7 @@ export function ListsWorkspace({ game, locale, variants, packs, lists, collectio
     setDefinition(emptyDefinition(game, nextVariant, nextPack));
     setSavedBaseline(JSON.stringify(emptyDefinition(game, nextVariant, nextPack)));
     setStatus("");
+    setPasteUnmatched([]);
   };
 
   const selectList = (list: ListView) => {
@@ -188,6 +191,7 @@ export function ListsWorkspace({ game, locale, variants, packs, lists, collectio
     setDefinition(list.definition);
     setSavedBaseline(JSON.stringify(list.definition));
     setStatus("");
+    setPasteUnmatched([]);
   };
 
   const onTopField = (path: string, value: unknown) => setDefinition((current) => setAt(current, path, value));
@@ -248,6 +252,22 @@ export function ListsWorkspace({ game, locale, variants, packs, lists, collectio
     }
     setStatus("");
     router.refresh();
+  }
+
+  function importPasted() {
+    const importText = runtimeVariant?.importText;
+    if (!importText || !variant || !pasteText.trim() || !confirmDiscard()) return;
+    const result = importText(pasteText, packs.map(({ id, content }) => ({ id, content })));
+    const nextPack = packs.find((pack) => pack.id === result.packRowId);
+    const entries = getAt(result.definition, "selections.entries");
+    const count = Array.isArray(entries) ? entries.length : 0;
+    setSelectedId(null);
+    if (result.packRowId !== undefined) setPackRowId(result.packRowId);
+    setDefinition(result.definition as unknown as Record<string, unknown>);
+    // The draft is unsaved: the baseline stays an empty list, so leaving asks first.
+    setSavedBaseline(JSON.stringify(emptyDefinition(game, variant, nextPack)));
+    setPasteUnmatched(result.unmatched);
+    setStatus(result.packRowId === undefined ? t("play.paste.noPack") : t("play.paste.imported", { count: formatNumber(locale, count) }));
   }
 
   function exportList() {
@@ -312,6 +332,18 @@ export function ListsWorkspace({ game, locale, variants, packs, lists, collectio
             </label>}
           </div>
           {variant.manual && <p className="manual-note">{t("play.manualEntry")}</p>}
+          {runtimeVariant?.importText && <details className="settings-panel list-paste">
+            <summary>{t("play.paste.title")}</summary>
+            <p className="hint">{t("play.paste.help")}</p>
+            <label className="field-label" htmlFor="list-paste-text">{t("play.paste.label")}
+              <textarea id="list-paste-text" rows={10} spellCheck={false} value={pasteText} onChange={(event) => setPasteText(event.target.value)} />
+            </label>
+            <div><button type="button" className="btn secondary" disabled={!pasteText.trim()} onClick={importPasted}>{t("play.paste.import")}</button></div>
+            {pasteUnmatched.length > 0 && <div role="status">
+              <p className="hint">{t("play.paste.unmatched", { count: formatNumber(locale, pasteUnmatched.length) })}</p>
+              <ul className="hint">{pasteUnmatched.map((line, index) => <li key={`${index}:${line}`}>{line}</li>)}</ul>
+            </div>}
+          </details>}
           <div className="list-fields">
             {variant.fields.map((field) => renderField(field, definition, (path, value) => onSelectionField(path, value), "", options, t))}
           </div>
@@ -332,7 +364,7 @@ export function ListsWorkspace({ game, locale, variants, packs, lists, collectio
               setStatus(picked.unlinkedCount > 0 ? t(source.labelKeys.unlinked, { count: formatNumber(locale, picked.unlinkedCount) }) : "");
             }}
           />}
-          {modeId && <p className="hint"><Link href={`/reference?gameId=${encodeURIComponent(game.id)}&recordId=${encodeURIComponent(modeId)}`}>{t("play.modeReference")}</Link></p>}
+          {modeId && <p className="hint"><Link className="touch-link" href={`/reference?gameId=${encodeURIComponent(game.id)}&recordId=${encodeURIComponent(modeId)}`}>{t("play.modeReference")}</Link></p>}
           {!!variant.settingsFields.length && <section className="settings-panel">
             <h2>{t("play.manualSettings")}</h2>
             <p className="hint">{t("play.settingsOwnerEntered")}</p>
