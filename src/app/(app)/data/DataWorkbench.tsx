@@ -85,7 +85,7 @@ function ReviewRun({ t, run, packs }: { t: Strings; run: ReviewRunData; packs: A
   const batchId = `review-batch-${run.id}`;
   const [batchState, batchAction, batchPending] = useActionState(async (_: Result | null, formData: FormData) => reviewCandidatesBatch(formData), null);
   return <article className="w-card card-pad data-run">
-    <header><h3 className="w-display">{run.gameId.toUpperCase()} · {run.sourceKind}</h3><span className="label">{run.sourceKind === "official-product-image-candidates" && run.status === "accepted" ? t["data.run.status.reviewed"] : t[`data.run.status.${run.status}`] ?? run.status}</span></header>
+    <header><h3 className="w-display">{runTitle(run)}</h3><span className="label">{run.sourceKind === "official-product-image-candidates" && run.status === "accepted" ? t["data.run.status.reviewed"] : t[`data.run.status.${run.status}`] ?? run.status}</span></header>
     <p>{t["data.run.source"]}: {run.sourceUrl ?? "—"}</p>
     <p>{t["data.run.revision"]}: <code>{run.sourceRevision ?? "—"}</code> · {t["data.run.created"]}: {run.createdAt}</p>
     <div className="data-counts"><span>{(t["data.run.pending"] ?? "").replace("{count}", String(counts.pending))}</span><span>{(t["data.run.accepted"] ?? "").replace("{count}", String(counts.accepted))}</span><span>{(t["data.run.rejected"] ?? "").replace("{count}", String(counts.rejected))}</span></div>
@@ -156,4 +156,10 @@ function safeImageUrl(value: string) {
     const allowed = ["warhammer.com", "warhammer-community.com", "atomicmassgames.com", "knightmodels.com", "cdn.svc.asmodee.net", "cdn.shopify.com"];
     return url.protocol === "https:" && !url.username && !url.password && allowed.some((host) => url.hostname === host || url.hostname.endsWith(`.${host}`));
   } catch { return false; }
+}
+
+/** Five staged imports of one game read alike; the factions the run brings (letters only, so "❖ Lores" stays out) tell them apart. */
+function runTitle(run: ReviewRunData): string {
+  const factions = [...new Set(run.candidates.filter((c) => c.entityKind === "faction").map((c) => String(c.proposed.name ?? "")).filter((name) => /^\p{L}/u.test(name)))];
+  return `${run.gameId.toUpperCase()} · ${factions.length ? factions.join(", ") : run.sourceKind}`;
 }
