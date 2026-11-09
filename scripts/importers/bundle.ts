@@ -35,6 +35,8 @@ const sections: Record<string, string> = {
   objectiveCards: "objective-card",
   starterBoxes: "starter-box",
   spearheads: "spearhead",
+  battleplans: "battleplan",
+  battleTactics: "battle-tactic",
 };
 
 export type ImportCandidateDraft = {

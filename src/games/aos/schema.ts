@@ -57,12 +57,41 @@ export const aosSpearheadSchema = recordSchema.extend({
 }).passthrough().refine((spearhead) => spearhead.sections.units !== "configured" || spearhead.units.length > 0, "A configured unit section needs at least one unit")
   .refine((spearhead) => spearhead.units.filter((unit) => unit.isGeneral).length <= 1, "A spearhead flags at most one general");
 
+const point = z.tuple([z.number().nonnegative(), z.number().nonnegative()]);
+
+/**
+ * A battleplan as the owner enters it from their own copy (private pack only, never the repo). Coordinates are inches
+ * on the board, origin top-left. Scoring rules are the owner's wording; points per round are computed from them.
+ */
+export const aosBattleplanSchema = recordSchema.extend({
+  number: z.number().int().positive().optional(),
+  mode: z.enum(["matched", "spearhead", "casual", "path-to-glory"]).default("matched"),
+  missionPack: z.string().optional(),
+  map: z.object({
+    width: z.number().positive(),
+    height: z.number().positive(),
+    territories: z.array(z.object({ side: z.enum(["attacker", "defender", "neutral"]), points: z.array(point).min(3) }).strict()).default([]),
+    objectives: z.array(z.object({ x: z.number().nonnegative(), y: z.number().nonnegative(), label: z.string().optional() }).strict()).default([]),
+  }).strict().optional(),
+  scoring: z.array(z.object({ id: z.string().min(1), label: z.string().min(1), points: z.number().int().nonnegative() }).strict()).default([]),
+  notes: z.string().optional(),
+}).passthrough();
+
+/** A battle tactic as the owner enters it (private pack only). */
+export const aosBattleTacticSchema = recordSchema.extend({
+  mode: z.enum(["matched", "spearhead", "casual", "path-to-glory"]).default("matched"),
+  points: z.number().int().nonnegative().optional(),
+  notes: z.string().optional(),
+}).passthrough();
+
 export const aosCatalogueSchema = z.object({
   ...catalogueSections(),
   units: z.array(aosUnitSchema),
   enhancements: z.array(recordSchema).default([]),
   regiments: z.array(recordSchema).default([]),
   spearheads: z.array(aosSpearheadSchema).default([]),
+  battleplans: z.array(aosBattleplanSchema).default([]),
+  battleTactics: z.array(aosBattleTacticSchema).default([]),
 }).passthrough();
 
 export const aosPackSchema = cataloguePackSchema("aos", aosCatalogueSchema);
@@ -91,4 +120,6 @@ export const aosListSchema = z.object({
 export type AosCatalogue = z.infer<typeof aosCatalogueSchema>;
 export type AosSpearhead = z.infer<typeof aosSpearheadSchema>;
 export type AosSpearheadUnit = z.infer<typeof aosSpearheadUnitSchema>;
+export type AosBattleplan = z.infer<typeof aosBattleplanSchema>;
+export type AosBattleTactic = z.infer<typeof aosBattleTacticSchema>;
 export type AosListInput = z.infer<typeof aosListSchema>;
