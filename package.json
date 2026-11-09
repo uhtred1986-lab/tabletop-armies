@@ -20,7 +20,8 @@
     "shots": "node scripts/shots.mjs",
     "tmp-branch": "tsx scripts/tmp-branch.mts",
     "prod:read": "tsx scripts/prod-read.mts",
-    "deploy:status": "tsx scripts/deploy-status.mts"
+    "deploy:status": "tsx scripts/deploy-status.mts",
+    "battleplans:template": "tsx scripts/importers/battleplan-template-cli.ts"
   },
   "dependencies": {
     "@napi-rs/canvas": "^1.1.0",
