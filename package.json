@@ -18,7 +18,9 @@
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
     "shots": "node scripts/shots.mjs",
-    "tmp-branch": "tsx scripts/tmp-branch.mts"
+    "tmp-branch": "tsx scripts/tmp-branch.mts",
+    "prod:read": "tsx scripts/prod-read.mts",
+    "deploy:status": "tsx scripts/deploy-status.mts"
   },
   "dependencies": {
     "@napi-rs/canvas": "^1.1.0",
