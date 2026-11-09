@@ -13,7 +13,7 @@ type ReviewRunData = { id: number; gameId: string; status: string; sourceKind: s
 export function DataWorkbench({ t, runs, packs, rows, overrides, games }: {
   t: Strings;
   runs: ReviewRunData[];
-  packs: Array<{ id: number; gameId: string; source: string; sourceDate: string; units: UnitOption[]; assetCount: number }>;
+  packs: Array<{ id: number; gameId: string; label: string; source: string; sourceDate: string; units: UnitOption[]; assetCount: number }>;
   rows: Array<{ id: number; gameId: string; unitName: string; unitId: string | null; suggestions: Array<{ id: string; name: string; confidence: number; exact: boolean }> }>;
   overrides: Array<{ gameId: string; targetId: string; field: string; reason: string | null }>;
   games: Array<{ id: string; name: string }>;
@@ -41,7 +41,8 @@ export function DataWorkbench({ t, runs, packs, rows, overrides, games }: {
       <h2 className="w-display">{t["data.pack.title"]}</h2>
       {!packs.length && <div className="w-card card-pad">{t["data.pack.empty"]}</div>}
       <div className="grid-cards">{packs.map((pack) => <article className="w-card card-pad" key={pack.id}>
-        <h3 className="w-display">{pack.gameId.toUpperCase()} · {t["data.units"]}: {pack.units.length}</h3>
+        <h3 className="w-display">{pack.gameId.toUpperCase()} · {pack.label}</h3>
+        <p>{t["data.units"]}: {pack.units.length}</p>
         <p>{(t["data.pack.source"] ?? "").replace("{source}", pack.source)} · {pack.sourceDate}</p>
         <p>{t["data.pack.assets"]}: {pack.assetCount}</p>
         <a className="w-btn btn" href={`/data/cards/${pack.id}`}>{t["data.pack.viewCards"]}</a>

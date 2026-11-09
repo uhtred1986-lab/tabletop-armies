@@ -1,3 +1,4 @@
+import { packLabel } from "@/lib/lists/pack-label";
 import { asc, desc, inArray } from "drizzle-orm";
 import { db } from "@/db";
 import { collectionItems, collectionOverrides, dataPacks, importCandidates, importRuns, packAssets } from "@/db/schema";
@@ -40,7 +41,7 @@ export default async function DataPage() {
     <DataWorkbench
       t={Object.fromEntries(Object.keys(strings[locale]).map((key) => [key, t(key as never)]))}
       runs={runRows.map((run) => ({ id: run.id, gameId: run.gameId, status: run.status, sourceKind: run.sourceKind, sourceUrl: run.sourceUrl, sourceRevision: run.sourceRevision, createdAt: run.createdAt.toISOString(), candidates: (candidatesByRun.get(run.id) ?? []).map((candidate) => ({ ...candidate, proposed: record(candidate.proposed) })) }))}
-      packs={packsRows.map((pack) => ({ id: pack.id, gameId: pack.gameId, source: pack.source, sourceDate: pack.sourceDate, units: catalogueUnits(pack.content), assetCount: assetCounts.get(pack.id) ?? 0 }))}
+      packs={packsRows.map((pack) => ({ id: pack.id, gameId: pack.gameId, label: packLabel(pack), source: pack.source, sourceDate: pack.sourceDate, units: catalogueUnits(pack.content), assetCount: assetCounts.get(pack.id) ?? 0 }))}
       rows={collectionRows.map(({ id, gameId, unitName, unitId }) => {
         const targets = packsRows.filter((pack) => pack.gameId === gameId).flatMap((pack) => catalogueUnits(pack.content));
         return { id, gameId, unitName, unitId, suggestions: suggestNameMatches(unitName, targets).map(({ target, confidence, exact }) => ({ id: target.id, name: target.name, confidence, exact })) };
